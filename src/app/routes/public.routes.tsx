@@ -1,6 +1,6 @@
 import { PublicLayout } from "../layout/PublicLayout";
 import { LandingPage } from "../../pages/public/LandingPage";
-import { LoginPage } from "../../pages/public/LoginPage";
+import { LoginPage } from "../../pages/public/Login/LoginPage";
 
 export const publicRoutes = {
   element: <PublicLayout />,

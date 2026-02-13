@@ -1,7 +1,7 @@
 import { AppProviders } from "./app";
 
-function App() {
+const App = () => {
   return <AppProviders />;
-}
+};
 
 export default App;

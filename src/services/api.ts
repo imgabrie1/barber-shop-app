@@ -1,15 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, {
   AxiosError,
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
 
+import {
+  getToken,
+  getRefreshToken,
+  setTokens,
+  clearTokens,
+} from "./auth.storage";
+
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
-
-export const TOKEN_STORAGE = "@barbershop:token";
-export const USER_STORAGE = "@barbershop:user";
-export const REFRESH_TOKEN_STORAGE = "@barbershop:refreshToken";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -20,6 +24,7 @@ const api = axios.create({
 });
 
 let isRefreshing = false;
+
 let failedRequestsQueue: {
   onSuccess: (token: string) => void;
   onFailure: (err: AxiosError) => void;
@@ -31,93 +36,50 @@ export const registerLogoutCallback = (callback: () => void) => {
   logoutCallback = callback;
 };
 
-// Funções de armazenamento para Web (localStorage/sessionStorage)
-const storage = {
-  getItem: (key: string): string | null => {
-    try {
-      return localStorage.getItem(key);
-    } catch (error) {
-      console.error("Error reading from localStorage:", error);
-      return null;
-    }
-  },
-
-  setItem: (key: string, value: string): void => {
-    try {
-      localStorage.setItem(key, value);
-    } catch (error) {
-      console.error("Error writing to localStorage:", error);
-    }
-  },
-
-  removeItem: (key: string): void => {
-    try {
-      localStorage.removeItem(key);
-    } catch (error) {
-      console.error("Error removing from localStorage:", error);
-    }
-  },
-
-  multiRemove: (keys: string[]): void => {
-    keys.forEach((key) => storage.removeItem(key));
-  },
-};
-
-// Alternativa: usar sessionStorage se preferir
-// const storage = sessionStorage;
-
 const handleUnauthorized = async () => {
-  if (logoutCallback) {
-    logoutCallback();
-    return;
-  }
-
-  // Remove tokens do storage
-  storage.multiRemove([TOKEN_STORAGE, USER_STORAGE, REFRESH_TOKEN_STORAGE]);
-
-  // Remove token do header padrão
+  clearTokens();
   delete api.defaults.headers.common["Authorization"];
 
-  // Redireciona para login - você precisará ajustar conforme sua roteirização
-  window.location.href = "/login";
+  if (logoutCallback) {
+    logoutCallback();
+  }
 };
 
 const processTokenRefresh = async () => {
   try {
-    const refreshToken = storage.getItem(REFRESH_TOKEN_STORAGE);
+    const refreshToken = getRefreshToken();
 
     if (!refreshToken) {
       throw new Error("No refresh token available");
     }
 
-    const response = await axios.post(`${API_BASE_URL}/login/refresh-token`, {
-      refresh_token: refreshToken,
-    });
+    const response = await axios.post(
+      `${API_BASE_URL}/login/refresh-token`,
+      { refresh_token: refreshToken },
+    );
 
     const { token, refresh_token } = response.data;
 
-    storage.setItem(TOKEN_STORAGE, token);
-    if (refresh_token) {
-      storage.setItem(REFRESH_TOKEN_STORAGE, refresh_token);
-    }
+    setTokens(token, refresh_token);
 
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    failedRequestsQueue.forEach((request) => request.onSuccess(token));
+    failedRequestsQueue.forEach((request) =>
+      request.onSuccess(token),
+    );
     failedRequestsQueue = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (refreshError: any) {
-    failedRequestsQueue.forEach((request) => request.onFailure(refreshError));
+  } catch (error: any) {
+    failedRequestsQueue.forEach((request) =>
+      request.onFailure(error),
+    );
     failedRequestsQueue = [];
 
-    console.error("Refresh token failed, logging out.", refreshError);
     await handleUnauthorized();
   } finally {
     isRefreshing = false;
   }
 };
 
-// interceptor de resposta
 api.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
@@ -137,7 +99,7 @@ api.interceptors.response.use(
         failedRequestsQueue.push({
           onSuccess: (token: string) => {
             originalConfig.headers = originalConfig.headers || {};
-            originalConfig.headers["Authorization"] = `Bearer ${token}`;
+            originalConfig.headers.Authorization = `Bearer ${token}`;
             resolve(api(originalConfig));
           },
           onFailure: (err: AxiosError) => {
@@ -151,50 +113,18 @@ api.interceptors.response.use(
   },
 );
 
-// interceptor de requisição
 api.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    const token = storage.getItem(TOKEN_STORAGE);
+  (config: InternalAxiosRequestConfig) => {
+    const token = getToken();
+
     if (token) {
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  (error: AxiosError) => {
-    return Promise.reject(error);
-  },
+  (error: AxiosError) => Promise.reject(error),
 );
-
-// funções auxiliares para gerenciamento de tokens
-export const setAuthToken = (token: string, refreshToken?: string) => {
-  storage.setItem(TOKEN_STORAGE, token);
-  if (refreshToken) {
-    storage.setItem(REFRESH_TOKEN_STORAGE, refreshToken);
-  }
-  api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-};
-
-export const clearAuthTokens = () => {
-  storage.multiRemove([TOKEN_STORAGE, USER_STORAGE, REFRESH_TOKEN_STORAGE]);
-  delete api.defaults.headers.common["Authorization"];
-};
-
-export const getAuthToken = (): string | null => {
-  return storage.getItem(TOKEN_STORAGE);
-};
-
-export const getRefreshToken = (): string | null => {
-  return storage.getItem(REFRESH_TOKEN_STORAGE);
-};
-
-// export const getUserData = () => {
-//   const userStr = storage.getItem(USER_STORAGE);
-//   return userStr ? JSON.parse(userStr) : null;
-// };
-
-// export const setUserData = (user: any) => {
-//   storage.setItem(USER_STORAGE, JSON.stringify(user));
-// };
 
 export default api;

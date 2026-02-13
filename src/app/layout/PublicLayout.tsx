@@ -1,15 +1,17 @@
 import { Outlet } from "react-router-dom";
 
-export function PublicLayout() {
+export const PublicLayout = () => {
   return (
-    <div className="layout layout-public">
-      <header className="layout-header">
-        <h1>Barbearia Genérica</h1>
-        <p>Agendamentos online.</p>
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-[var(--headerColor)] w-full flex justify-center items-center min-h-[8vh] py-4">
+        <div className="w-[95vw] md:w-[90vw] lg:w-[130vh] text-[var(--textPrimary)] px-2 flex flex-col 2xl:gap-6 gap-2">
+          <h1 className="text-xl font-bold 2xl:text-3xl ">Barbearia Genérica</h1>
+          <p className="text-sm 2xl:text-2xl">slogan ou frase Genérica.</p>
+        </div>
       </header>
-      <main className="layout-content">
+      <main className="flex-1 flex justify-center items-center">
         <Outlet />
       </main>
     </div>
   );
-}
+};

@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 
-export function AppLayout() {
+export const AppLayout = () => {
   const { logout } = useAuth();
 
   return (
@@ -26,4 +26,4 @@ export function AppLayout() {
       </main>
     </div>
   );
-}
+};
