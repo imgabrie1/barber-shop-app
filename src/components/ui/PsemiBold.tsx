@@ -4,7 +4,7 @@ type Pprops = HTMLAttributes<HTMLParagraphElement>;
 
 const PsemiBold = ({ className = "", children, ...props }: Pprops) => {
   return (
-    <p className={`text-lg font-semibold ${className}`} {...props}>
+    <p className={`text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl font-semibold ${className}`} {...props}>
       {children}
     </p>
   );
