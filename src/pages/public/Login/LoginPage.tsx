@@ -6,8 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginDTO } from "@/schemas/login.schemas";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import H2Bold from "@/components/ui/H2Bold";
+import { maskPhone, unmaskPhone } from "@/utils/masks";
 
-export const LoginPage = () => {
+const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,10 +18,21 @@ export const LoginPage = () => {
     register,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginDTO>({
     resolver: zodResolver(loginSchema),
+    mode: "onChange",
   });
+
+  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const masked = maskPhone(value);
+    const unmasked = unmaskPhone(masked);
+    
+    setValue("phoneNumber", unmasked, { shouldValidate: true });
+    event.target.value = masked;
+  };
 
   const onSubmit = async (data: LoginDTO) => {
     try {
@@ -42,15 +55,23 @@ export const LoginPage = () => {
 
   return (
     <section className="relative -top-20 xl:-top-8">
-      <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col justify-center gap-4 text-[var(--textPrimary)] w-[95vw] md:w-[90vw] lg:w-[60vh] min-h-[25vh]">
+          <div className="flex justify-center">
+            <H2Bold>ENTRAR</H2Bold>
+          </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="phoneNumber" className="2xl:text-[2vh]">Telefone</label>
+            <label htmlFor="phoneNumber" className="2xl:text-[2vh]">
+              Telefone
+            </label>
             <Input
               id="phoneNumber"
               type="tel"
               autoComplete="tel"
-              {...register("phoneNumber")}
+              placeholder="(00) 00000-0000"
+              {...register("phoneNumber", {
+                onChange: handlePhoneChange,
+              })}
             />
 
             {errors.phoneNumber && (
@@ -60,11 +81,14 @@ export const LoginPage = () => {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="2xl:text-[2vh]">Senha</label>
+            <label htmlFor="password" className="2xl:text-[2vh]">
+              Senha
+            </label>
             <Input
               id="password"
               type="password"
               autoComplete="current-password"
+              placeholder="Digite sua senha"
               {...register("password")}
             />
             {errors.password && (
@@ -75,12 +99,31 @@ export const LoginPage = () => {
           </div>
         </div>
 
-        {errors.root && <p role="alert">{errors.root.message}</p>}
+        {errors.root && (
+          <p role="alert" className="text-red-600 text-center">
+            {errors.root.message}
+          </p>
+        )}
 
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Entrando..." : "Entrar"}
-        </Button>
+        <div className="flex flex-col gap-3">
+          <Button type="submit" loading={isSubmitting}>
+            Entrar
+          </Button>
+
+          <div className="flex items-center justify-center gap-2 text-sm text-[var(--textPrimary)]">
+            <span>Não tem uma conta?</span>
+            <button
+              type="button"
+              onClick={() => navigate("/register")}
+              className="font-bold underline cursor-pointer"
+            >
+              Crie aqui!
+            </button>
+          </div>
+        </div>
       </form>
     </section>
   );
 };
+
+export default LoginPage;

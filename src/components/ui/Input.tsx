@@ -7,7 +7,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <input
         ref={ref}
-        className={`rounded-md bg-[var(--inputColor)] h-[6vh] 2xl:h-[5vh] lg:h-[7vh] border border-[var(--inputColor)] px-2 ${className}`}
+        style={{paddingLeft: "0.6rem"}}
+        className={`rounded-md bg-[var(--inputColor)] h-[6vh] 2xl:h-[5vh] lg:h-[7vh] border border-[var(--inputColor)] ${className}`}
         {...props}
       />
     );
