@@ -18,12 +18,12 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-function readInitialAuth(): boolean {
+const readInitialAuth = (): boolean => {
   if (typeof window === "undefined") return false;
   return window.localStorage.getItem(STORAGE_KEY) === "true";
-}
+};
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(readInitialAuth);
 
   const login = useCallback(() => {
@@ -38,22 +38,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({ isAuthenticated, login, logout }),
-    [isAuthenticated, login, logout]
+    [isAuthenticated, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+};
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function useAuth() {
+export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) {
     throw new Error("useAuth must be used inside AuthProvider");
   }
   return ctx;
-}
+};
 
-export function RequireAuth({ children }: { children: ReactNode }) {
+export const RequireAuth = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
 
@@ -62,4 +62,4 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   }
 
   return <>{children}</>;
-}
+};

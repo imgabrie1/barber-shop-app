@@ -15,8 +15,8 @@ const defaultQueryConfig: QueryClientConfig = {
   },
 };
 
-export function QueryProvider({ children }: { children: ReactNode }) {
+export const QueryProvider = ({ children }: { children: ReactNode }) => {
   const client = useMemo(() => new QueryClient(defaultQueryConfig), []);
 
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
-}
+};
