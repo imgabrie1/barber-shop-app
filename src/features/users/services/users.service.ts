@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import api from "../../../services/api";
-import { type User } from "../types/user";
+import { type User } from "../../../interfaces/user.interface";
 
 export const getUsers = async () => {
   try {
@@ -21,7 +21,7 @@ export const getUsers = async () => {
 
 export const getUserById = async (id: string) => {
   try {
-    const response = await api.get<User>(`/users/${id}`);
+    const response = await api.get<User>(`/user/${id}`);
     return response.data;
   } catch (err: unknown) {
     const currentError = err as AxiosError;

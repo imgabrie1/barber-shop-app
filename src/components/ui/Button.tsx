@@ -1,4 +1,5 @@
 import { type ButtonHTMLAttributes } from "react";
+import Spin from "./Spin";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
@@ -9,7 +10,6 @@ const Button = ({
   className = "",
   children,
   loading = false,
-  spinnerSize = 20,
   disabled,
   ...props
 }: ButtonProps) => {
@@ -34,12 +34,7 @@ const Button = ({
     >
       <span className={loading ? "invisible" : "visible"}>{children}</span>
 
-      {loading && (
-        <span
-          className="absolute animate-spin rounded-full border-2 border-white/40 border-t-white"
-          style={{ width: spinnerSize, height: spinnerSize }}
-        />
-      )}
+      {loading && <Spin/>}
     </button>
   );
 };
