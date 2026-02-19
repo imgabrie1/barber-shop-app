@@ -3,11 +3,13 @@
 
 :root {
   --background: #0a0c14;
+  --block: #181f39;
   --headerColor: var(--primaryColor);
   --textPrimary: #fff;
   --textSecondary: #000;
   --primaryColor: #082746;
   --inputColor: #242424;
+  --red: "red"
 }
 
 * {

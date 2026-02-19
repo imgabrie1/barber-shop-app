@@ -7,8 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-
-const STORAGE_KEY = "barbershop:auth";
+import { getToken, clearTokens } from "@/services/auth.storage";
 
 type AuthContextValue = {
   isAuthenticated: boolean;
@@ -19,8 +18,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 const readInitialAuth = (): boolean => {
-  if (typeof window === "undefined") return false;
-  return window.localStorage.getItem(STORAGE_KEY) === "true";
+  return !!getToken();
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -28,12 +26,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = useCallback(() => {
     setIsAuthenticated(true);
-    window.localStorage.setItem(STORAGE_KEY, "true");
   }, []);
 
   const logout = useCallback(() => {
     setIsAuthenticated(false);
-    window.localStorage.removeItem(STORAGE_KEY);
+    clearTokens();
   }, []);
 
   const value = useMemo(
