@@ -53,25 +53,20 @@ const processTokenRefresh = async () => {
       throw new Error("No refresh token available");
     }
 
-    const response = await axios.post(
-      `${API_BASE_URL}/login/refresh-token`,
-      { refresh_token: refreshToken },
-    );
+    const response = await axios.post(`${API_BASE_URL}/login/refresh-token`, {
+      refresh_token: refreshToken,
+    });
 
-    const { token, refresh_token } = response.data;
+    const { token, refreshToken: newRefreshToken } = response.data;
 
-    setTokens(token, refresh_token);
+    setTokens(token, newRefreshToken);
 
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    failedRequestsQueue.forEach((request) =>
-      request.onSuccess(token),
-    );
+    failedRequestsQueue.forEach((request) => request.onSuccess(token));
     failedRequestsQueue = [];
   } catch (error: any) {
-    failedRequestsQueue.forEach((request) =>
-      request.onFailure(error),
-    );
+    failedRequestsQueue.forEach((request) => request.onFailure(error));
     failedRequestsQueue = [];
 
     await handleUnauthorized();
