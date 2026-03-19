@@ -1,7 +1,8 @@
-import DashboardPage from "@/pages/app/Dashboard";
 import { AppLayout } from "../layout/AppLayout";
 import { RequireAuth } from "../providers/AuthProvider";
-import AppointmentsPage from "@/pages/app/Appoitment";
+import AppointmentsPage from "@/pages/app/Appointments";
+import SelectServicePage from "@/pages/app/Dashboard/SelectService";
+import SelectBarberPage from "@/pages/app/Dashboard/SelectBarber";
 
 export const privateRoutes = {
   element: (
@@ -10,7 +11,11 @@ export const privateRoutes = {
     </RequireAuth>
   ),
   children: [
-    { path: "/app", element: <DashboardPage /> },
-    { path: "/app/agenda", element: <AppointmentsPage /> },
+    { path: "/app", element: <SelectServicePage /> },
+    { path: "/app/appointments", element: <AppointmentsPage /> },
+    {
+      path: "/app/appointment/select-barber/:serviceId",
+      element: <SelectBarberPage />,
+    },
   ],
 };

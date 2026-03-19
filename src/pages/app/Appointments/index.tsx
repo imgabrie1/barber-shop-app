@@ -1,6 +1,4 @@
-import React from "react";
-
 const AppointmentsPage = () => {
-  return <div>AppointmentsPage</div>;
+  return <div>meus agendamentos</div>;
 };
 export default AppointmentsPage;
