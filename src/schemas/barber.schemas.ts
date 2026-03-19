@@ -6,3 +6,5 @@ export const ServiceSchema = z.object({
   durationMinutes: z.number(),
   price: z.number(),
 });
+
+
