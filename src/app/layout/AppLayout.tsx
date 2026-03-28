@@ -4,6 +4,7 @@ import { RiMenu4Line } from "@react-icons/all-files/ri/RiMenu4Line";
 import { GoX } from "@react-icons/all-files/go/GoX";
 import Header from "@/components/ui/Header";
 import { useState } from "react";
+import P from "@/components/ui/Span";
 
 export const AppLayout = () => {
   const { logout } = useAuth();
@@ -40,13 +41,13 @@ export const AppLayout = () => {
             )}
           </div>
           <div
-  className={`
+            className={`
     overflow-hidden
     transition-all duration-300 ease-in-out
     ${isOpen ? "max-h-40 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"}
   `}
-  style={{ marginTop: "0.5rem" }}
->
+            style={{ marginTop: "0.5rem" }}
+          >
             <nav
               className="
             flex
@@ -83,13 +84,9 @@ export const AppLayout = () => {
               >
                 Agenda
               </NavLink>
-              <button
-                type="button"
-                onClick={logout}
-                className="text-sm font-medium px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 transition-colors"
-              >
+              <P onClick={logout} className="cursor-pointer">
                 Sair
-              </button>
+              </P>
             </nav>
           </div>
         </div>

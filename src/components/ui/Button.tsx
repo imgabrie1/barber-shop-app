@@ -31,6 +31,7 @@ const Button = ({
         disabled:opacity-50 disabled:cursor-not-allowed
         ${className}
       `}
+      style={{ fontFamily: "Geologica" }}
       {...props}
     >
       <span className={loading ? "invisible" : "visible"}>{children}</span>

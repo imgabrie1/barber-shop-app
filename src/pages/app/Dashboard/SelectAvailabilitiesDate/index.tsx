@@ -227,14 +227,12 @@ const SelectAvailabilitiesDatePage = () => {
         }}
         className="min-h-screen
         w-full
-        bg-blue-500
         "
       >
         <div
         style={{ marginBottom: "2rem" }}
         className="flex
         flex-col
-        bg-red-500
         "
         >
           <div className="flex flex-col items-start gap-4">
