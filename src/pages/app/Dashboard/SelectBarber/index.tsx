@@ -25,6 +25,11 @@ const SelectBarberPage = () => {
 
   const serviceName = serviceNameFromState || serviceNameFromQuery;
 
+  const priceFromState = (location.state as { price?: string })?.price;
+  const priceFromQuery = searchParams.get("price");
+
+  const price = priceFromState || priceFromQuery;
+
   const {
     data: barbers,
     isFetching: isFetchingBarbers,
@@ -56,13 +61,18 @@ const SelectBarberPage = () => {
 
       {barbers?.map((barber) => {
         const handleSelectBarber = () => {
-          console.log(`/app/appointment/next-step/${barber.id}`, {
-            state: {
-              barberName: barber.name,
-              serviceName,
-              serviceId,
+          navigate(
+            `/app/appointment/select-availabilityDate/?serviceName=${encodeURIComponent(serviceName as string)}&price=${price}&barberId=${barber.id}&barberName=${encodeURIComponent(barber.name)}`,
+            {
+              state: {
+                barberName: barber.name,
+                barberId: barber.id,
+                serviceName,
+                serviceId,
+                price,
+              },
             },
-          });
+          );
         };
 
         return (

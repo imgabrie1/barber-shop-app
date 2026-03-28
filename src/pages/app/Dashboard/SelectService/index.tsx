@@ -24,10 +24,11 @@ const SelectServicePage = () => {
       {services?.map((service) => {
         const handleSelectService = () => {
           navigate(
-            `/app/appointment/select-barber/${service.id}?serviceName=${encodeURIComponent(service.name)}`,
+            `/app/appointment/select-barber/${service.id}?serviceName=${encodeURIComponent(service.name)}&price=${service.price}`,
             {
               state: {
                 serviceName: service.name,
+                price: service.price,
               },
             },
           );

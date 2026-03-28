@@ -2,12 +2,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0c14;
+  --background: #01030c;
   --block: #181f39;
   --headerColor: var(--primaryColor);
   --textPrimary: #fff;
   --textSecondary: #000;
-  --primaryColor: #082746;
+  --primaryColor: #081729;
   --inputColor: #242424;
   --red: red
 }

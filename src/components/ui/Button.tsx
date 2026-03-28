@@ -27,6 +27,7 @@ const Button = ({
         text-lg 2xl:text-[2vh]
         bg-[var(--primaryColor)]
         text-[var(--textPrimary)]
+        cursor-pointer
         disabled:opacity-50 disabled:cursor-not-allowed
         ${className}
       `}
