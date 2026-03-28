@@ -63,7 +63,9 @@ const SelectAvailabilitiesDatePage = () => {
     const checkDate = new Date(date);
     checkDate.setHours(0, 0, 0, 0);
 
-    if (checkDate.getTime() === today.getTime()) return "Hoje";
+    if (checkDate.getTime() === today.getTime()) {
+      return "Hoje";
+    }
     if (checkDate.getTime() === tomorrow.getTime()) return "Amanhã";
 
     const day = String(date.getDate()).padStart(2, "0");
@@ -168,13 +170,14 @@ const SelectAvailabilitiesDatePage = () => {
 
         {isFetchingTimes && <IsFeatching />}
         {errorTimes && (
-          <p
+          <P
             role="alert"
             className="text-red-500 font-semibold"
             style={{ marginTop: "1rem" }}
           >
-            {errorTimes.message}
-          </p>
+            A barbearia Vortex e/ou o {barberName} não atenderá{" "}
+            {getDisplayDate(currentDate)}
+          </P>
         )}
 
         <div style={{ marginTop: "1rem" }}>
@@ -230,8 +233,8 @@ const SelectAvailabilitiesDatePage = () => {
         "
       >
         <div
-        style={{ marginBottom: "2rem" }}
-        className="flex
+          style={{ marginBottom: "2rem" }}
+          className="flex
         flex-col
         "
         >
