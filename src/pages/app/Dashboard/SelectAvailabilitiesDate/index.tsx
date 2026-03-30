@@ -66,12 +66,24 @@ const SelectAvailabilitiesDatePage = () => {
     if (checkDate.getTime() === today.getTime()) {
       return "Hoje";
     }
-    if (checkDate.getTime() === tomorrow.getTime()) return "Amanhã";
 
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+    if (checkDate.getTime() === tomorrow.getTime()) {
+      return "Amanhã";
+    }
+
+    const day = date.getDate();
+
+    const month = date.toLocaleDateString("pt-BR", {
+      month: "long",
+    });
+
+    const weekday = date.toLocaleDateString("pt-BR", {
+      weekday: "long",
+    });
+
+    const formatted = `${weekday}, ${day} de ${month}`;
+
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   };
 
   const getFormattedDateParts = (date: Date) => {
