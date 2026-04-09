@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import H2Bold from "@/components/ui/H2Bold";
-import IsFeatching from "@/components/ui/IsFeatching";
 import P from "@/components/ui/Span";
 import { useBarbers } from "@/features/barberServices/hooks/useBarbers";
 import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
@@ -11,6 +10,7 @@ import {
   useLocation,
   useSearchParams,
 } from "react-router-dom";
+import IsFeatchingAndLoading from "@/components/ui/IsFeatchingAndLoading";
 
 const SelectBarberPage = () => {
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ const SelectBarberPage = () => {
         <H2Bold>Barbeiros</H2Bold>
       </div>
 
-      {isFetchingBarbers && <IsFeatching />}
+      {isFetchingBarbers && <IsFeatchingAndLoading />}
       {errorBarbers && <p role="alert">Erro ao buscar barbeiros</p>}
 
       {barbers?.map((barber) => {

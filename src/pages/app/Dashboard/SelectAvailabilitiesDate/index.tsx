@@ -1,5 +1,4 @@
 import H2Bold from "@/components/ui/H2Bold";
-import IsFeatching from "@/components/ui/IsFeatching";
 import P from "@/components/ui/Span";
 import { useAvailability } from "@/features/Appointments/hooks/UseCheckAvailability";
 import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
@@ -10,6 +9,7 @@ import { TiDelete } from "@react-icons/all-files/ti/TiDelete";
 import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Button from "@/components/ui/Button";
+import IsFeatchingAndLoadingAndLoading from "@/components/ui/IsFeatchingAndLoading";
 
 const SelectAvailabilitiesDatePage = () => {
   const navigate = useNavigate();
@@ -138,6 +138,7 @@ const SelectAvailabilitiesDatePage = () => {
 
   const {
     data: times,
+    isLoading: isLoadingTimes,
     isFetching: isFetchingTimes,
     error: errorTimes,
   } = useAvailability({
@@ -145,6 +146,10 @@ const SelectAvailabilitiesDatePage = () => {
     barberId,
     barberName,
   });
+
+  const backToAddMoreService = () => {
+    navigate(-2);
+  };
 
   if (stage === 1) {
     return (
@@ -180,7 +185,10 @@ const SelectAvailabilitiesDatePage = () => {
           />
         </div>
 
-        {isFetchingTimes && <IsFeatching />}
+        {isLoadingTimes && <IsFeatchingAndLoadingAndLoading />}
+        {isFetchingTimes && !isLoadingTimes && (
+          <P style={{ fontSize: "0.8rem", opacity: 0.6 }}>Atualizando...</P>
+        )}
         {errorTimes && (
           <P
             role="alert"
@@ -193,7 +201,7 @@ const SelectAvailabilitiesDatePage = () => {
         )}
 
         <div style={{ marginTop: "1rem" }}>
-          {times?.length === 0 && !isFetchingTimes && (
+          {times?.length === 0 && !isLoadingTimes && (
             <P>Nenhum horário disponível para este dia.</P>
           )}
           {times?.map((time) => {
@@ -279,7 +287,7 @@ const SelectAvailabilitiesDatePage = () => {
             <div
               style={{ padding: "0.6rem", marginTop: "0.6rem" }}
               className="border-2 cursor-pointer border-[var(--textPrimary)] rounded-sm flex items-center justify-between w-fit gap-4"
-              onClick={() => console.log("adicionar outro serviço")}
+              onClick={backToAddMoreService}
             >
               <IoMdAddCircle size={25} />
               <P>adicionar mais</P>

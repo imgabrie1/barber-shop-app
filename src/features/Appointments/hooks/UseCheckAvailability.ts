@@ -18,5 +18,6 @@ export const useAvailability = ({
     queryKey: ["checkAvailability", date, barberId, barberName],
     queryFn: () => getCheckAvailability({ date, barberId, barberName }),
     enabled: enabled && !!date && !!barberId && !!barberName,
+    staleTime: 1000 * 60 * 2,
   });
 };

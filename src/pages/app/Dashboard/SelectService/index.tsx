@@ -1,5 +1,5 @@
 import H2Bold from "@/components/ui/H2Bold";
-import IsFeatching from "@/components/ui/IsFeatching";
+import IsFeatchingAndLoadingAndLoading from "@/components/ui/IsFeatchingAndLoading";
 import P from "@/components/ui/Span";
 import { useServices } from "@/features/barberServices/hooks/useBarbersServices";
 import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
@@ -18,7 +18,7 @@ const SelectServicePage = () => {
     <div style={{ paddingLeft: "0.8rem", paddingRight: "0.8rem" }}>
       <H2Bold>Serviços</H2Bold>
 
-      {isFetchingServices && <IsFeatching />}
+      {isFetchingServices && <IsFeatchingAndLoadingAndLoading />}
       {errorServices && <p role="alert">Erro ao buscar serviços</p>}
 
       {services?.map((service) => {
