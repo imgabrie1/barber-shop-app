@@ -4,9 +4,11 @@ import P from "@/components/ui/Span";
 import { useServices } from "@/features/barberServices/hooks/useBarbersServices";
 import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { useNavigate } from "react-router-dom";
+import { useAppointment } from "@/contexts/useAppointment";
 
 const SelectServicePage = () => {
   const navigate = useNavigate();
+  const { setCurrentServiceId, setCurrentServiceName, setCurrentServiceDuration } = useAppointment();
 
   const {
     data: services,
@@ -23,11 +25,13 @@ const SelectServicePage = () => {
 
       {services?.map((service) => {
         const handleSelectService = () => {
+          setCurrentServiceId(service.id);
+          setCurrentServiceName(service.name);
+          setCurrentServiceDuration(service.durationMinutes);
           navigate(
-            `/app/appointment/select-barber/${service.id}?serviceName=${encodeURIComponent(service.name)}&price=${service.price}`,
+            `/app/appointment/select-barber/${service.id}?price=${service.price}`,
             {
               state: {
-                serviceName: service.name,
                 price: service.price,
               },
             },

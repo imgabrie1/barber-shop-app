@@ -6,29 +6,20 @@ import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { IoIosArrowBack } from "@react-icons/all-files/io/IoIosArrowBack";
 import {
   useNavigate,
-  useParams,
-  useLocation,
-  useSearchParams,
+  // useParams
 } from "react-router-dom";
 import IsFeatchingAndLoading from "@/components/ui/IsFeatchingAndLoading";
-
+import { useAppointment } from "@/contexts/useAppointment";
 const SelectBarberPage = () => {
   const navigate = useNavigate();
-  const { serviceId } = useParams<{ serviceId: string }>();
+  // const { serviceId } = useParams<{ serviceId: string }>();
 
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
-
-  const serviceNameFromState = (location.state as { serviceName?: string })
-    ?.serviceName;
-  const serviceNameFromQuery = searchParams.get("serviceName");
-
-  const serviceName = serviceNameFromState || serviceNameFromQuery;
-
-  const priceFromState = (location.state as { price?: string })?.price;
-  const priceFromQuery = searchParams.get("price");
-
-  const price = priceFromState || priceFromQuery;
+  const {
+    currentServiceId,
+    // currentServiceName,
+    setCurrentBarberId,
+    setCurrentBarberName,
+  } = useAppointment();
 
   const {
     data: barbers,
@@ -37,12 +28,12 @@ const SelectBarberPage = () => {
   } = useBarbers();
 
   useEffect(() => {
-    if (!serviceName) {
+    if (!currentServiceId) {
       navigate("/app");
     }
-  }, [serviceName, navigate]);
+  }, [currentServiceId, navigate]);
 
-  if (!serviceName) return null;
+  if (!currentServiceId) return null;
 
   return (
     <div style={{ paddingLeft: "0.8rem", paddingRight: "0.8rem" }}>
@@ -61,18 +52,9 @@ const SelectBarberPage = () => {
 
       {barbers?.map((barber) => {
         const handleSelectBarber = () => {
-          navigate(
-            `/app/appointment/select-availabilityDate/?serviceName=${encodeURIComponent(serviceName as string)}&price=${price}&barberId=${barber.id}&barberName=${encodeURIComponent(barber.name)}`,
-            {
-              state: {
-                barberName: barber.name,
-                barberId: barber.id,
-                serviceName,
-                serviceId,
-                price,
-              },
-            },
-          );
+          setCurrentBarberId(barber.id);
+          setCurrentBarberName(barber.name);
+          navigate(`/app/appointment/select-availabilityDate`);
         };
 
         return (
@@ -100,9 +82,6 @@ const SelectBarberPage = () => {
           </div>
         );
       })}
-
-      <p>Serviço selecionado: {serviceId}</p>
-      <p>Nome do serviço: {serviceName}</p>
     </div>
   );
 };
