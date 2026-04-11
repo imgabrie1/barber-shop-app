@@ -217,10 +217,6 @@ const SelectAvailabilitiesDatePage = () => {
       )}
 
       <div style={{ marginTop: "1rem" }}>
-        {filteredTimes.length === 0 && !isLoadingTimes && (
-          <P>Nenhum horário disponível para este dia.</P>
-        )}
-
         {filteredTimes.map((time) => (
           <div
             key={time}
