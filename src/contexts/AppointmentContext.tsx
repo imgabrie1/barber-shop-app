@@ -73,9 +73,16 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
     setSelectedAppointmentItems([]);
   };
 
-  const removeAppointmentItemByServiceId = (serviceId: string) => {
+  const removeAppointmentItemByDateAndID = (target: AppointmentItem) => {
     setSelectedAppointmentItems((prevItems) =>
-      prevItems.filter((item) => item.serviceId !== serviceId),
+      prevItems.filter(
+        (item) =>
+          !(
+            item.serviceId === target.serviceId &&
+            new Date(item.dateTime).getTime() ===
+              new Date(target.dateTime).getTime()
+          ),
+      ),
     );
   };
 
@@ -97,7 +104,7 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
         setCurrentBarberName,
         currentDateTime,
         setCurrentDateTime,
-        removeAppointmentItemByServiceId,
+        removeAppointmentItemByDateAndID,
       }}
     >
       {children}
