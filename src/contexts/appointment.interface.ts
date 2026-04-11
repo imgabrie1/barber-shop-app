@@ -23,5 +23,5 @@ export interface AppointmentContextType {
   setCurrentBarberName: (name: string | null) => void;
   currentDateTime: Date | null;
   setCurrentDateTime: (dateTime: Date | null) => void;
-  removeAppointmentItemByServiceId: (serviceId: string) => void;
+  removeAppointmentItemByDateAndID: (target: AppointmentItem) => void;
 }

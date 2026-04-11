@@ -10,6 +10,7 @@
   --primaryColor: #081729;
   --inputColor: #242424;
   --red: red;
+  --drop-shadow: rgba(255, 255, 255, 0.414);
 }
 
 * {

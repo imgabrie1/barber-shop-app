@@ -7,10 +7,16 @@ import { useAppointment } from "@/contexts/useAppointment";
 import Button from "@/components/ui/Button";
 import { TiDelete } from "react-icons/ti";
 import type { AppointmentItem } from "@/contexts/appointment.interface";
+import { useState } from "react";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 const AppointmentSummaryPage = () => {
-  const { removeAppointmentItemByServiceId } = useAppointment();
+  const [modalRemoveItem, setModalRemoveItem] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState<AppointmentItem | null>(
+    null,
+  );
 
+  const { removeAppointmentItemByDateAndID } = useAppointment();
   const navigate = useNavigate();
   const { selectedAppointmentItems, clearAppointmentItems } = useAppointment();
 
@@ -26,8 +32,16 @@ const AppointmentSummaryPage = () => {
   };
 
   const handleRemoveApointmentService = (item: AppointmentItem) => {
-    removeAppointmentItemByServiceId(item.serviceId);
-    alert(`removeu o ${item.serviceName}`);
+    setItemToRemove(item);
+    setModalRemoveItem(true);
+  };
+
+  const handleConfirmRemove = () => {
+    if (!itemToRemove) return;
+
+    removeAppointmentItemByDateAndID(itemToRemove);
+    setModalRemoveItem(false);
+    setItemToRemove(null);
   };
 
   const formatDateTime = (dateTime: Date) => {
@@ -42,6 +56,16 @@ const AppointmentSummaryPage = () => {
 
   return (
     <div style={{ paddingLeft: "0.8rem", paddingRight: "0.8rem" }}>
+      {modalRemoveItem && (
+        <ConfirmModal
+          open={modalRemoveItem}
+          title={`Remover serviço ${itemToRemove?.serviceName}?`}
+          onCancel={() => setModalRemoveItem(false)}
+          onConfirm={handleConfirmRemove}
+          colorConfirm="bg-[var(--red)]"
+        />
+      )}
+
       <div className="flex flex-col items-start gap-4">
         <IoIosArrowBack
           onClick={() => navigate(-1)}
@@ -56,21 +80,21 @@ const AppointmentSummaryPage = () => {
         <P style={{ marginTop: "1rem" }}>Nenhum serviço selecionado ainda.</P>
       ) : (
         <div style={{ marginTop: "1rem" }}>
-          {selectedAppointmentItems.map((item) => (
+          {selectedAppointmentItems.map((item, index) => (
             <div
-              key={item.serviceId}
+              key={item.serviceId + index}
               style={{
                 marginBottom: "1rem",
                 padding: "0.8rem ",
               }}
               className="
-              border-3
-              border-dotted
-              border-[var(--textPrimary)]
-              rounded-[2px]
-              flex
-              flex-row
-              justify-between
+                border-2
+                border-dotted
+                border-[var(--textPrimary)]
+                rounded-[2px]
+                flex
+                flex-row
+                justify-between
               "
             >
               <div className="flex flex-col">
@@ -85,9 +109,11 @@ const AppointmentSummaryPage = () => {
                   {formatDateTime(item.dateTime)}
                 </P>
               </div>
+
               <TiDelete
                 size={22}
                 onClick={() => handleRemoveApointmentService(item)}
+                className="cursor-pointer hover:brightness-90 transition"
               />
             </div>
           ))}
