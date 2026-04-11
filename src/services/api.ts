@@ -82,7 +82,15 @@ api.interceptors.response.use(
       _retry?: boolean;
     };
 
-    if (error.response?.status === 401 && !originalConfig._retry) {
+    const isAuthRoute =
+      originalConfig.url === "/login" ||
+      originalConfig.url === "/login/refresh-token";
+
+    if (
+      error.response?.status === 401 &&
+      !originalConfig._retry &&
+      !isAuthRoute
+    ) {
       originalConfig._retry = true;
 
       if (!isRefreshing) {
@@ -98,7 +106,7 @@ api.interceptors.response.use(
             resolve(api(originalConfig));
           },
           onFailure: (err: AxiosError) => {
-            reject(err);
+            reject(err.response);
           },
         });
       });
