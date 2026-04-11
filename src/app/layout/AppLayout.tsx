@@ -73,7 +73,7 @@ export const AppLayout = () => {
               </NavLink>
 
               <NavLink
-                to="/app/agenda"
+                to="/app/appointments"
                 className={({ isActive }) =>
                   `pb-2 px-2 text-sm font-medium transition-all border-b-2 ${
                     isActive

@@ -9,6 +9,7 @@ import { TiDelete } from "react-icons/ti";
 import type { AppointmentItem } from "@/contexts/appointment.interface";
 import { useState } from "react";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import { useCreateAppointment } from "@/features/Appointments/hooks/useCreateAppointment";
 
 const AppointmentSummaryPage = () => {
   const [modalRemoveItem, setModalRemoveItem] = useState(false);
@@ -16,19 +17,39 @@ const AppointmentSummaryPage = () => {
     null,
   );
 
-  const { removeAppointmentItemByDateAndID } = useAppointment();
   const navigate = useNavigate();
-  const { selectedAppointmentItems, clearAppointmentItems } = useAppointment();
+
+  const {
+    selectedAppointmentItems,
+    clearAppointmentItems,
+    removeAppointmentItemByDateAndID,
+  } = useAppointment();
+
+  const { mutateAsync, isPending } = useCreateAppointment();
 
   const handleAddMoreService = () => {
     navigate("/app");
   };
 
-  const handleConfirmAppointment = () => {
-    console.log("agendamento confirmado fake:", selectedAppointmentItems);
-    alert("confirmar requisisao no backend");
-    clearAppointmentItems();
-    navigate("/app/appointments");
+  const handleConfirmAppointment = async () => {
+    if (selectedAppointmentItems.length === 0) return;
+    if (isPending) return;
+
+    try {
+      for (const item of selectedAppointmentItems) {
+        await mutateAsync({
+          startTime: item.dateTime.toISOString(),
+          barberId: item.barberId,
+          serviceIds: [item.serviceId],
+        });
+      }
+
+      clearAppointmentItems();
+      navigate("/app/appointments");
+    } catch (err) {
+      console.error("Erro ao criar agendamentos:", err);
+      alert("Erro ao confirmar agendamento");
+    }
   };
 
   const handleRemoveApointmentService = (item: AppointmentItem) => {
@@ -130,8 +151,8 @@ const AppointmentSummaryPage = () => {
           </div>
 
           <div style={{ marginTop: "1.5rem" }}>
-            <Button onClick={handleConfirmAppointment}>
-              Confirmar Agendamento
+            <Button onClick={handleConfirmAppointment} disabled={isPending}>
+              {isPending ? "Confirmando..." : "Confirmar Agendamento"}
             </Button>
           </div>
         </div>

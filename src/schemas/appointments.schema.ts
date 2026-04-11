@@ -1,4 +1,28 @@
 import { z } from "zod";
+import { userSchema } from "./user.schema";
+import { ServiceSchema } from "./barber.schemas";
+
+export const createAppointmentSchema = z.object({
+  startTime: z.string().refine((date) => new Date(date) > new Date(), {
+    message: "agendamento deve ser no futuro",
+  }),
+
+  barberId: z.string({ message: "barberId inválido" }),
+
+  serviceIds: z
+    .array(z.string({ message: "ID do serviço inválido" }))
+    .min(1, "Deve ter pelo menos 1 serviço")
+    .max(10, "Limite de serviços excedido"),
+});
+
+export const outputAppoitmentSchema = createAppointmentSchema.extend({
+  id: z.string(),
+  endTime: z.string(),
+  status: z.string(),
+  client: { userSchema },
+  barber: { userSchema },
+  services: z.array(ServiceSchema)
+});
 
 export const timeSchema = z
   .string()
