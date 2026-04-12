@@ -216,6 +216,19 @@ const SelectAvailabilitiesDatePage = () => {
         </P>
       )}
 
+      {!isLoadingTimes &&
+        !isFetchingTimes &&
+        !errorTimes &&
+        filteredTimes.length === 0 && (
+          <P
+            role="alert"
+            className="text-yellow-500 font-semibold"
+            style={{ marginTop: "1rem" }}
+          >
+            Não há mais horários disponíveis para {getDisplayDate(currentDate)}
+          </P>
+        )}
+
       <div style={{ marginTop: "1rem" }}>
         {filteredTimes.map((time) => (
           <div
