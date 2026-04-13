@@ -1,10 +1,55 @@
+import ConfirmModal from "@/components/common/ConfirmModal";
 import Button from "@/components/ui/Button";
 import IsFeatchingAndLoadingAndLoading from "@/components/ui/IsFeatchingAndLoading";
+import { useAppointmentCancelOrDelete } from "@/features/Appointments/hooks/useAppointmentCancelOrDelete";
 import { useMyAppointments } from "@/features/Appointments/hooks/useMyAppointments";
 import { appointmentStatusMap } from "@/interfaces/appointments.interface";
+import { useState } from "react";
 
 const AppointmentsPage = () => {
+  type ActionType = "cancel" | "delete";
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [actionType, setActionType] = useState<ActionType | null>(null);
+
   const { data: appointmentsData, isFetching, error } = useMyAppointments();
+  const {
+    mutate: mutateAppointment,
+    isPending,
+    variables,
+  } = useAppointmentCancelOrDelete();
+
+  const isThisItemLoading = (id: string) => {
+    return isPending && variables?.id === id;
+  };
+
+  const handleCancel = (id: string) => {
+    setSelectedId(id);
+    setActionType("cancel");
+    setModalOpen(true);
+  };
+
+  const handleDelete = (id: string) => {
+    console.log(id);
+    // tem que criar a rota no backend :/
+    // muda pra o que ta aqui em baixo
+    // mutateAppointment({ id, action: "delete" });
+    //////////////////////////////////////
+    // setSelectedId(id);
+    // setActionType("delete");
+    // setModalOpen(true);
+  };
+
+  const handleConfirm = () => {
+    if (!selectedId || !actionType) return;
+
+    mutateAppointment({ id: selectedId, action: actionType });
+
+    setModalOpen(false);
+    setSelectedId(null);
+    setActionType(null);
+  };
 
   if (isFetching) return <IsFeatchingAndLoadingAndLoading />;
 
@@ -18,9 +63,25 @@ const AppointmentsPage = () => {
 
   return (
     <div>
+      {modalOpen && (
+        <ConfirmModal
+          open={modalOpen}
+          title={
+            actionType === "cancel"
+              ? "Cancelar agendamento?"
+              : "Excluir agendamento?"
+          }
+          onCancel={() => setModalOpen(false)}
+          onConfirm={handleConfirm}
+          colorConfirm={
+            actionType === "delete" ? "bg-[var(--red)]" : "bg-[var(--primary)]"
+          }
+        />
+      )}
       {appointmentsData?.data.map((item) => {
-        const showButton =
+        const showCancelButton =
           item.status === "pending" || item.status === "confirmed";
+        const showDeleteButton = item.status === "cancelled";
         const service = item.services[0];
         if (!service) return null;
 
@@ -38,13 +99,24 @@ const AppointmentsPage = () => {
 
               <p className={status.color}>{status.label}</p>
 
-              {showButton && (
+              {showCancelButton && (
                 <div style={{ marginTop: "0.9375rem" }}>
                   <Button
                     className="w-full"
-                    onClick={() => console.log("teste")}
+                    onClick={() => handleCancel(item.id)}
                   >
-                    Cancelar
+                    {isThisItemLoading(item.id) ? "Cancelando..." : "Cancelar"}
+                  </Button>
+                </div>
+              )}
+
+              {showDeleteButton && (
+                <div style={{ marginTop: "0.9375rem" }}>
+                  <Button
+                    className="w-full"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    {isThisItemLoading(item.id) ? "Excluindo..." : "Excluir"}
                   </Button>
                 </div>
               )}

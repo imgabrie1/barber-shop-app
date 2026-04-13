@@ -70,7 +70,8 @@ export const createAppointmentService = async (
 
 export const getMyAppointments = async () => {
   try {
-    const response = await api.get<OutputGetAppoitmentInterface>("/appointment/me");
+    const response =
+      await api.get<OutputGetAppoitmentInterface>("/appointment/me");
 
     const parsed = outputGetAppoitmentSchema.parse(response.data);
 
@@ -93,6 +94,60 @@ export const getMyAppointments = async () => {
         : responseData) ||
       currentError.message ||
       "Erro carregar agendamentos";
+
+    throw new Error(String(msg));
+  }
+};
+
+export const cancelMyAppointment = async (appointmentID: string) => {
+  try {
+    const response = await api.patch(`/appointment/me/cancel/${appointmentID}`);
+    return response;
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+
+    if (currentError.response?.status === 404) {
+      throw new Error("Agendamento não encontrado");
+    }
+
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro ao cancelar agendamentos";
+
+    throw new Error(String(msg));
+  }
+};
+
+export const deleteAppointment = async (appointmentID: string) => {
+  try {
+    const response = await api.delete(`/appointment/${appointmentID}`);
+    return response;
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+
+    if (currentError.response?.status === 404) {
+      throw new Error("Agendamento não encontrado");
+    }
+
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro ao deletar agendamentos";
 
     throw new Error(String(msg));
   }
