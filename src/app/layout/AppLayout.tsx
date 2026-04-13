@@ -7,16 +7,15 @@ import { useState } from "react";
 import P from "@/components/ui/Span";
 
 export const AppLayout = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleOpenAndCloseMenu = () => {
-    if (isOpen) {
-      setIsOpen(false);
-    } else {
-      setIsOpen(true);
-    }
+    setIsOpen(!isOpen);
   };
+
+  const isAdmin = user?.role === "admin";
+  const isBarber = user?.role === "barber" || user?.role === "admin";
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-zinc-900">
@@ -44,7 +43,7 @@ export const AppLayout = () => {
             className={`
     overflow-hidden
     transition-all duration-300 ease-in-out
-    ${isOpen ? "max-h-40 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"}
+    ${isOpen ? "max-h-64 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"}
   `}
             style={{ marginTop: "0.5rem" }}
           >
@@ -84,6 +83,37 @@ export const AppLayout = () => {
               >
                 Agenda
               </NavLink>
+
+              {isBarber && (
+                <NavLink
+                  to="/app/barber"
+                  className={({ isActive }) =>
+                    `pb-2 px-2 text-sm font-medium transition-all border-b-2 ${
+                      isActive
+                        ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                    }`
+                  }
+                >
+                  Barbeiro
+                </NavLink>
+              )}
+
+              {isAdmin && (
+                <NavLink
+                  to="/app/admin"
+                  className={({ isActive }) =>
+                    `pb-2 px-2 text-sm font-medium transition-all border-b-2 ${
+                      isActive
+                        ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                    }`
+                  }
+                >
+                  Admin
+                </NavLink>
+              )}
+
               <P onClick={logout} className="cursor-pointer">
                 Sair
               </P>

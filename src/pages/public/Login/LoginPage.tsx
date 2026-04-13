@@ -37,8 +37,8 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginDTO) => {
     try {
-      await loginRequest(data);
-      login();
+      const response = await loginRequest(data);
+      login(response.user);
 
       const from = (location.state as { from?: string } | null)?.from || "/app";
 
