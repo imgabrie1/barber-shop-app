@@ -7,11 +7,14 @@ import {
   type ReactNode,
 } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { getToken, clearTokens } from "@/services/auth.storage";
+import { getToken, clearTokens, USER_STORAGE } from "@/services/auth.storage";
+import { type User } from "@/interfaces/user.interface";
+import { storage } from "@/services/storage";
 
 type AuthContextValue = {
   isAuthenticated: boolean;
-  login: () => void;
+  user: User | null;
+  login: (user: User) => void;
   logout: () => void;
 };
 
@@ -21,21 +24,36 @@ const readInitialAuth = (): boolean => {
   return !!getToken();
 };
 
+const readInitialUser = (): User | null => {
+  const userJson = storage.get(USER_STORAGE);
+  if (userJson) {
+    try {
+      return JSON.parse(userJson);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(readInitialAuth);
+  const [user, setUser] = useState<User | null>(readInitialUser);
 
-  const login = useCallback(() => {
+  const login = useCallback((userData: User) => {
     setIsAuthenticated(true);
+    setUser(userData);
   }, []);
 
   const logout = useCallback(() => {
     setIsAuthenticated(false);
+    setUser(null);
     clearTokens();
   }, []);
 
   const value = useMemo(
-    () => ({ isAuthenticated, login, logout }),
-    [isAuthenticated, login, logout],
+    () => ({ isAuthenticated, user, login, logout }),
+    [isAuthenticated, user, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -57,6 +75,28 @@ export const RequireAuth = ({ children }: { children: ReactNode }) => {
   if (!isAuthenticated) {
     const from = location.pathname + location.search;
     return <Navigate to="/login" replace state={{ from }} />;
+  }
+
+  return <>{children}</>;
+};
+
+export const RequireRole = ({
+  children,
+  allowedRoles,
+}: {
+  children: ReactNode;
+  allowedRoles: string[];
+}) => {
+  const { user, isAuthenticated } = useAuth();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    const from = location.pathname + location.search;
+    return <Navigate to="/login" replace state={{ from }} />;
+  }
+
+  if (!user || !user.role || !allowedRoles.includes(user.role)) {
+    return <Navigate to="/app" replace />;
   }
 
   return <>{children}</>;
