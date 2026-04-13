@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV@700,0&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV,SHRP@100..900,0..1,0..100&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -11,6 +11,10 @@
   --inputColor: #242424;
   --red: red;
   --drop-shadow: rgba(255, 255, 255, 0.414);
+
+  --success: #b9f6ca;
+  --warning: #ffecb3;
+  --no-show: #e6812f;
 }
 
 * {

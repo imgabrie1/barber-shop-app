@@ -1,8 +1,10 @@
 import type {
   CreateAppointmentInterface,
   OutputAppoitmentInterface,
+  OutputGetAppoitmentInterface,
   TimeSlotsInterface,
 } from "@/interfaces/appointments.interface";
+import { outputGetAppoitmentSchema } from "@/schemas/appointments.schema";
 import api from "@/services/api";
 import type { AxiosError } from "axios";
 
@@ -61,6 +63,36 @@ export const createAppointmentService = async (
         : responseData) ||
       currentError.message ||
       "Erro ao criar agendamento";
+
+    throw new Error(String(msg));
+  }
+};
+
+export const getMyAppointments = async () => {
+  try {
+    const response = await api.get<OutputGetAppoitmentInterface>("/appointment/me");
+
+    const parsed = outputGetAppoitmentSchema.parse(response.data);
+
+    return parsed;
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+
+    if (currentError.response?.status === 404) {
+      return { data: [], total: 0, page: 1, limit: 10 };
+    }
+
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro carregar agendamentos";
 
     throw new Error(String(msg));
   }
