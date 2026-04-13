@@ -34,7 +34,7 @@ const Button = ({
     group
     ${className}
   `}
-      style={{ fontFamily: "Geologica" }}
+      style={{ fontFamily: "Geologica", fontWeight: "normal" }}
       {...props}
     >
       <span
