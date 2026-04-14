@@ -8,6 +8,7 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import H2Bold from "@/components/ui/H2Bold";
 import { maskPhone, unmaskPhone } from "@/utils/masks";
+import { AxiosError } from "axios";
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -29,22 +30,28 @@ const LoginPage = () => {
     const value = event.target.value;
     const masked = maskPhone(value);
     const unmasked = unmaskPhone(masked);
-    
+
     setValue("phoneNumber", unmasked, { shouldValidate: true });
     event.target.value = masked;
   };
 
   const onSubmit = async (data: LoginDTO) => {
     try {
-      await loginRequest(data);
-      login();
+      const response = await loginRequest(data);
+      login(response.user);
 
       const from = (location.state as { from?: string } | null)?.from || "/app";
 
       navigate(from, { replace: true });
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Falha ao fazer login";
+      let message = "Falha ao fazer login";
+
+      if (err instanceof AxiosError) {
+        message =
+          err.response?.data?.message || err.response?.statusText || message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
 
       setError("root", {
         type: "manual",

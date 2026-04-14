@@ -1,15 +1,20 @@
-@import url("https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV@700,0&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV,SHRP@100..900,0..1,0..100&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 
 :root {
-  --background: #0a0c14;
+  --background: #01030c;
   --block: #181f39;
   --headerColor: var(--primaryColor);
   --textPrimary: #fff;
   --textSecondary: #000;
-  --primaryColor: #082746;
+  --primaryColor: #081729;
   --inputColor: #242424;
-  --red: red
+  --red: red;
+  --drop-shadow: rgba(255, 255, 255, 0.414);
+
+  --success: #b9f6ca;
+  --warning: #ffecb3;
+  --no-show: #e6812f;
 }
 
 * {
@@ -19,8 +24,12 @@
 }
 
 body {
-  font-family: "JetBrains Mono", sans-serif;
+  font-family: "Inter", sans-serif;
 
   background: var(--background);
   color: white;
+}
+
+h1 {
+  font-family: "Geologica", sans-serif;
 }

@@ -1,12 +1,14 @@
 import H2Bold from "@/components/ui/H2Bold";
-import IsFeatching from "@/components/ui/IsFeatching";
+import IsFeatchingAndLoadingAndLoading from "@/components/ui/IsFeatchingAndLoading";
 import P from "@/components/ui/Span";
 import { useServices } from "@/features/barberServices/hooks/useBarbersServices";
 import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { useNavigate } from "react-router-dom";
+import { useAppointment } from "@/contexts/useAppointment";
 
 const SelectServicePage = () => {
   const navigate = useNavigate();
+  const { setCurrentServiceId, setCurrentServiceName, setCurrentServiceDuration } = useAppointment();
 
   const {
     data: services,
@@ -18,16 +20,19 @@ const SelectServicePage = () => {
     <div style={{ paddingLeft: "0.8rem", paddingRight: "0.8rem" }}>
       <H2Bold>Serviços</H2Bold>
 
-      {isFetchingServices && <IsFeatching />}
+      {isFetchingServices && <IsFeatchingAndLoadingAndLoading />}
       {errorServices && <p role="alert">Erro ao buscar serviços</p>}
 
       {services?.map((service) => {
         const handleSelectService = () => {
+          setCurrentServiceId(service.id);
+          setCurrentServiceName(service.name);
+          setCurrentServiceDuration(service.durationMinutes);
           navigate(
-            `/app/appointment/select-barber/${service.id}?serviceName=${encodeURIComponent(service.name)}`,
+            `/app/appointment/select-barber/${service.id}?price=${service.price}`,
             {
               state: {
-                serviceName: service.name,
+                price: service.price,
               },
             },
           );

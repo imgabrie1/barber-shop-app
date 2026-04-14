@@ -3,7 +3,7 @@ import Spin from "./Spin";
 
 type DivProps = HTMLAttributes<HTMLDivElement>;
 
-const IsFeatching = ({ className = "" }: DivProps) => {
+const IsFeatchingAndLoadingAndLoading = ({ className = "" }: DivProps) => {
   return (
     <div className={`bg-amber-500 flex justify-center ${className}`}>
         <Spin></Spin>
@@ -11,4 +11,4 @@ const IsFeatching = ({ className = "" }: DivProps) => {
   );
 };
 
-export default IsFeatching;
+export default IsFeatchingAndLoadingAndLoading;

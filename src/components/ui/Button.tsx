@@ -19,22 +19,38 @@ const Button = ({
     <button
       disabled={isDisabled}
       className={`
-        relative
-        flex items-center justify-center
-        rounded-md
-        w-[95vw] md:w-[90vw] lg:w-full
-        h-[6vh] lg:h-[7vh] 2xl:h-[5vh]
-        text-lg 2xl:text-[2vh]
-        bg-[var(--primaryColor)]
-        text-[var(--textPrimary)]
-        disabled:opacity-50 disabled:cursor-not-allowed
-        ${className}
-      `}
+    relative
+    flex items-center justify-center
+    rounded-md
+    w-[95vw] md:w-[90vw] lg:w-full
+    h-[6vh] lg:h-[7vh] 2xl:h-[5vh]
+    text-lg 2xl:text-[2vh]
+    bg-[var(--primaryColor)]
+    text-[var(--textPrimary)]
+    cursor-pointer
+    disabled:opacity-50 disabled:cursor-not-allowed
+    transition
+    hover:brightness-95
+    group
+    ${className}
+  `}
+      style={{ fontFamily: "Geologica", fontWeight: "normal" }}
       {...props}
     >
-      <span className={loading ? "invisible" : "visible"}>{children}</span>
+      <span
+        className={`
+      ${loading ? "invisible" : ""}
+      text-[var(--textPrimary)]
+      text-2xl
+      transition
+      group-hover:brightness-125
+      group-hover:drop-shadow-[0_0_4px_var(--drop-shadow)]
+    `}
+      >
+        {children}
+      </span>
 
-      {loading && <Spin/>}
+      {loading && <Spin />}
     </button>
   );
 };

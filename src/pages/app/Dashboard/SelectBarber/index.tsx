@@ -1,29 +1,25 @@
 import { useEffect } from "react";
 import H2Bold from "@/components/ui/H2Bold";
-import IsFeatching from "@/components/ui/IsFeatching";
 import P from "@/components/ui/Span";
 import { useBarbers } from "@/features/barberServices/hooks/useBarbers";
 import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { IoIosArrowBack } from "@react-icons/all-files/io/IoIosArrowBack";
 import {
   useNavigate,
-  useParams,
-  useLocation,
-  useSearchParams,
+  // useParams
 } from "react-router-dom";
-
+import IsFeatchingAndLoading from "@/components/ui/IsFeatchingAndLoading";
+import { useAppointment } from "@/contexts/useAppointment";
 const SelectBarberPage = () => {
   const navigate = useNavigate();
-  const { serviceId } = useParams<{ serviceId: string }>();
+  // const { serviceId } = useParams<{ serviceId: string }>();
 
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
-
-  const serviceNameFromState = (location.state as { serviceName?: string })
-    ?.serviceName;
-  const serviceNameFromQuery = searchParams.get("serviceName");
-
-  const serviceName = serviceNameFromState || serviceNameFromQuery;
+  const {
+    currentServiceId,
+    // currentServiceName,
+    setCurrentBarberId,
+    setCurrentBarberName,
+  } = useAppointment();
 
   const {
     data: barbers,
@@ -32,12 +28,12 @@ const SelectBarberPage = () => {
   } = useBarbers();
 
   useEffect(() => {
-    if (!serviceName) {
+    if (!currentServiceId) {
       navigate("/app");
     }
-  }, [serviceName, navigate]);
+  }, [currentServiceId, navigate]);
 
-  if (!serviceName) return null;
+  if (!currentServiceId) return null;
 
   return (
     <div style={{ paddingLeft: "0.8rem", paddingRight: "0.8rem" }}>
@@ -51,18 +47,14 @@ const SelectBarberPage = () => {
         <H2Bold>Barbeiros</H2Bold>
       </div>
 
-      {isFetchingBarbers && <IsFeatching />}
+      {isFetchingBarbers && <IsFeatchingAndLoading />}
       {errorBarbers && <p role="alert">Erro ao buscar barbeiros</p>}
 
       {barbers?.map((barber) => {
         const handleSelectBarber = () => {
-          console.log(`/app/appointment/next-step/${barber.id}`, {
-            state: {
-              barberName: barber.name,
-              serviceName,
-              serviceId,
-            },
-          });
+          setCurrentBarberId(barber.id);
+          setCurrentBarberName(barber.name);
+          navigate(`/app/appointment/select-availabilityDate`);
         };
 
         return (
@@ -90,9 +82,6 @@ const SelectBarberPage = () => {
           </div>
         );
       })}
-
-      <p>Serviço selecionado: {serviceId}</p>
-      <p>Nome do serviço: {serviceName}</p>
     </div>
   );
 };

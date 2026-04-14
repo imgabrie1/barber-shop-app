@@ -3,5 +3,6 @@ import { z } from "zod";
 export const userSchema = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string("Email inválido"),
+  phoneNumber: z.string(),
+  role: z.enum(["admin", "barber", "client"]).optional(),
 });
