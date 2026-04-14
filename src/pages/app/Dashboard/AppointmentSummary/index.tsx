@@ -98,7 +98,11 @@ const AppointmentSummaryPage = () => {
       </div>
 
       {selectedAppointmentItems.length === 0 ? (
-        <P style={{ marginTop: "1rem" }}>Nenhum serviço selecionado ainda.</P>
+        <div
+        style={{ marginTop: "0.9375rem" }}
+        className="mt-4 text-center text-gray-500">
+          Nenhum serviço selecionado ainda.
+        </div>
       ) : (
         <div style={{ marginTop: "1rem" }}>
           {selectedAppointmentItems.map((item, index) => (
