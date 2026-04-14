@@ -128,7 +128,7 @@ export const cancelMyAppointment = async (appointmentID: string) => {
 
 export const deleteAppointment = async (appointmentID: string) => {
   try {
-    const response = await api.delete(`/appointment/${appointmentID}`);
+    const response = await api.delete(`/appointment/delete/${appointmentID}`);
     return response;
   } catch (err: unknown) {
     const currentError = err as AxiosError;

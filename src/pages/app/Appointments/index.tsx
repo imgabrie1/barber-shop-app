@@ -13,12 +13,14 @@ const AppointmentsPage = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [actionType, setActionType] = useState<ActionType | null>(null);
 
-  const { data: appointmentsData, isFetching, error } = useMyAppointments();
+  const { data: appointmentsData, isLoading, error } = useMyAppointments();
   const {
     mutate: mutateAppointment,
     isPending,
     variables,
   } = useAppointmentCancelOrDelete();
+
+  const appointments = appointmentsData?.data ?? [];
 
   const isThisItemLoading = (id: string) => {
     return isPending && variables?.id === id;
@@ -31,14 +33,9 @@ const AppointmentsPage = () => {
   };
 
   const handleDelete = (id: string) => {
-    console.log(id);
-    // tem que criar a rota no backend :/
-    // muda pra o que ta aqui em baixo
-    // mutateAppointment({ id, action: "delete" });
-    //////////////////////////////////////
-    // setSelectedId(id);
-    // setActionType("delete");
-    // setModalOpen(true);
+    setSelectedId(id);
+    setActionType("delete");
+    setModalOpen(true);
   };
 
   const handleConfirm = () => {
@@ -51,13 +48,24 @@ const AppointmentsPage = () => {
     setActionType(null);
   };
 
-  if (isFetching) return <IsFeatchingAndLoadingAndLoading />;
+  if (isLoading) return <IsFeatchingAndLoadingAndLoading />;
 
   if (error) {
     return (
       <p role="alert">
         {error instanceof Error ? error.message : "Erro ao buscar serviços"}
       </p>
+    );
+  }
+
+  if (appointments.length === 0) {
+    return (
+      <div
+        style={{ marginTop: "0.9375rem" }}
+        className="mt-4 text-center text-gray-500"
+      >
+        Nenhum agendamento encontrado.
+      </div>
     );
   }
 
@@ -73,12 +81,11 @@ const AppointmentsPage = () => {
           }
           onCancel={() => setModalOpen(false)}
           onConfirm={handleConfirm}
-          colorConfirm={
-            actionType === "delete" ? "bg-[var(--red)]" : "bg-[var(--primary)]"
-          }
+          colorConfirm="bg-[var(--red)]"
         />
       )}
-      {appointmentsData?.data.map((item) => {
+
+      {appointments.map((item) => {
         const showCancelButton =
           item.status === "pending" || item.status === "confirmed";
         const showDeleteButton = item.status === "cancelled";
@@ -90,8 +97,8 @@ const AppointmentsPage = () => {
         return (
           <div
             key={item.id}
-            style={{ marginBottom: "0.3125rem" }}
             className="m-2"
+            style={{ marginBottom: "0.3125rem" }}
           >
             <div style={{ padding: "0.625rem" }}>
               <p>Serviço: {service.name}</p>

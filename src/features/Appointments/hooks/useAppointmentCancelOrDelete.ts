@@ -34,9 +34,7 @@ export const useAppointmentCancelOrDelete = () => {
             return {
               ...oldData,
               data: oldData.data.map((item) =>
-                item.id === id
-                  ? { ...item, status: "cancelled" }
-                  : item
+                item.id === id ? { ...item, status: "cancelled" } : item,
               ),
             };
           }
@@ -45,12 +43,8 @@ export const useAppointmentCancelOrDelete = () => {
             ...oldData,
             data: oldData.data.filter((item) => item.id !== id),
           };
-        }
+        },
       );
-
-      queryClient.invalidateQueries({
-        queryKey: ["myAppointments"],
-      });
     },
 
     onError: (error: Error) => {

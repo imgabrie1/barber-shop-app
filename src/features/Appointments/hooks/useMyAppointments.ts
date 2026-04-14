@@ -7,5 +7,6 @@ export const useMyAppointments = (enabled = true) => {
     queryKey: ["myAppointments"],
     queryFn: getMyAppointments,
     enabled,
+    retry: false,
   });
 };
