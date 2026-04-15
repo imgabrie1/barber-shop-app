@@ -211,8 +211,8 @@ const SelectAvailabilitiesDatePage = () => {
           className="text-red-500 font-semibold"
           style={{ marginTop: "1rem" }}
         >
-          A barbearia Vortex e/ou o {currentBarberName} não atenderá{" "}
-          {getDisplayDate(currentDate)}
+          {import.meta.env.VITE_BARBER_SHOP_NAME} e/ou o {currentBarberName} não
+          atenderá {getDisplayDate(currentDate)}
         </P>
       )}
 
