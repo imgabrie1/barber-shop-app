@@ -99,33 +99,6 @@ export const getMyAppointments = async () => {
   }
 };
 
-export const cancelMyAppointment = async (appointmentID: string) => {
-  try {
-    const response = await api.patch(`/appointment/me/cancel/${appointmentID}`);
-    return response;
-  } catch (err: unknown) {
-    const currentError = err as AxiosError;
-
-    if (currentError.response?.status === 404) {
-      throw new Error("Agendamento não encontrado");
-    }
-
-    const responseData = currentError.response?.data as
-      | { message?: string }
-      | string
-      | undefined;
-
-    const msg =
-      (typeof responseData === "object"
-        ? responseData?.message
-        : responseData) ||
-      currentError.message ||
-      "Erro ao cancelar agendamentos";
-
-    throw new Error(String(msg));
-  }
-};
-
 export const deleteAppointment = async (appointmentID: string) => {
   try {
     const response = await api.delete(`/appointment/delete/${appointmentID}`);
@@ -148,6 +121,39 @@ export const deleteAppointment = async (appointmentID: string) => {
         : responseData) ||
       currentError.message ||
       "Erro ao deletar agendamentos";
+
+    throw new Error(String(msg));
+  }
+};
+
+export const updateAppointmentStatus = async (
+  appointmentID: string,
+  status: "cancelled" | "confirmed" | "completed" | "no_show",
+) => {
+  try {
+    const response = await api.patch(`/appointment/status/${appointmentID}`, {
+      status,
+    });
+
+    return response.data;
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+
+    if (currentError.response?.status === 404) {
+      throw new Error("Agendamento não encontrado");
+    }
+
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro ao atualizar status";
 
     throw new Error(String(msg));
   }

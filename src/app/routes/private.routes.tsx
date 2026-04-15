@@ -31,7 +31,7 @@ export const privateRoutes = {
     {
       path: "/app/barber",
       element: (
-        <RequireRole allowedRoles={["admin", "barber"]}>
+        <RequireRole allowedRoles={["barber"]}>
           <BarberPage />
         </RequireRole>
       ),

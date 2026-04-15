@@ -1,13 +1,36 @@
+import { useAuth } from "@/app/providers/AuthProvider";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import Button from "@/components/ui/Button";
 import IsFeatchingAndLoadingAndLoading from "@/components/ui/IsFeatchingAndLoading";
-import { useAppointmentCancelOrDelete } from "@/features/Appointments/hooks/useAppointmentCancelOrDelete";
+import { useMutationAppointment } from "@/features/Appointments/hooks/useMutationAppointment";
 import { useMyAppointments } from "@/features/Appointments/hooks/useMyAppointments";
 import { appointmentStatusMap } from "@/interfaces/appointments.interface";
 import { useState } from "react";
 
 const AppointmentsPage = () => {
-  type ActionType = "cancel" | "delete";
+  type ActionType = "cancel" | "delete" | "confirm" | "complete";
+
+  const modalConfig: Record<
+    ActionType,
+    { title: string; buttonColor: string }
+  > = {
+    cancel: {
+      title: "Cancelar agendamento?",
+      buttonColor: "bg-[var(--red)]",
+    },
+    delete: {
+      title: "Excluir agendamento?",
+      buttonColor: "bg-[var(--red)]",
+    },
+    confirm: {
+      title: "Confirmar agendamento?",
+      buttonColor: "bg-[var(--success)]",
+    },
+    complete: {
+      title: "O serviço já foi pago?",
+      buttonColor: "bg-[var(--success)]",
+    },
+  };
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -18,7 +41,9 @@ const AppointmentsPage = () => {
     mutate: mutateAppointment,
     isPending,
     variables,
-  } = useAppointmentCancelOrDelete();
+  } = useMutationAppointment();
+
+  const { user } = useAuth();
 
   const appointments = appointmentsData?.data ?? [];
 
@@ -26,19 +51,31 @@ const AppointmentsPage = () => {
     return isPending && variables?.id === id;
   };
 
-  const handleCancel = (id: string) => {
+  const handleCancelAppointment = (id: string) => {
     setSelectedId(id);
     setActionType("cancel");
     setModalOpen(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDeleteAppointment = (id: string) => {
     setSelectedId(id);
     setActionType("delete");
     setModalOpen(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirmAppointment = (id: string) => {
+    setSelectedId(id);
+    setActionType("confirm");
+    setModalOpen(true);
+  };
+
+  const handleCompleteAppointment = (id: string) => {
+    setSelectedId(id);
+    setActionType("complete");
+    setModalOpen(true);
+  };
+
+  const handleConfirmInModal = () => {
     if (!selectedId || !actionType) return;
 
     mutateAppointment({ id: selectedId, action: actionType });
@@ -74,21 +111,21 @@ const AppointmentsPage = () => {
       {modalOpen && (
         <ConfirmModal
           open={modalOpen}
-          title={
-            actionType === "cancel"
-              ? "Cancelar agendamento?"
-              : "Excluir agendamento?"
-          }
+          title={modalConfig[actionType!].title}
           onCancel={() => setModalOpen(false)}
-          onConfirm={handleConfirm}
-          colorConfirm="bg-[var(--red)]"
+          onConfirm={handleConfirmInModal}
+          colorConfirm={modalConfig[actionType!].buttonColor}
         />
       )}
 
       {appointments.map((item) => {
+        const isBarber = user?.role === "barber" && item.barber.id === user.id;
+        const showCompletedButton = item.status === "confirmed";
         const showCancelButton =
           item.status === "pending" || item.status === "confirmed";
-        const showDeleteButton = item.status === "cancelled";
+        const showDeleteButton =
+          item.status === "cancelled" || item.status === "completed";
+        const isCompleted = item.status === "completed";
         const service = item.services[0];
         if (!service) return null;
 
@@ -106,27 +143,61 @@ const AppointmentsPage = () => {
 
               <p className={status.color}>{status.label}</p>
 
-              {showCancelButton && (
-                <div style={{ marginTop: "0.9375rem" }}>
-                  <Button
-                    className="w-full"
-                    onClick={() => handleCancel(item.id)}
-                  >
-                    {isThisItemLoading(item.id) ? "Cancelando..." : "Cancelar"}
-                  </Button>
-                </div>
-              )}
+              <>
+                {!isCompleted && (
+                  <>
+                    {isBarber && (
+                      <div style={{ marginTop: "0.9375rem" }}>
+                        {showCompletedButton ? (
+                          <Button
+                            className="w-full"
+                            onClick={() => handleCompleteAppointment(item.id)}
+                          >
+                            {isThisItemLoading(item.id)
+                              ? "Finalizando..."
+                              : "Finalizar Pagamento"}
+                          </Button>
+                        ) : (
+                          item.status === "pending" && (
+                            <Button
+                              className="w-full"
+                              onClick={() => handleConfirmAppointment(item.id)}
+                            >
+                              {isThisItemLoading(item.id)
+                                ? "Confirmando..."
+                                : "Confirmar Agendamento"}
+                            </Button>
+                          )
+                        )}
+                      </div>
+                    )}
 
-              {showDeleteButton && (
-                <div style={{ marginTop: "0.9375rem" }}>
-                  <Button
-                    className="w-full"
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    {isThisItemLoading(item.id) ? "Excluindo..." : "Excluir"}
-                  </Button>
-                </div>
-              )}
+                    {showCancelButton && (
+                      <div style={{ marginTop: "0.9375rem" }}>
+                        <Button
+                          className="w-full"
+                          onClick={() => handleCancelAppointment(item.id)}
+                        >
+                          {isThisItemLoading(item.id)
+                            ? "Cancelando..."
+                            : "Cancelar"}
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {showDeleteButton && (
+                  <div style={{ marginTop: "0.9375rem" }}>
+                    <Button
+                      className="w-full"
+                      onClick={() => handleDeleteAppointment(item.id)}
+                    >
+                      {isThisItemLoading(item.id) ? "Excluindo..." : "Excluir"}
+                    </Button>
+                  </div>
+                )}
+              </>
             </div>
           </div>
         );
