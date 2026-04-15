@@ -10,6 +10,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { getToken, clearTokens, USER_STORAGE } from "@/services/auth.storage";
 import { type User } from "@/interfaces/user.interface";
 import { storage } from "@/services/storage";
+import { useQueryClient } from "@tanstack/react-query";
 
 type AuthContextValue = {
   isAuthenticated: boolean;
@@ -39,17 +40,20 @@ const readInitialUser = (): User | null => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(readInitialAuth);
   const [user, setUser] = useState<User | null>(readInitialUser);
+  const queryClient = useQueryClient();
 
   const login = useCallback((userData: User) => {
+    queryClient.clear();
     setIsAuthenticated(true);
     setUser(userData);
-  }, []);
+  }, [queryClient]);
 
   const logout = useCallback(() => {
     setIsAuthenticated(false);
     setUser(null);
     clearTokens();
-  }, []);
+    queryClient.clear();
+  }, [queryClient]);
 
   const value = useMemo(
     () => ({ isAuthenticated, user, login, logout }),
