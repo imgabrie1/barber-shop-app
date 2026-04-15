@@ -23,8 +23,9 @@ export const AppLayout = () => {
         <div className="flex flex-col">
           <div className="flex justify-between items-center w-full">
             <h1 className="text-xl md:text-2xl font-bold tracking-tight">
-              Barbearia Vortex
+              {import.meta.env.VITE_BARBER_SHOP_NAME}
             </h1>
+
             {isOpen ? (
               <GoX
                 className="cursor-pointer"
