@@ -15,7 +15,7 @@ export const AppLayout = () => {
   };
 
   const isAdmin = user?.role === "admin";
-  const isBarber = user?.role === "barber" || user?.role === "admin";
+  const isBarber = user?.role === "barber";
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-zinc-900">

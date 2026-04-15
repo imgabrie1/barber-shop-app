@@ -6,17 +6,14 @@ import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { IoIosArrowBack } from "@react-icons/all-files/io/IoIosArrowBack";
 import {
   useNavigate,
-  // useParams
 } from "react-router-dom";
 import IsFeatchingAndLoading from "@/components/ui/IsFeatchingAndLoading";
 import { useAppointment } from "@/contexts/useAppointment";
 const SelectBarberPage = () => {
   const navigate = useNavigate();
-  // const { serviceId } = useParams<{ serviceId: string }>();
 
   const {
     currentServiceId,
-    // currentServiceName,
     setCurrentBarberId,
     setCurrentBarberName,
   } = useAppointment();
