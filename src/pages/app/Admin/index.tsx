@@ -3,7 +3,7 @@ import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 import Span from "@/components/ui/Span";
 import { useRevenue } from "@/features/Admin/hooks/useRevenue";
 import { formatCurrency } from "@/utils/masks";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { LuSlidersHorizontal } from "react-icons/lu";
 
 const AdminPage = () => {
@@ -20,6 +20,8 @@ const AdminPage = () => {
   >();
   const [filterValue, setFilterValue] = useState<string | undefined>();
 
+  const filterWrapperRef = useRef<HTMLDivElement>(null);
+
   const {
     data: revenue,
     isLoading,
@@ -28,6 +30,25 @@ const AdminPage = () => {
     filterType,
     filterValue,
   });
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        filterWrapperRef.current &&
+        !filterWrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsFilterOpen(false);
+      }
+    };
+
+    if (isFilterOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isFilterOpen]);
 
   const handleApplyFilter = () => {
     setFilterType(tempType);
@@ -43,7 +64,6 @@ const AdminPage = () => {
 
   const filterLabel = useMemo(() => {
     if (!filterType || !filterValue) return "";
-
     let formattedValue = filterValue;
 
     if (filterType === "month") {
@@ -71,9 +91,9 @@ const AdminPage = () => {
 
   if (error) {
     return (
-      <div>
+      <div style={{ padding: "0 10px" }}>
         <H2Bold>Painel Administrativo</H2Bold>
-        <p role="alert">
+        <p role="alert" className="text-red-500 mt-4">
           {error instanceof Error ? error.message : "Erro ao buscar renda"}
         </p>
       </div>
@@ -85,20 +105,31 @@ const AdminPage = () => {
     !revenue || (revenue.totalRevenue === 0 && revenue.filteredRevenue === 0);
 
   return (
-    <div style={{ padding: "0 10px" }}>
-      <H2Bold style={{ marginBottom: "10px" }}>Painel Administrativo</H2Bold>
+    <div
+      style={{
+        padding: "0 20px",
+        maxWidth: "1000px",
+        margin: "0 auto",
+        width: "100%",
+      }}
+    >
+      <H2Bold style={{ marginBottom: "30px" }}>Painel Administrativo</H2Bold>
 
-      <div className="flex flex-col items-end relative">
+      <div
+        ref={filterWrapperRef}
+        className="flex flex-col items-end relative"
+        style={{ marginBottom: "24px" }}
+      >
         <div
-          style={{ paddingLeft: "30vw" }}
-          className="flex flex-col w-[50vw] relative"
+          className="flex flex-col relative"
+          style={{ width: "100%", maxWidth: "200px" }}
         >
           <div
-            className="flex items-center justify-between  cursor-pointer p-2"
+            className="flex items-center justify-between cursor-pointer hover:bg-black/5 rounded-lg transition-colors border border-transparent hover:border-gray-200"
+            style={{ padding: "8px", marginLeft: "95px" }}
             onClick={() => setIsFilterOpen(!isFilterOpen)}
           >
             <Span>Filtros</Span>
-
             <LuSlidersHorizontal size={20} />
           </div>
 
@@ -109,10 +140,10 @@ const AdminPage = () => {
                 marginTop: "10px",
                 minWidth: "280px",
               }}
-              className="absolute top-full right-0 z-50 bg-white border border-gray-100 rounded-xl shadow-2xl flex flex-col gap-4 border-t-4 border-blue-500 animate-in fade-in zoom-in duration-200"
+              className="absolute top-full right-0 z-50 bg-[#1e2f62] rounded-xl shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in duration-200"
             >
               <div>
-                <span className="text-blue-900 text-xs font-bold uppercase tracking-widest">
+                <span className="text-white text-xs font-bold uppercase tracking-widest">
                   Filtrar por período
                 </span>
                 <div
@@ -127,11 +158,11 @@ const AdminPage = () => {
                         flex-1 text-xs rounded-lg font-bold transition-all uppercase tracking-tighter
                         ${
                           tempType === type
-                          ? "bg-blue-600 text-white shadow-md scale-105"
-                          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                            ? "bg-blue-600 text-white shadow-md scale-105"
+                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                         }
                         active:scale-95
-                        `}
+                      `}
                       onClick={() => {
                         setTempType(type);
                         const now = new Date().toISOString().split("T")[0];
@@ -148,21 +179,21 @@ const AdminPage = () => {
                         ? "Dia"
                         : type === "month"
                           ? "Mês"
-                          : "Trimestre"}
+                          : "Tri"}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div style={{ marginTop: "10px" }}>
-                <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest block">
+                <span className="text-white text-[10px] font-bold uppercase tracking-widest block">
                   Data de Referência
                 </span>
                 <div style={{ marginTop: "6px" }}>
                   {tempType === "quarter" ? (
                     <select
                       style={{ padding: "10px" }}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-lg text-gray-700 font-medium focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full bg-white border border-gray-200 rounded-lg text-gray-700 font-medium focus:ring-2 focus:ring-blue-500 outline-none"
                       value={tempValue}
                       onChange={(e) => setTempValue(e.target.value)}
                     >
@@ -171,17 +202,19 @@ const AdminPage = () => {
                           key={q}
                           value={`${new Date().getFullYear()}-Q${q}`}
                         >
-                          {q}º Trimestre de {new Date().getFullYear()}
+                          {q}º Tri de {new Date().getFullYear()}
                         </option>
                       ))}
                     </select>
                   ) : (
                     <input
+                      key={tempType}
                       style={{ padding: "10px" }}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-lg text-gray-700 font-medium focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full bg-white rounded-lg text-gray-700 font-medium focus:ring-2 focus:ring-blue-500 cursor-pointer"
                       type={tempType === "day" ? "date" : "month"}
                       value={tempValue}
                       onChange={(e) => setTempValue(e.target.value)}
+                      onClick={(e) => e.currentTarget.showPicker?.()}
                     />
                   )}
                 </div>
@@ -190,14 +223,14 @@ const AdminPage = () => {
               <div style={{ marginTop: "10px" }} className="flex gap-3">
                 <button
                   style={{ padding: "12px" }}
-                  className="flex-1 bg-red-50 text-red-600 rounded-lg font-bold text-xs uppercase hover:bg-red-100 transition-colors"
+                  className="flex-1 bg-red-50/20 text-red-400 rounded-lg font-bold text-xs uppercase hover:bg-red-50/20 transition-colors"
                   onClick={handleClearFilter}
                 >
                   Limpar
                 </button>
                 <button
                   style={{ padding: "12px" }}
-                  className="flex-[2] bg-green-500 text-white rounded-lg font-bold text-xs uppercase shadow-lg shadow-green-200 hover:bg-green-600 transition-all active:translate-y-0.5"
+                  className="flex-[2] bg-green-500 text-white rounded-lg font-bold text-xs uppercase hover:bg-green-600 transition-all active:translate-y-0.5"
                   onClick={handleApplyFilter}
                 >
                   Aplicar Filtro
@@ -210,10 +243,7 @@ const AdminPage = () => {
 
       <div>
         {isFiltered ? (
-          <div
-            style={{ marginTop: "30px" }}
-            className="h-[20vh] flex flex-col justify-between gap-4"
-          >
+          <div style={{ marginTop: "30px" }} className="flex flex-col gap-4">
             <div
               style={{ padding: "24px" }}
               className="bg-[var(--revenueFilteredBox)] rounded-lg shadow-md border-l-4 border-blue-500 flex flex-col items-start transition-shadow hover:shadow-lg"
@@ -244,10 +274,7 @@ const AdminPage = () => {
             </div>
           </div>
         ) : (
-          <div
-            style={{ marginTop: "30px" }}
-            className="h-[20vh] flex flex-col justify-between"
-          >
+          <div style={{ marginTop: "30px" }}>
             <div
               style={{ padding: "24px" }}
               className="bg-[var(--revenueBox)] rounded-lg shadow-md border-l-4 border-green-500 flex flex-col items-start transition-shadow hover:shadow-lg"
@@ -267,7 +294,7 @@ const AdminPage = () => {
       </div>
 
       {isBroken && (
-        <div>
+        <div style={{ marginTop: "20px" }}>
           <Span>O caixa está vazio. Por enquanto...</Span>
         </div>
       )}
