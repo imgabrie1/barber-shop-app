@@ -16,6 +16,9 @@
   --success: #377b4a;
   --warning: #ffecb3;
   --no-show: #e6812f;
+  --modalFilter: #081729da;
+  --revenueBox: rgb(220, 236, 222);
+  --revenueFilteredBox: rgb(214, 219, 252);
 }
 
 * {
