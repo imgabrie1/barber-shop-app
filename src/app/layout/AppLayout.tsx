@@ -18,7 +18,10 @@ export const AppLayout = () => {
   const isBarber = user?.role === "barber";
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-zinc-900">
+    <div
+      style={{ transition: "background-color 0.3s ease" }}
+      className="flex flex-col min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A]"
+    >
       <Header style={{ marginBottom: "1.4rem", padding: "0.8rem" }}>
         <div className="flex flex-col">
           <div className="flex justify-between items-center w-full">
