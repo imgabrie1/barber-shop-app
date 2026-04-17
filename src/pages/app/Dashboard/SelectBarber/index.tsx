@@ -7,8 +7,8 @@ import { IoIosArrowBack } from "@react-icons/all-files/io/IoIosArrowBack";
 import {
   useNavigate,
 } from "react-router-dom";
-import IsFeatchingAndLoading from "@/components/ui/IsFeatchingAndLoading";
 import { useAppointment } from "@/contexts/useAppointment";
+import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 const SelectBarberPage = () => {
   const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ const SelectBarberPage = () => {
         <H2Bold>Barbeiros</H2Bold>
       </div>
 
-      {isFetchingBarbers && <IsFeatchingAndLoading />}
+      {isFetchingBarbers && <IsFetchingAndLoading />}
       {errorBarbers && <p role="alert">Erro ao buscar barbeiros</p>}
 
       {barbers?.map((barber) => {

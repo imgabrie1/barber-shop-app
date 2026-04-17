@@ -1,7 +1,7 @@
 import { useAuth } from "@/app/providers/AuthProvider";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import Button from "@/components/ui/Button";
-import IsFeatchingAndLoadingAndLoading from "@/components/ui/IsFeatchingAndLoading";
+import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 import { useMutationAppointment } from "@/features/Appointments/hooks/useMutationAppointment";
 import { useMyAppointments } from "@/features/Appointments/hooks/useMyAppointments";
 import { appointmentStatusMap } from "@/interfaces/appointments.interface";
@@ -85,7 +85,7 @@ const AppointmentsPage = () => {
     setActionType(null);
   };
 
-  if (isLoading) return <IsFeatchingAndLoadingAndLoading />;
+  if (isLoading) return <IsFetchingAndLoading />;
 
   if (error) {
     return (
