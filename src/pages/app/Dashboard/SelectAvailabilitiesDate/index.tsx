@@ -5,7 +5,7 @@ import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { IoIosArrowBack } from "@react-icons/all-files/io/IoIosArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
-import IsFeatchingAndLoadingAndLoading from "@/components/ui/IsFeatchingAndLoading";
+import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 import { useAppointment } from "@/contexts/useAppointment";
 import { IoIosArrowForward } from "react-icons/io";
 
@@ -201,7 +201,7 @@ const SelectAvailabilitiesDatePage = () => {
         />
       </div>
 
-      {isLoadingTimes && <IsFeatchingAndLoadingAndLoading />}
+      {isLoadingTimes && <IsFetchingAndLoading />}
       {isFetchingTimes && !isLoadingTimes && (
         <P style={{ fontSize: "0.8rem", opacity: 0.6 }}>Atualizando...</P>
       )}
