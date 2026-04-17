@@ -7,7 +7,7 @@
   --headerColor: var(--primaryColor);
   --textPrimary: #fff;
   --textSecondary: #000;
-  --primaryColor: #081729;
+  --primaryColor: #050f1a;
   --inputColor: #242424;
   --red: red;
   --drop-shadow: rgba(255, 255, 255, 0.414);
@@ -19,6 +19,8 @@
   --modalFilter: #081729da;
   --revenueBox: rgb(220, 236, 222);
   --revenueFilteredBox: rgb(214, 219, 252);
+
+  --teste: #1e2f62;
 }
 
 * {
