@@ -8,7 +8,10 @@ const Header = ({ className = "", children, ...props }: HeaderProps) => {
       className={`bg-[var(--headerColor)] w-full text-[var(--textPrimary)] shadow-md ${className}`}
       {...props}
     >
-      <div className="w-full max-w-5xl mx-auto flex flex-col justify-center px-4 py-4 md:px-6 md:py-5 gap-4">
+      <div 
+        className="w-full max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px] mx-auto flex flex-col justify-center gap-4"
+        style={{ padding: "1rem" }}
+      >
         {children}
       </div>
     </header>

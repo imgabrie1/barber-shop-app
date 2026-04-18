@@ -54,12 +54,12 @@ export const AppLayout = () => {
             <nav
               className="
             flex
-            justify-around
+            justify-center
             items-center
             border-t
             border-white/10
             w-full"
-              style={{ paddingTop: "0.5rem" }}
+              style={{ paddingTop: "0.5rem", gap: "2rem" }}
             >
               <NavLink
                 to="/app"
@@ -126,8 +126,11 @@ export const AppLayout = () => {
         </div>
       </Header>
 
-      <main className="flex flex-col flex-1 overflow-hidden">
-        <div className="flex-1 overflow-auto p-4 md:p-6 w-full max-w-5xl mx-auto">
+      <main className="flex flex-col flex-1 overflow-hidden items-center">
+        <div 
+          className="flex-1 overflow-auto w-full max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px] mx-auto"
+          style={{ padding: "1rem" }}
+        >
           <Outlet />
         </div>
       </main>
