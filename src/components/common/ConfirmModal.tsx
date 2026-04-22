@@ -8,6 +8,7 @@ type ConfirmModalProps = {
   colorConfirm: string;
   onCancel: () => void;
   onConfirm: () => void;
+  loading?: boolean;
 };
 
 const ConfirmModal = ({
@@ -15,7 +16,8 @@ const ConfirmModal = ({
   title,
   onCancel,
   onConfirm,
-  colorConfirm
+  colorConfirm,
+  loading
 }: ConfirmModalProps) => {
   return (
     <Modal open={open} onClose={onCancel}>
@@ -24,12 +26,17 @@ const ConfirmModal = ({
       <div
       style={{ marginTop: "1.875rem" }}
       className="flex justify-center gap-4">
-        <Button onClick={onCancel} className="bg-gray-400 hover:brightness-90">
+        <Button 
+          onClick={onCancel} 
+          disabled={loading}
+          className="bg-gray-400 hover:brightness-90"
+        >
           Cancelar
         </Button>
 
         <Button
           onClick={onConfirm}
+          loading={loading}
           className={`${colorConfirm} hover:brightness-90`}
         >
           Confirmar
