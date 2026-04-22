@@ -18,9 +18,7 @@
   --no-show: #e6812f;
   --modalFilter: #081729da;
   --revenueBox: rgb(220, 236, 222);
-  --revenueFilteredBox: rgb(214, 219, 252);
-
-  --teste: #1e2f62;
+  --blueBox: rgb(214, 219, 252);
 }
 
 * {
@@ -38,4 +36,17 @@ body {
 
 h1 {
   font-family: "Geologica", sans-serif;
+}
+
+/* Chrome, Safari, Edge */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
