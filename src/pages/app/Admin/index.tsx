@@ -5,6 +5,7 @@ import { useRevenue } from "@/features/Admin/hooks/useRevenue";
 import { formatCurrency } from "@/utils/masks";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { LuSlidersHorizontal } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
 
 const AdminPage = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -30,6 +31,15 @@ const AdminPage = () => {
     filterType,
     filterValue,
   });
+
+  const navigate = useNavigate();
+
+  const handleNavigateUsers = () => {
+    navigate("/app/admin/users");
+  };
+  const handleNavigateServices = () => {
+    navigate("/app/admin/services");
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -107,7 +117,7 @@ const AdminPage = () => {
   return (
     <div
       style={{
-        padding: "0 20px",
+        // padding: "0 20px",
         maxWidth: "1000px",
         margin: "0 auto",
         width: "100%",
@@ -246,7 +256,7 @@ const AdminPage = () => {
           <div style={{ marginTop: "30px" }} className="flex flex-col gap-4">
             <div
               style={{ padding: "24px" }}
-              className="bg-[var(--revenueFilteredBox)] rounded-lg shadow-md border-l-4 border-blue-500 flex flex-col items-start transition-shadow hover:shadow-lg"
+              className="bg-[var(--blueBox)] rounded-lg shadow-md border-l-4 border-blue-500 flex flex-col items-start transition-shadow hover:shadow-lg"
             >
               <span className="text-blue-900 text-sm font-medium uppercase tracking-wider">
                 {filterLabel}
@@ -291,6 +301,51 @@ const AdminPage = () => {
             </div>
           </div>
         )}
+      </div>
+
+      <div
+        className="gap-6"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          paddingTop: "20px",
+        }}
+      >
+        <div
+          onClick={handleNavigateUsers}
+          style={{ padding: "24px" }}
+          className="
+                  border
+                  border-[#2c448f]
+                  rounded-2xl
+                  shadow-sm
+                  hover:shadow-md
+                  hover:border-blue-400
+                  transition-all
+                  cursor-pointer
+                  group
+                  "
+        >
+          <H2Bold>Gerenciar Usuários</H2Bold>
+        </div>
+
+        <div
+          onClick={handleNavigateServices}
+          style={{ padding: "24px" }}
+          className="
+                  border
+                  border-[#8f882c]
+                  rounded-2xl
+                  shadow-sm
+                  hover:shadow-md
+                  hover:border-amber-400
+                  transition-all
+                  cursor-pointer
+                  group
+                  "
+        >
+          <H2Bold>Gerenciar Serviços</H2Bold>
+        </div>
       </div>
 
       {isBroken && (
