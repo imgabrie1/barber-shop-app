@@ -10,6 +10,10 @@ import { deleteBarberServiceService } from "@/features/Admin/services/admin.serv
 import ConfirmModal from "@/components/common/ConfirmModal";
 import type { BarberService } from "@/interfaces/barber.interface";
 import CreateAndEditServiceForm from "@/components/common/CreateAndEditServiceForm";
+import Modal from "@/components/common/Modal";
+import Button from "@/components/ui/Button";
+import { FaCheck } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 type stagesServices = "init" | "create" | "edit" | "delete";
 
@@ -18,11 +22,22 @@ const AdminServicesPage = () => {
   const [selectedService, setSelectedService] = useState<BarberService | null>(
     null,
   );
+  const [successConfig, setSuccessConfig] = useState<{
+    open: boolean;
+    message: string;
+  }>({
+    open: false,
+    message: "",
+  });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const { data: services, isLoading, error } = useServices(stage !== "init");
   const queryClient = useQueryClient();
+
+  const navigate = useNavigate();
 
   const getStageTitle = () => {
     switch (stage) {
@@ -40,6 +55,9 @@ const AdminServicesPage = () => {
   };
 
   const handleBack = () => {
+    if (stage === "init") {
+      navigate(-1);
+    }
     if (selectedService && stage === "edit") {
       setSelectedService(null);
     } else {
@@ -60,13 +78,27 @@ const AdminServicesPage = () => {
       setIsDeleting(true);
       await deleteBarberServiceService(selectedService.id);
       setIsDeleteModalOpen(false);
-      onSuccess();
+
+      setSuccessConfig({
+        open: true,
+        message: `Serviço "${selectedService.name}" excluído com sucesso!`,
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["service"] });
     } catch (err) {
-      console.error(err);
-      alert("Erro ao excluir serviço");
+      console.log(err);
+      alert("Erro ao excluir");
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleFormSuccess = (msg: string) => {
+    setSuccessConfig({
+      open: true,
+      message: msg,
+    });
+    queryClient.invalidateQueries({ queryKey: ["service"] });
   };
 
   return (
@@ -85,15 +117,15 @@ const AdminServicesPage = () => {
           gap: "1rem",
         }}
       >
-        {stage !== "init" && (
-          <button
-            onClick={handleBack}
-            style={{ padding: "0.5rem" }}
-            className="hover:bg-black/5 rounded-full transition-colors flex items-center justify-center"
-          >
-            <LuArrowLeft size={24} />
-          </button>
-        )}
+        {/* {stage !== "init" && ( */}
+        <button
+          onClick={handleBack}
+          style={{ padding: "0.5rem" }}
+          className="hover:bg-black/5 rounded-full transition-colors flex items-center justify-center"
+        >
+          <LuArrowLeft size={24} />
+        </button>
+
         <H2Bold>{getStageTitle()}</H2Bold>
       </div>
 
@@ -102,15 +134,16 @@ const AdminServicesPage = () => {
         {error && <p className="text-red-500">Erro ao carregar serviços</p>}
 
         {stage === "create" && (
-          <CreateAndEditServiceForm typeStage="create" onSuccess={onSuccess} />
+          <CreateAndEditServiceForm
+            typeStage="create"
+            onSuccess={() => handleFormSuccess("Serviço criado com sucesso!")}
+          />
         )}
 
         {stage === "edit" && (
           <>
             {!selectedService ? (
-              <div
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
-              >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {services?.map((service) => (
                   <div
                     key={service.id}
@@ -118,7 +151,9 @@ const AdminServicesPage = () => {
                     style={{ padding: "10px" }}
                     className="p-4 border border-gray-200 rounded-xl shadow-sm hover:border-amber-400 cursor-pointer transition-all"
                   >
-                    <p className="font-bold text-lg text-[var(--textPrimary)]">{service.name}</p>
+                    <p className="font-bold text-lg text-[var(--textPrimary)]">
+                      {service.name}
+                    </p>
                     <p className="text-gray-400">
                       {service.durationMinutes} min -{" "}
                       {formatCurrency(service.price)}
@@ -131,7 +166,9 @@ const AdminServicesPage = () => {
               <CreateAndEditServiceForm
                 typeStage="edit"
                 initialData={selectedService}
-                onSuccess={onSuccess}
+                onSuccess={() =>
+                  handleFormSuccess("Alterações salvas com sucesso!")
+                }
               />
             )}
           </>
@@ -231,6 +268,34 @@ const AdminServicesPage = () => {
           </div>
         </div>
       )}
+
+      <Modal
+        open={successConfig.open}
+        onClose={() => {
+          setSuccessConfig({ ...successConfig, open: false });
+          onSuccess();
+        }}
+      >
+        <div className="flex flex-col items-center text-center gap-4">
+          <div
+            style={{ padding: "20px" }}
+            className="bg-green-500/10 rounded-full"
+          >
+            <FaCheck className="text-green-500" size={40} />
+          </div>
+          <H2Bold>Sucesso!</H2Bold>
+          <p className="text-gray-400">{successConfig.message}</p>
+          <Button
+            onClick={() => {
+              setSuccessConfig({ ...successConfig, open: false });
+              onSuccess();
+            }}
+            className="w-full bg-green-600 hover:bg-green-700 transition-all"
+          >
+            Continuar
+          </Button>
+        </div>
+      </Modal>
 
       <ConfirmModal
         open={isDeleteModalOpen}
