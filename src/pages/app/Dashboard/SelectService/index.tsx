@@ -53,7 +53,6 @@ const SelectServicePage = () => {
               className="flex justify-between items-center cursor-pointer border-white/20 border-b md:border md:rounded-lg"
               style={{
                 paddingBottom: "19.2px",
-                // Padding interno apenas no desktop para não colar no texto quando houver borda completa
                 padding: window.innerWidth >= 768 ? "19.2px" : undefined,
               }}
             >
@@ -63,7 +62,7 @@ const SelectServicePage = () => {
                 <P>R$: {service.price}</P>
               </div>
 
-              <MdNavigateNext className="text-[var(--textPrimary)]" size={30} />
+              <MdNavigateNext className="text-[var(--textPrimary)] md:hidden " size={30} />
             </div>
           );
         })}

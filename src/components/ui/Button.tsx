@@ -19,6 +19,11 @@ const Button = ({
     <button
       disabled={isDisabled}
       className={`
+    w-full
+    md:py-8
+    md:text-2xl
+    md:font-bold
+    transition-all
     relative
     flex items-center justify-center
     rounded-md

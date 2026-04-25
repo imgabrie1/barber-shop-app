@@ -58,14 +58,8 @@ const SelectAvailabilitiesDatePage = () => {
     if (checkDate.getTime() === tomorrow.getTime()) return "Amanhã";
 
     const day = date.getDate();
-
-    const month = date.toLocaleDateString("pt-BR", {
-      month: "long",
-    });
-
-    const weekday = date.toLocaleDateString("pt-BR", {
-      weekday: "long",
-    });
+    const month = date.toLocaleDateString("pt-BR", { month: "long" });
+    const weekday = date.toLocaleDateString("pt-BR", { weekday: "long" });
 
     const formatted = `${weekday}, ${day} de ${month}`;
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
@@ -82,7 +76,6 @@ const SelectAvailabilitiesDatePage = () => {
   const handlePrevDay = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     const checkDate = new Date(currentDate);
     checkDate.setHours(0, 0, 0, 0);
 
@@ -98,10 +91,8 @@ const SelectAvailabilitiesDatePage = () => {
   const isToday = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     const checkDate = new Date(currentDate);
     checkDate.setHours(0, 0, 0, 0);
-
     return checkDate.getTime() <= today.getTime();
   };
 
@@ -119,21 +110,16 @@ const SelectAvailabilitiesDatePage = () => {
 
   const filteredTimes = useMemo(() => {
     if (!times) return [];
-
     const now = new Date();
-
     const isCurrentDateToday =
       currentDate.getDate() === now.getDate() &&
       currentDate.getMonth() === now.getMonth() &&
       currentDate.getFullYear() === now.getFullYear();
 
-    if (!isCurrentDateToday) {
-      return times;
-    }
+    if (!isCurrentDateToday) return times;
 
     return times.filter((time: string) => {
       const [hours, minutes] = time.split(":").map(Number);
-
       const slotDateTime = new Date(
         now.getFullYear(),
         now.getMonth(),
@@ -141,7 +127,6 @@ const SelectAvailabilitiesDatePage = () => {
         hours,
         minutes,
       );
-
       return slotDateTime.getTime() > now.getTime();
     });
   }, [times, currentDate]);
@@ -167,13 +152,14 @@ const SelectAvailabilitiesDatePage = () => {
   };
 
   return (
-    <div >
+    <div
+    className="md:px-20"
+    >
       <div className="flex flex-col items-start gap-4">
         <IoIosArrowBack
           onClick={() => navigate(-1)}
           size={30}
-          className="text-[var(--textPrimary)]"
-          style={{ cursor: "pointer" }}
+          className="text-[var(--textPrimary)] cursor-pointer"
         />
         <H2Bold>Horários Disponíveis</H2Bold>
         <P>Serviço: {currentServiceName}</P>
@@ -184,11 +170,11 @@ const SelectAvailabilitiesDatePage = () => {
         <IoIosArrowBack
           size={24}
           onClick={handlePrevDay}
+          className="text-[var(--textPrimary)]"
           style={{
             cursor: isToday() ? "default" : "pointer",
             opacity: isToday() ? 0.3 : 1,
           }}
-          className="text-[var(--textPrimary)]"
         />
         <P style={{ fontSize: "1.1rem", fontWeight: "600" }}>
           {getDisplayDate(currentDate)}
@@ -196,15 +182,18 @@ const SelectAvailabilitiesDatePage = () => {
         <IoIosArrowForward
           size={24}
           onClick={handleNextDay}
-          style={{ cursor: "pointer" }}
-          className="text-[var(--textPrimary)]"
+          className="text-[var(--textPrimary)] cursor-pointer"
         />
       </div>
 
       {isLoadingTimes && <IsFetchingAndLoading />}
+
       {isFetchingTimes && !isLoadingTimes && (
-        <P style={{ fontSize: "0.8rem", opacity: 0.6 }}>Atualizando...</P>
+        <P style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.5rem" }}>
+          Atualizando...
+        </P>
       )}
+
       {errorTimes && (
         <P
           role="alert"
@@ -229,26 +218,22 @@ const SelectAvailabilitiesDatePage = () => {
           </P>
         )}
 
-      <div style={{ marginTop: "1rem" }}>
+      <div
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        style={{ marginTop: "24px" }}
+      >
         {filteredTimes.map((time) => (
           <div
             key={time}
-            className="flex flex-col w-full"
-            style={{ marginTop: "1.5rem" }}
+            onClick={() => handleSelectTime(time)}
+            className="flex justify-between items-center cursor-pointer border-white/20 border-b md:border md:rounded-lg"
+            style={{
+              paddingBottom: "16px",
+              padding: window.innerWidth >= 768 ? "16px" : undefined,
+            }}
           >
-            <ul className="w-full flex flex-col gap-2">
-              <li
-                className="border-b border-white/20 flex justify-between items-center"
-                style={{ paddingBottom: "1.2rem", cursor: "pointer" }}
-                onClick={() => handleSelectTime(time)}
-              >
-                <P>{time}</P>
-                <MdNavigateNext
-                  className="text-[var(--textPrimary)]"
-                  size={30}
-                />
-              </li>
-            </ul>
+            <P>{time}</P>
+            <MdNavigateNext className="text-[var(--textPrimary)] md:hidden " size={30} />
           </div>
         ))}
       </div>
