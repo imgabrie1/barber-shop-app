@@ -8,7 +8,11 @@ import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 
 const SelectServicePage = () => {
   const navigate = useNavigate();
-  const { setCurrentServiceId, setCurrentServiceName, setCurrentServiceDuration } = useAppointment();
+  const {
+    setCurrentServiceId,
+    setCurrentServiceName,
+    setCurrentServiceDuration,
+  } = useAppointment();
 
   const {
     data: services,
@@ -17,7 +21,7 @@ const SelectServicePage = () => {
   } = useServices();
 
   return (
-    <div style={{ paddingLeft: "0.8rem", paddingRight: "0.8rem" }}>
+    <div>
       <H2Bold>Serviços</H2Bold>
 
       {isFetchingServices && <IsFetchingAndLoading />}
