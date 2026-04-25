@@ -33,7 +33,7 @@ const SelectBarberPage = () => {
   if (!currentServiceId) return null;
 
   return (
-    <div style={{ paddingLeft: "0.8rem", paddingRight: "0.8rem" }}>
+    <div >
       <div className="flex flex-col items-start gap-4">
         <IoIosArrowBack
           onClick={() => navigate(-1)}

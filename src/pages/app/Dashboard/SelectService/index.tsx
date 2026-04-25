@@ -8,7 +8,11 @@ import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 
 const SelectServicePage = () => {
   const navigate = useNavigate();
-  const { setCurrentServiceId, setCurrentServiceName, setCurrentServiceDuration } = useAppointment();
+  const {
+    setCurrentServiceId,
+    setCurrentServiceName,
+    setCurrentServiceDuration,
+  } = useAppointment();
 
   const {
     data: services,
@@ -17,54 +21,53 @@ const SelectServicePage = () => {
   } = useServices();
 
   return (
-    <div style={{ paddingLeft: "0.8rem", paddingRight: "0.8rem" }}>
+    <div>
       <H2Bold>Serviços</H2Bold>
 
       {isFetchingServices && <IsFetchingAndLoading />}
       {errorServices && <p role="alert">Erro ao buscar serviços</p>}
 
-      {services?.map((service) => {
-        const handleSelectService = () => {
-          setCurrentServiceId(service.id);
-          setCurrentServiceName(service.name);
-          setCurrentServiceDuration(service.durationMinutes);
-          navigate(
-            `/app/appointment/select-barber/${service.id}?price=${service.price}`,
-            {
-              state: {
-                price: service.price,
+      <div
+        className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4"
+        style={{ marginTop: "24px" }}
+      >
+        {services?.map((service) => {
+          const handleSelectService = () => {
+            setCurrentServiceId(service.id);
+            setCurrentServiceName(service.name);
+            setCurrentServiceDuration(service.durationMinutes);
+            navigate(
+              `/app/appointment/select-barber/${service.id}?price=${service.price}`,
+              {
+                state: {
+                  price: service.price,
+                },
               },
-            },
+            );
+          };
+
+          return (
+            <div
+              key={service.id}
+              onClick={handleSelectService}
+              className="flex justify-between items-center cursor-pointer border-white/20 border-b md:border md:rounded-lg"
+              style={{
+                paddingBottom: "19.2px",
+                // Padding interno apenas no desktop para não colar no texto quando houver borda completa
+                padding: window.innerWidth >= 768 ? "19.2px" : undefined,
+              }}
+            >
+              <div>
+                <P>{service.name}</P>
+                <P>duração média: {service.durationMinutes} minutos</P>
+                <P>R$: {service.price}</P>
+              </div>
+
+              <MdNavigateNext className="text-[var(--textPrimary)]" size={30} />
+            </div>
           );
-        };
-
-        return (
-          <div
-            key={service.id}
-            className="flex flex-col w-full"
-            style={{ marginTop: "1.5rem" }}
-          >
-            <ul className="w-full flex flex-col gap-2">
-              <li
-                className="border-b border-white/20 flex justify-between items-center"
-                style={{ paddingBottom: "1.2rem", cursor: "pointer" }}
-                onClick={handleSelectService}
-              >
-                <div>
-                  <P>{service.name}</P>
-                  <P>duração média: {service.durationMinutes} minutos</P>
-                  <P>R$: {service.price}</P>
-                </div>
-
-                <MdNavigateNext
-                  className="text-[var(--textPrimary)]"
-                  size={30}
-                />
-              </li>
-            </ul>
-          </div>
-        );
-      })}
+        })}
+      </div>
     </div>
   );
 };

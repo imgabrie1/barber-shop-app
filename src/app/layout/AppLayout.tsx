@@ -22,7 +22,7 @@ export const AppLayout = () => {
       style={{ transition: "background-color 0.3s ease" }}
       className="flex flex-col min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A]"
     >
-      <Header style={{ marginBottom: "1.4rem", padding: "0.8rem" }}>
+      <Header className="">
         <div className="flex flex-col">
           <div className="flex justify-between items-center w-full">
             <h1 className="text-xl md:text-2xl font-bold tracking-tight">
@@ -58,48 +58,50 @@ export const AppLayout = () => {
             items-center
             border-t
             border-white/10
-            w-full"
-              style={{ paddingTop: "0.5rem", gap: "2rem" }}
+            w-full
+            gap-8
+            "
+              style={{ paddingTop: "0.625rem" }}
             >
               <NavLink
                 to="/app"
                 end
                 className={({ isActive }) =>
-                  `pb-2 px-2 text-sm font-medium transition-all border-b-2 ${
+                  `text-sm font-medium transition-all border-b-2 ${
                     isActive
                       ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
                       : "border-transparent opacity-60 hover:opacity-100"
                   }`
                 }
               >
-                Início
+                INICIO
               </NavLink>
 
               <NavLink
                 to="/app/appointments"
                 className={({ isActive }) =>
-                  `pb-2 px-2 text-sm font-medium transition-all border-b-2 ${
+                  ` text-sm font-medium transition-all border-b-2 ${
                     isActive
                       ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
                       : "border-transparent opacity-60 hover:opacity-100"
                   }`
                 }
               >
-                Agenda
+                AGENDA
               </NavLink>
 
               {isBarber && (
                 <NavLink
                   to="/app/barber"
                   className={({ isActive }) =>
-                    `pb-2 px-2 text-sm font-medium transition-all border-b-2 ${
+                    ` text-sm font-medium transition-all border-b-2 ${
                       isActive
                         ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
                         : "border-transparent opacity-60 hover:opacity-100"
                     }`
                   }
                 >
-                  Barbeiro
+                  BARBEIRO
                 </NavLink>
               )}
 
@@ -107,19 +109,22 @@ export const AppLayout = () => {
                 <NavLink
                   to="/app/admin"
                   className={({ isActive }) =>
-                    `pb-2 px-2 text-sm font-medium transition-all border-b-2 ${
+                    ` text-sm font-medium transition-all border-b-2 ${
                       isActive
                         ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
                         : "border-transparent opacity-60 hover:opacity-100"
                     }`
                   }
                 >
-                  Admin
+                  ADMIN
                 </NavLink>
               )}
 
-              <P onClick={logout} className="cursor-pointer">
-                Sair
+              <P
+                onClick={logout}
+                className="text-sm font-medium cursor-pointer"
+              >
+                SAIR
               </P>
             </nav>
           </div>
@@ -127,8 +132,8 @@ export const AppLayout = () => {
       </Header>
 
       <main className="flex flex-col flex-1 overflow-hidden items-center">
-        <div 
-          className="flex-1 overflow-auto w-full max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px] mx-auto"
+        <div
+          className="flex-1 overflow-auto w-full max-w-5xl xl:max-w-7xl 2xl:max-w-[100rem] mx-auto"
           style={{ padding: "1rem" }}
         >
           <Outlet />
