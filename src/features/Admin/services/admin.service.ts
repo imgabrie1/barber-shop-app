@@ -2,6 +2,7 @@ import type {
   adminRevenueInterface,
   createServiceOutput,
   createServiceType,
+  userByIDtoAdminViewInterface,
 } from "@/interfaces/admin.interface";
 import api from "@/services/api";
 import type { AxiosError } from "axios";
@@ -114,6 +115,67 @@ export const deleteBarberServiceService = async (id: string) => {
         : responseData) ||
       currentError.message ||
       "Erro ao deletar serviço";
+    throw new Error(String(msg));
+  }
+};
+
+export const getUsersService = async () => {
+  try {
+    const response = await api.get<userByIDtoAdminViewInterface[]>("/user");
+    return response.data
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro ao buscar usuários";
+    throw new Error(String(msg));
+  }
+};
+
+
+export const getUserByIDservice = async (id: string) => {
+  try {
+    const response = await api.get<userByIDtoAdminViewInterface>(`/user/${id}`);
+    return response.data
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro ao buscar usuários";
+    throw new Error(String(msg));
+  }
+};
+
+export const deleteUserService = async (id: string) => {
+  try {
+    const response = await api.delete(`/admin/${id}`);
+    return response.data;
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro ao deletar usuário";
     throw new Error(String(msg));
   }
 };
