@@ -119,7 +119,6 @@ const AdminPage = () => {
   return (
     <div
       style={{
-        // padding: "0 20px",
         maxWidth: "1000px",
         margin: "0 auto",
         width: "100%",

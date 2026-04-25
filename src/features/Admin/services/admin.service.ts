@@ -159,3 +159,23 @@ export const getUserByIDservice = async (id: string) => {
     throw new Error(String(msg));
   }
 };
+
+export const deleteUserService = async (id: string) => {
+  try {
+    const response = await api.delete(`/admin/${id}`);
+    return response.data;
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro ao deletar usuário";
+    throw new Error(String(msg));
+  }
+};
