@@ -77,7 +77,9 @@ const AdminPage = () => {
     let formattedValue = filterValue;
 
     if (filterType === "month") {
-      const date = new Date(filterValue + "-01");
+      const [year, month] = filterValue.split("-").map(Number);
+      const date = new Date(year, month - 1, 1);
+
       formattedValue = new Intl.DateTimeFormat("pt-BR", {
         month: "long",
         year: "numeric",
@@ -91,10 +93,10 @@ const AdminPage = () => {
 
     if (filterType === "quarter") {
       const [year, q] = filterValue.split("-Q");
-      formattedValue = `${q}º trimestre ${year}`;
+      formattedValue = `${q}º trimestre de ${year}`;
     }
 
-    return `${formattedValue}`;
+    return formattedValue.charAt(0).toUpperCase() + formattedValue.slice(1);
   }, [filterType, filterValue]);
 
   if (isLoading) return <IsFetchingAndLoading />;
