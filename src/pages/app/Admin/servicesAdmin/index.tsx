@@ -117,7 +117,6 @@ const AdminServicesPage = () => {
           gap: "1rem",
         }}
       >
-        {/* {stage !== "init" && ( */}
         <button
           onClick={handleBack}
           style={{ padding: "0.5rem" }}
