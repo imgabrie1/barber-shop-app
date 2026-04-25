@@ -99,8 +99,9 @@ const AppointmentSummaryPage = () => {
 
       {selectedAppointmentItems.length === 0 ? (
         <div
-        style={{ marginTop: "0.9375rem" }}
-        className="mt-4 text-center text-gray-500">
+          style={{ marginTop: "0.9375rem" }}
+          className="mt-4 text-center text-gray-500"
+        >
           Nenhum serviço selecionado ainda.
         </div>
       ) : (
@@ -155,7 +156,11 @@ const AppointmentSummaryPage = () => {
           </div>
 
           <div style={{ marginTop: "1.5rem" }}>
-            <Button onClick={handleConfirmAppointment} disabled={isPending}>
+            <Button
+              className="w-full"
+              onClick={handleConfirmAppointment}
+              disabled={isPending}
+            >
               {isPending ? "Confirmando..." : "Confirmar Agendamento"}
             </Button>
           </div>
