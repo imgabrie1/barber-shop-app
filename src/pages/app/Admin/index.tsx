@@ -12,9 +12,6 @@ const AdminPage = () => {
   const [tempType, setTempType] = useState<"day" | "month" | "quarter">(
     "month",
   );
-  const [tempValue, setTempValue] = useState(
-    new Date().toISOString().split("T")[0].slice(0, 7),
-  );
 
   const [filterType, setFilterType] = useState<
     "day" | "month" | "quarter" | undefined
@@ -99,6 +96,16 @@ const AdminPage = () => {
     return formattedValue.charAt(0).toUpperCase() + formattedValue.slice(1);
   }, [filterType, filterValue]);
 
+  const getLocalDateString = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const [tempValue, setTempValue] = useState(getLocalDateString().slice(0, 7));
+
   if (isLoading) return <IsFetchingAndLoading />;
 
   if (error) {
@@ -176,10 +183,10 @@ const AdminPage = () => {
                       `}
                       onClick={() => {
                         setTempType(type);
-                        const now = new Date().toISOString().split("T")[0];
-                        if (type === "day") setTempValue(now);
+                        const localToday = getLocalDateString();
+                        if (type === "day") setTempValue(localToday);
                         else if (type === "month")
-                          setTempValue(now.slice(0, 7));
+                          setTempValue(localToday.slice(0, 7));
                         else
                           setTempValue(
                             `${new Date().getFullYear()}-Q${Math.floor(new Date().getMonth() / 3) + 1}`,
