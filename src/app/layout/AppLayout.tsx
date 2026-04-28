@@ -4,7 +4,6 @@ import { RiMenu4Line } from "@react-icons/all-files/ri/RiMenu4Line";
 import { GoX } from "@react-icons/all-files/go/GoX";
 import Header from "@/components/ui/Header";
 import { useState } from "react";
-import P from "@/components/ui/Span";
 
 export const AppLayout = () => {
   const { logout, user } = useAuth();
@@ -120,12 +119,12 @@ export const AppLayout = () => {
                 </NavLink>
               )}
 
-              <P
+              <p
                 onClick={logout}
-                className="text-sm font-medium cursor-pointer"
+                className="text-md font-medium cursor-pointer"
               >
                 SAIR
-              </P>
+              </p>
             </nav>
           </div>
         </div>

@@ -226,7 +226,7 @@ const SelectAvailabilitiesDatePage = () => {
           <div
             key={time}
             onClick={() => handleSelectTime(time)}
-            className="flex justify-between items-center cursor-pointer border-white/20 border-b md:border md:rounded-lg"
+            className="flex justify-between items-center cursor-pointer pb-4 border-white/20 border-b md:border md:rounded-lg"
             style={{
               paddingBottom: "16px",
               padding: window.innerWidth >= 768 ? "16px" : undefined,

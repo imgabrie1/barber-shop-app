@@ -78,7 +78,6 @@ const AppointmentSummaryPage = () => {
   return (
     <div
     className="px-5 md:px-20"
-    // style={{ paddingLeft: "0.8rem", paddingRight: "0.8rem" }}
     >
       {modalRemoveItem && (
         <ConfirmModal

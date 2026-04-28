@@ -1,0 +1,317 @@
+import { useState, useMemo, useRef, useEffect } from "react";
+import { LuSlidersHorizontal } from "react-icons/lu";
+import { formatCurrency } from "@/utils/masks";
+import Span from "@/components/ui/Span";
+import H2Bold from "@/components/ui/H2Bold";
+import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
+import { useRevenue } from "@/features/Admin/hooks/useRevenue";
+
+interface RevenueDisplayProps {
+  admin: boolean;
+  title: string;
+}
+
+const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [tempType, setTempType] = useState<"day" | "month" | "quarter">(
+    "month",
+  );
+
+  const [filterType, setFilterType] = useState<
+    "day" | "month" | "quarter" | undefined
+  >();
+  const [filterValue, setFilterValue] = useState<string | undefined>();
+
+  const filterWrapperRef = useRef<HTMLDivElement>(null);
+
+  const {
+    data: revenue,
+    isLoading,
+    error,
+  } = useRevenue(admin, {
+    filterType,
+    filterValue,
+  });
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        filterWrapperRef.current &&
+        !filterWrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsFilterOpen(false);
+      }
+    };
+
+    if (isFilterOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isFilterOpen]);
+
+  const handleApplyFilter = () => {
+    setFilterType(tempType);
+    setFilterValue(tempValue);
+    setIsFilterOpen(false);
+  };
+
+  const handleClearFilter = () => {
+    setFilterType(undefined);
+    setFilterValue(undefined);
+    setIsFilterOpen(false);
+  };
+
+  const filterLabel = useMemo(() => {
+    if (!filterType || !filterValue) return "";
+    let formattedValue = filterValue;
+
+    if (filterType === "month") {
+      const [year, month] = filterValue.split("-").map(Number);
+      const date = new Date(year, month - 1, 1);
+
+      formattedValue = new Intl.DateTimeFormat("pt-BR", {
+        month: "long",
+        year: "numeric",
+      }).format(date);
+    }
+
+    if (filterType === "day") {
+      const [year, month, day] = filterValue.split("-");
+      formattedValue = `${day}/${month}/${year}`;
+    }
+
+    if (filterType === "quarter") {
+      const [year, q] = filterValue.split("-Q");
+      formattedValue = `${q}º trimestre de ${year}`;
+    }
+
+    return formattedValue.charAt(0).toUpperCase() + formattedValue.slice(1);
+  }, [filterType, filterValue]);
+
+  const getLocalDateString = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const [tempValue, setTempValue] = useState(getLocalDateString().slice(0, 7));
+
+  if (isLoading) return <IsFetchingAndLoading />;
+
+  if (error) {
+    return (
+      <div style={{ padding: "0 10px" }}>
+        <H2Bold>{title}</H2Bold>
+        <p role="alert" className="text-red-500 mt-4">
+          {error instanceof Error ? error.message : "Erro ao buscar renda"}
+        </p>
+      </div>
+    );
+  }
+
+  const isFiltered = !!filterType && !!filterValue;
+  const isBroken =
+    !revenue || (revenue.totalRevenue === 0 && revenue.filteredRevenue === 0);
+
+  return (
+    <div
+      style={{
+        maxWidth: "1000px",
+        margin: "0 auto",
+        width: "100%",
+      }}
+    >
+      <H2Bold style={{ marginBottom: "30px" }}>{title}</H2Bold>
+
+      <div
+        ref={filterWrapperRef}
+        className="flex flex-col items-end relative"
+        style={{ marginBottom: "24px" }}
+      >
+        <div
+          className="flex flex-col relative"
+          style={{ width: "100%", maxWidth: "200px" }}
+        >
+          <div
+            className="flex p-2 ml-20 items-center justify-between cursor-pointer hover:bg-black/5 rounded-lg transition-colors border border-transparent hover:border-gray-200"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+          >
+            <Span>Filtros</Span>
+            <LuSlidersHorizontal size={20} />
+          </div>
+
+          {isFilterOpen && (
+            <div
+              style={{
+                padding: "20px",
+                marginTop: "10px",
+                minWidth: "280px",
+              }}
+              className="absolute top-full right-0 z-50 bg-[#1e2f62] rounded-xl shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in duration-200"
+            >
+              <div>
+                <span className="text-white text-xs font-bold uppercase tracking-widest">
+                  Filtrar por período
+                </span>
+                <div
+                  style={{ marginTop: "12px" }}
+                  className="flex justify-between gap-2"
+                >
+                  {(["day", "month", "quarter"] as const).map((type) => (
+                    <button
+                      key={type}
+                      style={{ padding: "8px 12px" }}
+                      className={`
+                        flex-1 text-xs rounded-lg font-bold transition-all uppercase tracking-tighter
+                        ${
+                          tempType === type
+                            ? "bg-blue-600 text-white shadow-md scale-105"
+                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                        }
+                        active:scale-95
+                      `}
+                      onClick={() => {
+                        setTempType(type);
+                        const localToday = getLocalDateString();
+                        if (type === "day") setTempValue(localToday);
+                        else if (type === "month")
+                          setTempValue(localToday.slice(0, 7));
+                        else
+                          setTempValue(
+                            `${new Date().getFullYear()}-Q${Math.floor(new Date().getMonth() / 3) + 1}`,
+                          );
+                      }}
+                    >
+                      {type === "day"
+                        ? "Dia"
+                        : type === "month"
+                          ? "Mês"
+                          : "Tri"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ marginTop: "10px" }}>
+                <span className="text-white text-[10px] font-bold uppercase tracking-widest block">
+                  Data de Referência
+                </span>
+                <div style={{ marginTop: "6px" }}>
+                  {tempType === "quarter" ? (
+                    <select
+                      style={{ padding: "10px" }}
+                      className="w-full bg-white border border-gray-200 rounded-lg text-gray-700 font-medium focus:ring-2 focus:ring-blue-500 outline-none"
+                      value={tempValue}
+                      onChange={(e) => setTempValue(e.target.value)}
+                    >
+                      {[1, 2, 3, 4].map((q) => (
+                        <option
+                          key={q}
+                          value={`${new Date().getFullYear()}-Q${q}`}
+                        >
+                          {q}º Tri de {new Date().getFullYear()}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      key={tempType}
+                      style={{ padding: "10px" }}
+                      className="w-full bg-white rounded-lg text-gray-700 font-medium focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                      type={tempType === "day" ? "date" : "month"}
+                      value={tempValue}
+                      onChange={(e) => setTempValue(e.target.value)}
+                      onClick={(e) => e.currentTarget.showPicker?.()}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div style={{ marginTop: "10px" }} className="flex gap-3">
+                <button
+                  style={{ padding: "12px" }}
+                  className="flex-1 bg-red-50/20 text-red-400 rounded-lg font-bold text-xs uppercase hover:bg-red-50/20 transition-colors"
+                  onClick={handleClearFilter}
+                >
+                  Limpar
+                </button>
+                <button
+                  style={{ padding: "12px" }}
+                  className="flex-[2] bg-green-500 text-white rounded-lg font-bold text-xs uppercase hover:bg-green-600 transition-all active:translate-y-0.5"
+                  onClick={handleApplyFilter}
+                >
+                  Aplicar Filtro
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div>
+        {isFiltered ? (
+          <div style={{ marginTop: "30px" }} className="flex flex-col gap-4">
+            <div
+              style={{ padding: "24px" }}
+              className="bg-[var(--blueBox)] rounded-lg shadow-md border-l-4 border-blue-500 flex flex-col items-start transition-shadow hover:shadow-lg"
+            >
+              <span className="text-blue-900 text-sm font-medium uppercase tracking-wider">
+                {filterLabel}
+              </span>
+              <div
+                style={{ marginTop: "8px" }}
+                className="text-3xl font-bold text-gray-800"
+              >
+                {formatCurrency(revenue?.filteredRevenue ?? 0)}
+              </div>
+            </div>
+            <div
+              style={{ padding: "24px" }}
+              className="bg-[var(--revenueBox)] rounded-lg shadow-md border-l-4 border-green-500 flex flex-col items-start transition-shadow hover:shadow-lg"
+            >
+              <span className="text-green-900 text-sm font-medium uppercase tracking-wider">
+                Total Acumulado
+              </span>
+              <div
+                style={{ marginTop: "8px" }}
+                className="text-3xl font-bold text-gray-800"
+              >
+                {formatCurrency(revenue?.totalRevenue ?? 0)}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div style={{ marginTop: "30px" }}>
+            <div
+              style={{ padding: "24px" }}
+              className="bg-[var(--revenueBox)] rounded-lg shadow-md border-l-4 border-green-500 flex flex-col items-start transition-shadow hover:shadow-lg"
+            >
+              <span className="text-green-900 text-sm font-medium uppercase tracking-wider">
+                Total Faturado
+              </span>
+              <div
+                style={{ marginTop: "8px" }}
+                className="text-3xl font-bold text-gray-800"
+              >
+                {formatCurrency(revenue?.totalRevenue ?? 0)}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {isBroken && (
+        <div style={{ marginTop: "20px" }}>
+          <Span>O caixa está vazio. Por enquanto...</Span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default RevenueDisplay;

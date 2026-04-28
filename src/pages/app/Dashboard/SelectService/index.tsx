@@ -50,11 +50,7 @@ const SelectServicePage = () => {
             <div
               key={service.id}
               onClick={handleSelectService}
-              className="flex justify-between items-center cursor-pointer border-white/20 border-b md:border md:rounded-lg"
-              style={{
-                paddingBottom: "19.2px",
-                padding: window.innerWidth >= 768 ? "19.2px" : undefined,
-              }}
+              className="flex pb-4 justify-between items-center cursor-pointer border-white/20 border-b md:border md:rounded-lg"
             >
               <div>
                 <P>{service.name}</P>

@@ -10,15 +10,14 @@ interface UseRevenueParams {
   enabled?: boolean;
 }
 
-export const useRevenue = ({
-  filterType,
-  filterValue,
-  enabled = true,
-}: UseRevenueParams = {}) => {
+export const useRevenue = (
+  admin: boolean,
+  { filterType, filterValue, enabled = true }: UseRevenueParams = {},
+) => {
   return useQuery<adminRevenueInterface>({
     queryKey: ["revenue", filterType, filterValue],
     queryFn: () =>
-      adminRevenueService({
+      adminRevenueService(admin, {
         filterType,
         filterValue,
       }),
