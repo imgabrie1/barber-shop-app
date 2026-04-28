@@ -1,9 +1,9 @@
-import H2Bold from "@/components/ui/H2Bold";
+import RevenueDisplay from "@/components/common/RevenueDisplay";
 
 const BarberPage = () => {
   return (
     <div className="flex flex-col gap-6">
-      <H2Bold>Painel do Barbeiro</H2Bold>
+      <RevenueDisplay admin={false} title="Painel do Barbeiro" />
     </div>
   );
 };

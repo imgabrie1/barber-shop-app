@@ -27,13 +27,15 @@ const AdminUsersPage = () => {
   const { mutateAsync: deleteUserMutation, isPending: isDeletingUser } =
     useDeleteUser();
 
-  const getrole = () => {
-    switch (userDetails?.role) {
+  const getrole = (role: string | undefined) => {
+    switch (role) {
       case "admin":
         return "Admin";
       case "barber":
         return "Barbeiro(a)";
       case "client":
+        return "Cliente";
+      default:
         return "Cliente";
     }
   };
@@ -102,20 +104,10 @@ const AdminUsersPage = () => {
               onClick={() => handleShowDetails(user.id)}
               style={{ padding: "20px" }}
               className={`
-                  border
-                  rounded-xl
-                  flex
-                  justify-between
-                  items-center
-                  hover:border-blue-400
-                  cursor-pointer
-                  transition-all
-                  shadow-sm
-                  ${
-                    selectedUserId === user.id
-                      ? "border-blue-500 ring-1 ring-blue-500"
-                      : "border-gray-200"
-                  }`}
+        border rounded-xl flex justify-between items-center
+        hover:border-blue-400 cursor-pointer transition-all shadow-sm
+        ${selectedUserId === user.id ? "border-blue-500 ring-1 ring-blue-500" : "border-gray-200"}
+    `}
             >
               <div className="flex items-center gap-4">
                 <div className="bg-blue-100 p-2 rounded-full text-blue-600">
@@ -127,7 +119,9 @@ const AdminUsersPage = () => {
                       {user.name}
                     </p>
                     <p>-</p>
-                    <p>{getrole()}</p>
+                    <p className="font-medium ">
+                      {getrole(user.role)}
+                    </p>
                   </div>
                   <p className="text-sm text-gray-400">{user.phoneNumber}</p>
                 </div>
@@ -207,18 +201,9 @@ const AdminUsersPage = () => {
                   Cargo
                 </p>
                 <span
-                  className="
-                inline-block
-                bg-blue-100
-                text-blue-700
-                text-xs
-                rounded-md
-                font-bold
-                uppercase
-                "
-                  style={{ marginTop: "10px", padding: "8px" }}
+                  className=" "
                 >
-                  {getrole()}
+                  {getrole(userDetails?.role)}
                 </span>
               </div>
               <div className="flex flex-col gap-3 mt-4">

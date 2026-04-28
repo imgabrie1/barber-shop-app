@@ -77,6 +77,7 @@ const CreateAndEditServiceForm = ({
             Nome do Serviço
           </label>
           <Input
+            className="bg-gray-700"
             id="name"
             type="text"
             placeholder="Digite o nome do serviço"
@@ -94,6 +95,7 @@ const CreateAndEditServiceForm = ({
             Duração do serviço (em minutos)
           </label>
           <Input
+            className="bg-gray-700"
             id="durationMinutes"
             type="number"
             placeholder="Digite em minutos"
@@ -112,6 +114,7 @@ const CreateAndEditServiceForm = ({
             Preço
           </label>
           <Input
+            className="bg-gray-700"
             id="price"
             type="number"
             step="0.01"
