@@ -107,7 +107,7 @@ const AppointmentsPage = () => {
   }
 
   return (
-    <div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4">
       {modalOpen && (
         <ConfirmModal
           open={modalOpen}
@@ -134,10 +134,11 @@ const AppointmentsPage = () => {
         return (
           <div
             key={item.id}
-            className="m-2"
-            style={{ marginBottom: "0.3125rem" }}
+            className=" mb-4 items-center cursor-pointer border-white/20 border-b md:border md:px-4 md:rounded-lg"
           >
-            <div style={{ padding: "0.625rem" }}>
+            <div
+              className="py-4 "
+            >
               <p>Serviço: {service.name}</p>
               <p>Duração: {service.durationMinutes} min</p>
 
@@ -188,7 +189,7 @@ const AppointmentsPage = () => {
                 )}
 
                 {showDeleteButton && (
-                  <div style={{ marginTop: "0.9375rem" }}>
+                  <div className="mt-4">
                     <Button
                       className="w-full"
                       onClick={() => handleDeleteAppointment(item.id)}

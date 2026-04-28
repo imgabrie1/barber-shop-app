@@ -21,5 +21,3 @@ export const userByIDtoAdminViewSchema = userSchema.extend({
   createdAt: z.string(),
   updatedAt: z.string(),
 })
-
-// export const usersToAdminViewSchema = userByIDtoAdminViewSchema.array()

@@ -9,22 +9,32 @@ import type { AxiosError } from "axios";
 
 type FilterType = "day" | "month" | "quarter";
 
-interface AdminRevenueParams {
+export interface AdminRevenueParams {
   filterType?: FilterType;
   filterValue?: string;
 }
 
 export const adminRevenueService = async (
+  admin: boolean,
   params?: AdminRevenueParams,
 ): Promise<adminRevenueInterface> => {
   try {
-    const response = await api.get<adminRevenueInterface>("/admin/revenue", {
+    if (admin) {
+      const response = await api.get<adminRevenueInterface>("/admin/revenue", {
+        params: {
+          filterType: params?.filterType,
+          filterValue: params?.filterValue,
+        },
+      });
+      return response.data;
+    }
+
+    const response = await api.get<adminRevenueInterface>("user/me/revenue", {
       params: {
         filterType: params?.filterType,
         filterValue: params?.filterValue,
       },
     });
-
     return response.data;
   } catch (err: unknown) {
     const currentError = err as AxiosError;
@@ -122,7 +132,7 @@ export const deleteBarberServiceService = async (id: string) => {
 export const getUsersService = async () => {
   try {
     const response = await api.get<userByIDtoAdminViewInterface[]>("/user");
-    return response.data
+    return response.data;
   } catch (err: unknown) {
     const currentError = err as AxiosError;
     const responseData = currentError.response?.data as
@@ -139,11 +149,10 @@ export const getUsersService = async () => {
   }
 };
 
-
 export const getUserByIDservice = async (id: string) => {
   try {
     const response = await api.get<userByIDtoAdminViewInterface>(`/user/${id}`);
-    return response.data
+    return response.data;
   } catch (err: unknown) {
     const currentError = err as AxiosError;
     const responseData = currentError.response?.data as

@@ -76,7 +76,9 @@ const AppointmentSummaryPage = () => {
   };
 
   return (
-    <div style={{ paddingLeft: "0.8rem", paddingRight: "0.8rem" }}>
+    <div
+    className="px-5 md:px-20"
+    >
       {modalRemoveItem && (
         <ConfirmModal
           open={modalRemoveItem}
@@ -157,7 +159,7 @@ const AppointmentSummaryPage = () => {
 
           <div style={{ marginTop: "1.5rem" }}>
             <Button
-              className="w-full"
+              className=""
               onClick={handleConfirmAppointment}
               disabled={isPending}
             >
