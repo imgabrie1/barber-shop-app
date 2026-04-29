@@ -1,6 +1,8 @@
 import { useAuth } from "@/app/providers/AuthProvider";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import { ErrorMessage } from "@/components/common/ErrorMessage";
 import Button from "@/components/ui/Button";
+import H2Bold from "@/components/ui/H2Bold";
 import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 import { useMutationAppointment } from "@/features/Appointments/hooks/useMutationAppointment";
 import { useMyAppointments } from "@/features/Appointments/hooks/useMyAppointments";
@@ -88,11 +90,7 @@ const AppointmentsPage = () => {
   if (isLoading) return <IsFetchingAndLoading />;
 
   if (error) {
-    return (
-      <p role="alert">
-        {error instanceof Error ? error.message : "Erro ao buscar serviços"}
-      </p>
-    );
+    return <ErrorMessage isMissing="agendamentos" />;
   }
 
   if (appointments.length === 0) {
@@ -101,7 +99,7 @@ const AppointmentsPage = () => {
         style={{ marginTop: "0.9375rem" }}
         className="mt-4 text-center text-gray-500"
       >
-        Nenhum agendamento encontrado.
+        <H2Bold>Nenhum agendamento encontrado.</H2Bold>
       </div>
     );
   }
@@ -136,9 +134,7 @@ const AppointmentsPage = () => {
             key={item.id}
             className=" mb-4 items-center cursor-pointer border-white/20 border-b md:border md:px-4 md:rounded-lg"
           >
-            <div
-              className="py-4 "
-            >
+            <div className="py-4 ">
               <p>Serviço: {service.name}</p>
               <p>Duração: {service.durationMinutes} min</p>
 

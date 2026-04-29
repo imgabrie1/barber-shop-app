@@ -5,6 +5,7 @@ import Span from "@/components/ui/Span";
 import H2Bold from "@/components/ui/H2Bold";
 import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 import { useRevenue } from "@/features/Admin/hooks/useRevenue";
+import { ErrorMessage } from "./ErrorMessage";
 
 interface RevenueDisplayProps {
   admin: boolean;
@@ -104,14 +105,7 @@ const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
   if (isLoading) return <IsFetchingAndLoading />;
 
   if (error) {
-    return (
-      <div style={{ padding: "0 10px" }}>
-        <H2Bold>{title}</H2Bold>
-        <p role="alert" className="text-red-500 mt-4">
-          {error instanceof Error ? error.message : "Erro ao buscar renda"}
-        </p>
-      </div>
-    );
+    return <ErrorMessage isMissing="renda" />;
   }
 
   const isFiltered = !!filterType && !!filterValue;
@@ -119,14 +113,8 @@ const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
     !revenue || (revenue.totalRevenue === 0 && revenue.filteredRevenue === 0);
 
   return (
-    <div
-      style={{
-        maxWidth: "1000px",
-        margin: "0 auto",
-        width: "100%",
-      }}
-    >
-      <H2Bold style={{ marginBottom: "30px" }}>{title}</H2Bold>
+    <div className="max-w-[1000px] mx-auto w-full mt-8">
+      <H2Bold className="mb-5">{title}</H2Bold>
 
       <div
         ref={filterWrapperRef}

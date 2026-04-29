@@ -9,6 +9,7 @@ import Button from "@/components/ui/Button";
 import H2Bold from "@/components/ui/H2Bold";
 import { maskPhone, unmaskPhone } from "@/utils/masks";
 import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -18,7 +19,6 @@ const LoginPage = () => {
   const {
     register,
     handleSubmit,
-    setError,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginDTO>({
@@ -40,8 +40,9 @@ const LoginPage = () => {
       const response = await loginRequest(data);
       login(response.user);
 
-      const from = (location.state as { from?: string } | null)?.from || "/app";
+      toast.success("Bem-vindo de volta!");
 
+      const from = (location.state as { from?: string } | null)?.from || "/app";
       navigate(from, { replace: true });
     } catch (err: unknown) {
       let message = "Falha ao fazer login";
@@ -53,9 +54,9 @@ const LoginPage = () => {
         message = err.message;
       }
 
-      setError("root", {
-        type: "manual",
-        message,
+      toast.error(message, {
+        position: "top-right",
+        autoClose: 5000,
       });
     }
   };
@@ -105,12 +106,6 @@ const LoginPage = () => {
             )}
           </div>
         </div>
-
-        {errors.root && (
-          <p role="alert" className="text-red-600 text-center">
-            {errors.root.message}
-          </p>
-        )}
 
         <div className="flex flex-col gap-3">
           <Button type="submit" loading={isSubmitting}>
