@@ -14,6 +14,7 @@ import Modal from "@/components/common/Modal";
 import Button from "@/components/ui/Button";
 import { FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { ErrorMessage } from "@/components/common/ErrorMessage";
 
 type stagesServices = "init" | "create" | "edit" | "delete";
 
@@ -130,7 +131,7 @@ const AdminServicesPage = () => {
 
       <div style={{ marginBottom: "1.5rem" }}>
         {isLoading && <IsFetchingAndLoading />}
-        {error && <p className="text-red-500">Erro ao carregar serviços</p>}
+        {error && <ErrorMessage isMissing="serviços" />}
 
         {stage === "create" && (
           <CreateAndEditServiceForm

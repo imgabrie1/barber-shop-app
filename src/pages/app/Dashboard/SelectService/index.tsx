@@ -5,6 +5,7 @@ import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { useNavigate } from "react-router-dom";
 import { useAppointment } from "@/contexts/useAppointment";
 import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
+import { ErrorMessage } from "@/components/common/ErrorMessage";
 
 const SelectServicePage = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const SelectServicePage = () => {
       <H2Bold>Serviços</H2Bold>
 
       {isFetchingServices && <IsFetchingAndLoading />}
-      {errorServices && <p role="alert">Erro ao buscar serviços</p>}
+      {errorServices && <ErrorMessage isMissing="serviços" />}
 
       <div
         className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4"
@@ -50,7 +51,7 @@ const SelectServicePage = () => {
             <div
               key={service.id}
               onClick={handleSelectService}
-              className="flex pb-4 justify-between items-center cursor-pointer border-white/20 border-b md:border md:rounded-lg"
+              className="flex p-3 justify-between items-center cursor-pointer border-white/20 border-b md:border md:rounded-lg"
             >
               <div>
                 <P>{service.name}</P>
@@ -58,7 +59,10 @@ const SelectServicePage = () => {
                 <P>R$: {service.price}</P>
               </div>
 
-              <MdNavigateNext className="text-[var(--textPrimary)] md:hidden " size={30} />
+              <MdNavigateNext
+                className="text-[var(--textPrimary)] md:hidden "
+                size={30}
+              />
             </div>
           );
         })}
