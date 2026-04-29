@@ -113,14 +113,8 @@ const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
     !revenue || (revenue.totalRevenue === 0 && revenue.filteredRevenue === 0);
 
   return (
-    <div
-      style={{
-        maxWidth: "1000px",
-        margin: "0 auto",
-        width: "100%",
-      }}
-    >
-      <H2Bold style={{ marginBottom: "30px" }}>{title}</H2Bold>
+    <div className="max-w-[1000px] mx-auto w-full mt-8">
+      <H2Bold className="mb-5">{title}</H2Bold>
 
       <div
         ref={filterWrapperRef}
