@@ -10,6 +10,7 @@ export const createServiceSchema = z.object({
   name: z.string(),
   durationMinutes: z.number().positive(),
   price: z.number().positive(),
+  defaultBarberCommissionPercentage: z.number()
 });
 
 export const createServiceOutputSchema = createServiceSchema.extend({
