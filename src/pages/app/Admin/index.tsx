@@ -32,8 +32,10 @@ const AdminPage = () => {
       >
         <div
           onClick={handleNavigateUsers}
-          style={{ padding: "24px" }}
           className="
+                  flex
+                  items-center
+                  justify-center
                   border
                   border-[#2c448f]
                   rounded-2xl
@@ -50,8 +52,11 @@ const AdminPage = () => {
 
         <div
           onClick={handleNavigateServices}
-          style={{ padding: "24px" }}
           className="
+                  p-6
+                  flex
+                  items-center
+                  justify-center
                   border
                   border-[#8f882c]
                   rounded-2xl

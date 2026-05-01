@@ -1,6 +1,6 @@
 import H2Bold from "@/components/ui/H2Bold";
 import { useState } from "react";
-import { LuArrowLeft, LuUser } from "react-icons/lu";
+import { LuArrowLeft, LuUser, LuList, LuUserPlus } from "react-icons/lu";
 import { useQueryClient } from "@tanstack/react-query";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import Modal from "@/components/common/Modal";
@@ -11,8 +11,15 @@ import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 import { useUsersToAdmin } from "@/features/Admin/hooks/useGetUsers";
 import { useUserToAdmin } from "@/features/Admin/hooks/useGetUserByID";
 import { useDeleteUser } from "@/features/Admin/hooks/useDeleteUser";
+import { ErrorMessage } from "@/components/common/ErrorMessage";
+import CreateUserForm from "@/components/common/CreateUserForm";
+import { register as registerBarber } from "@/services/auth.service";
+import type { RegisterDTO } from "@/schemas/register.schemas";
+
+type stagesUsers = "init" | "list" | "create" | "delete";
 
 const AdminUsersPage = () => {
+  const [stage, setStage] = useState<stagesUsers>("init");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [successConfig, setSuccessConfig] = useState({
@@ -40,14 +47,30 @@ const AdminUsersPage = () => {
     }
   };
 
-  const { data: users, isLoading, error } = useUsersToAdmin(true);
+  const { data: users, isLoading, error } = useUsersToAdmin(stage !== "init");
 
   const { data: userDetails, isFetching: isFetchingUser } = useUserToAdmin(
     selectedUserId || "",
   );
 
   const getStageTitle = () => {
-    return "Lista de Usuários";
+    switch (stage) {
+      case "list":
+        return "Lista de Usuários";
+      case "create":
+        return "Criar Barbeiro";
+      default:
+        return "Painel de Usuários";
+    }
+  };
+
+  const handleBack = () => {
+    if (stage === "init") {
+      navigate(-1);
+    } else {
+      setStage("init");
+      setSelectedUserId(null);
+    }
   };
 
   const handleShowDetails = (id: string) => {
@@ -55,13 +78,15 @@ const AdminUsersPage = () => {
     setIsDetailsModalOpen(true);
   };
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   const onSuccessAction = () => {
     queryClient.invalidateQueries({ queryKey: ["users"] });
     setSelectedUserId(null);
+    setStage("init");
+  };
+
+  const handleCreateBarber = async (data: RegisterDTO & { role?: string }) => {
+    await registerBarber(data);
+    setSuccessConfig({ open: true, message: "Barbeiro criado com sucesso!" });
   };
 
   const handleDelete = async () => {
@@ -93,46 +118,112 @@ const AdminUsersPage = () => {
         <H2Bold>{getStageTitle()}</H2Bold>
       </div>
 
-      <div style={{ marginTop: "30px" }} className="mb-6">
-        {isLoading && <IsFetchingAndLoading />}
-        {error && <p className="text-red-500">Erro ao carregar usuários.</p>}
-
-        <div className="grid grid-cols-1 gap-5">
-          {users?.map((user) => (
-            <div
-              key={user.id}
-              onClick={() => handleShowDetails(user.id)}
-              style={{ padding: "20px" }}
-              className={`
-        border rounded-xl flex justify-between items-center
-        hover:border-blue-400 cursor-pointer transition-all shadow-sm
-        ${selectedUserId === user.id ? "border-blue-500 ring-1 ring-blue-500" : "border-gray-200"}
-    `}
+      {stage === "init" && (
+        <div
+          className="gap-6"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(15.625rem, 1fr))",
+          }}
+        >
+          <div
+            onClick={() => setStage("list")}
+            style={{ padding: "1.5rem" }}
+            className="border border-[#2c448f] rounded-2xl shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer group"
+          >
+            <LuList
+              size={32}
+              className="text-blue-500 group-hover:scale-110 transition-transform"
+              style={{ marginBottom: "0.75rem" }}
+            />
+            <H2Bold>Listar Usuários</H2Bold>
+            <p
+              className="text-sm text-gray-500"
+              style={{ marginTop: "0.5rem" }}
             >
-              <div className="flex items-center gap-4">
-                <div className="bg-blue-100 p-2 rounded-full text-blue-600">
-                  <LuUser size={20} />
-                </div>
-                <div>
-                  <div className="flex gap-3">
-                    <p className="font-bold text-[var(--textPrimary)]">
-                      {user.name}
-                    </p>
-                    <p>-</p>
-                    <p className="font-medium ">
-                      {getrole(user.role)}
-                    </p>
+              Verifique todos os cadastros
+            </p>
+          </div>
+
+          <div
+            onClick={() => setStage("create")}
+            style={{ padding: "1.5rem" }}
+            className="border border-[#2c8f44] rounded-2xl shadow-sm hover:shadow-md hover:border-green-400 transition-all cursor-pointer group"
+          >
+            <LuUserPlus
+              size={32}
+              className="text-green-500 group-hover:scale-110 transition-transform"
+              style={{ marginBottom: "0.75rem" }}
+            />
+            <H2Bold>Adicionar Barbeiro</H2Bold>
+            <p
+              className="text-sm text-gray-500"
+              style={{ marginTop: "0.5rem" }}
+            >
+              Cadastre novos profissionais
+            </p>
+          </div>
+        </div>
+      )}
+
+      {stage === "create" && (
+        <div style={{ maxWidth: "500px", margin: "0 auto" }}>
+          <CreateUserForm onSuccess={handleCreateBarber} defaultRole="barber" />
+        </div>
+      )}
+
+      {stage === "list" && (
+        <div style={{ marginTop: "30px" }} className="mb-6">
+          {isLoading && <IsFetchingAndLoading />}
+          {error && <ErrorMessage isMissing="usuários" />}
+
+          <div className="grid grid-cols-1 gap-5">
+            {users?.map((user) => (
+              <div
+                key={user.id}
+                onClick={() =>
+                  stage === "list" ? handleShowDetails(user.id) : null
+                }
+                style={{ padding: "20px" }}
+                className={`
+                  border rounded-xl flex justify-between items-center
+                  transition-all shadow-sm
+                  ${
+                    stage === "list"
+                      ? "hover:border-blue-400 cursor-pointer border-gray-200"
+                      : "border-gray-200"
+                  }
+                `}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`p-2 rounded-full ${
+                      stage === "list"
+                        ? "bg-blue-100 text-blue-600"
+                        : "bg-red-100 text-red-600"
+                    }`}
+                  >
+                    <LuUser size={20} />
                   </div>
-                  <p className="text-sm text-gray-400">{user.phoneNumber}</p>
+                  <div>
+                    <div className="flex gap-3">
+                      <p className="font-bold text-[var(--textPrimary)]">
+                        {user.name}
+                      </p>
+                      <p>-</p>
+                      <p className="font-medium">{getrole(user.role)}</p>
+                    </div>
+                    <p className="text-sm text-gray-400">{user.phoneNumber}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-          {users?.length === 0 && !isLoading && (
-            <p>Nenhum usuário encontrado.</p>
-          )}
+            ))}
+            {users?.length === 0 && !isLoading && (
+              <p>Nenhum usuário encontrado.</p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       <Modal
         open={successConfig.open}
@@ -200,11 +291,7 @@ const AdminUsersPage = () => {
                 <p className="text-xs text-gray-500 uppercase font-bold">
                   Cargo
                 </p>
-                <span
-                  className=" "
-                >
-                  {getrole(userDetails?.role)}
-                </span>
+                <span className=" ">{getrole(userDetails?.role)}</span>
               </div>
               <div className="flex flex-col gap-3 mt-4">
                 <Button
