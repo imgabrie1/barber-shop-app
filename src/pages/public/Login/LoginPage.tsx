@@ -62,68 +62,68 @@ const LoginPage = () => {
   };
 
   return (
-    <section className="relative -top-20 xl:-top-8">
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col justify-center gap-4 text-[var(--textPrimary)] w-[95vw] md:w-[90vw] lg:w-[60vh] min-h-[25vh]">
-          <div className="flex justify-center">
-            <H2Bold>ENTRAR</H2Bold>
-          </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="phoneNumber" className="2xl:text-[2vh]">
-              Telefone
-            </label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              autoComplete="tel"
-              placeholder="(00) 00000-0000"
-              {...register("phoneNumber", {
-                onChange: handlePhoneChange,
-              })}
-            />
-
-            {errors.phoneNumber && (
-              <p role="alert" className="text-xs text-red-600">
-                {errors.phoneNumber.message}
-              </p>
-            )}
-          </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="2xl:text-[2vh]">
-              Senha
-            </label>
-            <Input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              placeholder="Digite sua senha"
-              {...register("password")}
-            />
-            {errors.password && (
-              <p role="alert" className="text-xs text-red-600">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
+    <section className="flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-[400px]">
+        <div className="mb-6 flex justify-center">
+          <H2Bold>ENTRAR</H2Bold>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <Button type="submit" loading={isSubmitting}>
+        <form
+          className="bg-[var(--block)] p-6 md:p-8 border border-gray-200 rounded-2xl shadow-sm flex flex-col gap-6"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-gray-600">Telefone</label>
+              <Input
+                id="phoneNumber"
+                type="tel"
+                autoComplete="tel"
+                placeholder="(00) 00000-0000"
+                {...register("phoneNumber", {
+                  onChange: handlePhoneChange,
+                })}
+              />
+
+              {errors.phoneNumber && (
+                <p role="alert" className="text-xs text-red-600">
+                  {errors.phoneNumber.message}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-gray-600">Senha</label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                placeholder="Digite sua senha"
+                {...register("password")}
+              />
+              {errors.password && (
+                <p role="alert" className="text-xs text-red-600">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <Button type="submit" className="w-full" loading={isSubmitting}>
             Entrar
           </Button>
+        </form>
 
-          <div className="flex items-center justify-center gap-2 text-sm text-[var(--textPrimary)]">
-            <span>Não tem uma conta?</span>
-            <button
-              type="button"
-              onClick={() => navigate("/register")}
-              className="font-bold underline cursor-pointer"
-            >
-              Crie aqui!
-            </button>
-          </div>
+        <div className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-600">
+          <span>Não tem uma conta?</span>
+          <button
+            type="button"
+            onClick={() => navigate("/register")}
+            className="font-bold underline cursor-pointer hover:text-gray-500 text-gray-300"
+          >
+            Crie aqui!
+          </button>
         </div>
-      </form>
+      </div>
     </section>
   );
 };

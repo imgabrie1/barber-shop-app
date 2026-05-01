@@ -67,10 +67,7 @@ const CreateAndEditServiceForm = ({
   };
 
   return (
-    <section
-      style={{ padding: "20px" }}
-      className="bg-[var(--block)] border rounded-md"
-    >
+    <section className="bg-[var(--block)] p-5 border rounded-md">
       <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-2">
           <label htmlFor="name" className="2xl:text-[2vh]">
@@ -80,7 +77,7 @@ const CreateAndEditServiceForm = ({
             className="bg-gray-700"
             id="name"
             type="text"
-            placeholder="Digite o nome do serviço"
+            placeholder="Ex: Corte Máquina"
             {...register("name")}
           />
           {errors.name && (
@@ -98,7 +95,7 @@ const CreateAndEditServiceForm = ({
             className="bg-gray-700"
             id="durationMinutes"
             type="number"
-            placeholder="Digite em minutos"
+            placeholder="Ex: 30"
             {...register("durationMinutes", { valueAsNumber: true })}
           />
           {errors.durationMinutes && (
@@ -118,12 +115,30 @@ const CreateAndEditServiceForm = ({
             id="price"
             type="number"
             step="0.01"
-            placeholder="Ex: 10.50"
+            placeholder="Ex: 30.50"
             {...register("price", { valueAsNumber: true })}
           />
           {errors.price && (
             <p role="alert" className="text-xs text-red-600">
               {errors.price.message || "Preço precisa ser um número positivo"}
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor="defaultBarberCommissionPercentage" className="2xl:text-[2vh]">
+            Porcentagem Padrão de Comissão
+          </label>
+          <Input
+            className="bg-gray-700"
+            id="defaultBarberCommissionPercentage"
+            type="text"
+            placeholder="Ex: 30"
+            {...register("defaultBarberCommissionPercentage", { valueAsNumber: true })}
+          />
+          {errors.defaultBarberCommissionPercentage && (
+            <p role="alert" className="text-xs text-red-600">
+              {errors.defaultBarberCommissionPercentage.message || "Nome obrigatório"}
             </p>
           )}
         </div>
