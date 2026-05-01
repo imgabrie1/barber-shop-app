@@ -213,11 +213,11 @@ const AdminServicesPage = () => {
           <div
             onClick={() => setStage("create")}
             style={{ padding: "1.5rem" }}
-            className="border border-[#2c448f] rounded-2xl shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer group"
+            className="border border-[#2c8f44] rounded-2xl shadow-sm hover:shadow-md hover:border-green-400 transition-all cursor-pointer group"
           >
             <BsPlusCircleFill
               size={32}
-              className="text-blue-500 group-hover:scale-110 transition-transform"
+              className="text-green-500 group-hover:scale-110 transition-transform"
               style={{ marginBottom: "0.75rem" }}
             />
             <H2Bold>Criar Serviço</H2Bold>
