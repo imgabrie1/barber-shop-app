@@ -4,9 +4,9 @@ import type { User } from "@/interfaces/user.interface";
 import api from "@/services/api";
 import type { AxiosError } from "axios";
 
-export const getServices = async () => {
+export const getServices = async (shopId: string) => {
   try {
-    const response = await api.get<BarberService[]>("/service");
+    const response = await api.get<BarberService[]>(`/service/perUnit/${shopId}`);
     return response.data;
   } catch (err: unknown) {
     const currentError = err as AxiosError;
@@ -16,14 +16,14 @@ export const getServices = async () => {
     const msg =
       (currentError.response?.data as string | undefined) ||
       currentError.message ||
-      "Erro ao carregar usuarios";
+      "Erro ao carregar serviços";
     throw new Error(String(msg));
   }
 };
 
-export const getBabrbers = async () => {
+export const getBabrbers = async (shopId: string) => {
   try {
-    const response = await api.get<User[]>("/user/barber");
+    const response = await api.get<User[]>(`/user/barber/${shopId}`);
     return response.data;
   } catch (err: unknown) {
     const currentError = err as AxiosError;

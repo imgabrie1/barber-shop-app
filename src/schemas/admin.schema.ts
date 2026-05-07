@@ -24,6 +24,12 @@ export const returnShopUnit = createShopSchema.extend({
   id: z.string(),
 });
 
+export const returnShopsInServices = returnShopUnit.omit({
+  address: true,
+  businessStartHour: true,
+  businessEndHour: true,
+});
+
 export const returnMultipleShopUnits = returnShopUnit.array();
 
 export const createServiceOutputSchema = createServiceSchema.extend({

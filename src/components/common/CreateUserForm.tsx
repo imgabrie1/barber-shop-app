@@ -5,6 +5,7 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { maskPhone, unmaskPhone } from "@/utils/masks";
 import { useState } from "react";
+import { useShopUnits } from "@/features/barberServices/hooks/useShopUnits";
 
 interface CreateUserFormProps {
   onSuccess: (data: RegisterDTO) => Promise<void>;
@@ -13,6 +14,7 @@ interface CreateUserFormProps {
 
 const CreateUserForm = ({ onSuccess, defaultRole }: CreateUserFormProps) => {
   const [stage, setStage] = useState<1 | 2>(1);
+  const { data: shops } = useShopUnits(defaultRole === "barber");
 
   const {
     register,
@@ -40,7 +42,13 @@ const CreateUserForm = ({ onSuccess, defaultRole }: CreateUserFormProps) => {
     const cleanedPhone = unmaskPhone(currentPhone || "");
     setValue("phoneNumber", cleanedPhone);
 
-    const isValid = await trigger(["name", "phoneNumber"]);
+    const fieldsToValidate: (keyof RegisterDTO)[] = ["name", "phoneNumber"];
+    
+    if (defaultRole === "barber") {
+      fieldsToValidate.push("shopId");
+    }
+
+    const isValid = await trigger(fieldsToValidate);
     if (isValid) {
       setStage(2);
     }
@@ -48,6 +56,10 @@ const CreateUserForm = ({ onSuccess, defaultRole }: CreateUserFormProps) => {
 
   const onSubmit = async (data: RegisterDTO) => {
     try {
+      if (defaultRole === "barber" && !data.shopId) {
+        setError("shopId", { type: "manual", message: "Selecione uma unidade" });
+        return;
+      }
       const payload = defaultRole ? { ...data, role: defaultRole } : data;
       await onSuccess(payload);
     } catch (err: unknown) {
@@ -81,6 +93,24 @@ const CreateUserForm = ({ onSuccess, defaultRole }: CreateUserFormProps) => {
                 />
                 {errors.phoneNumber && <p className="text-xs text-red-600">{errors.phoneNumber.message}</p>}
               </div>
+
+              {defaultRole === "barber" && (
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold text-gray-600">Unidade</label>
+                  <select
+                    {...register("shopId")}
+                    className="rounded-md bg-[var(--inputColor)] h-[6vh] 2xl:h-[5vh] lg:h-[7vh] border border-[var(--inputColor)] px-3 text-[var(--textPrimary)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Selecione uma unidade</option>
+                    {shops?.map((shop) => (
+                      <option key={shop.id} value={shop.id}>
+                        {shop.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.shopId && <p className="text-xs text-red-600">{errors.shopId.message}</p>}
+                </div>
+              )}
 
               <Button type="button" className="w-full mt-2" onClick={handleNext}>Avançar</Button>
             </>
