@@ -41,6 +41,7 @@ const AppointmentSummaryPage = () => {
           startTime: item.dateTime.toISOString(),
           barberId: item.barberId,
           serviceIds: [item.serviceId],
+          shopId: item.shopId,
         });
       }
 
@@ -126,6 +127,9 @@ const AppointmentSummaryPage = () => {
               "
             >
               <div className="flex flex-col">
+                <P>
+                  <span className="font-bold">Unidade:</span> {item.shopName}
+                </P>
                 <P>
                   <span className="font-bold">Serviço:</span> {item.serviceName}
                 </P>

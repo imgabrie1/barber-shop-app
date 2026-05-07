@@ -1,8 +1,9 @@
 import H2Bold from "@/components/ui/H2Bold";
 import { useState } from "react";
 import { BsPlusCircleFill } from "react-icons/bs";
-import { LuPencil, LuTrash2, LuArrowLeft } from "react-icons/lu";
+import { LuPencil, LuTrash2, LuArrowLeft, LuStore } from "react-icons/lu";
 import { useServices } from "@/features/barberServices/hooks/useBarbersServices";
+import { useShopUnits } from "@/features/barberServices/hooks/useShopUnits";
 import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 import { formatCurrency } from "@/utils/masks";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,10 +17,17 @@ import { FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ErrorMessage } from "@/components/common/ErrorMessage";
 
-type stagesServices = "init" | "createService" | "edit" | "delete";
+type stagesServices =
+  | "init"
+  | "selectShop"
+  | "createService"
+  | "edit"
+  | "delete";
 
 const AdminServicesPage = () => {
   const [stage, setStage] = useState<stagesServices>("init");
+  const [targetAction, setTargetAction] = useState<stagesServices | null>(null);
+  const [selectedShopId, setSelectedShopId] = useState<string>("");
   const [selectedService, setSelectedService] = useState<BarberService | null>(
     null,
   );
@@ -31,15 +39,26 @@ const AdminServicesPage = () => {
     message: "",
   });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { data: services, isLoading, error } = useServices(stage !== "init");
-  const queryClient = useQueryClient();
+  const { data: shops, isLoading: isLoadingShops } = useShopUnits(
+    stage === "selectShop",
+  );
+  const {
+    data: services,
+    isLoading,
+    error,
+  } = useServices(
+    selectedShopId,
+    !!selectedShopId && stage !== "init" && stage !== "selectShop",
+  );
 
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const getStageTitle = () => {
+    if (stage === "selectShop") return "Selecione a Unidade";
+
     switch (stage) {
       case "createService":
         return "Novo Serviço";
@@ -57,19 +76,22 @@ const AdminServicesPage = () => {
   const handleBack = () => {
     if (stage === "init") {
       navigate(-1);
-    }
-    if (selectedService && stage === "edit") {
+    } else if (stage === "selectShop") {
+      setStage("init");
+      setTargetAction(null);
+    } else if (selectedService && stage === "edit") {
       setSelectedService(null);
     } else {
-      setStage("init");
+      setStage("selectShop");
       setSelectedService(null);
     }
   };
 
   const onSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ["service"] });
+    queryClient.invalidateQueries({ queryKey: ["service", selectedShopId] });
     setStage("init");
     setSelectedService(null);
+    setSelectedShopId("");
   };
 
   const handleDelete = async () => {
@@ -84,7 +106,7 @@ const AdminServicesPage = () => {
         message: `Serviço "${selectedService.name}" excluído com sucesso!`,
       });
 
-      queryClient.invalidateQueries({ queryKey: ["service"] });
+      queryClient.invalidateQueries({ queryKey: ["service", selectedShopId] });
     } catch (err) {
       console.log(err);
       alert("Erro ao excluir");
@@ -101,14 +123,20 @@ const AdminServicesPage = () => {
     onSuccess();
   };
 
+  const startAction = (action: stagesServices) => {
+    setTargetAction(action);
+    setStage("selectShop");
+  };
+
+  const handleSelectShop = (id: string) => {
+    setSelectedShopId(id);
+    if (targetAction) {
+      setStage(targetAction);
+    }
+  };
+
   return (
-    <div
-      style={{
-        maxWidth: "62.5rem",
-        margin: "0 auto",
-        width: "100%",
-      }}
-    >
+    <div style={{ maxWidth: "62.5rem", margin: "0 auto", width: "100%" }}>
       <div
         style={{
           marginBottom: "1.875rem",
@@ -124,13 +152,33 @@ const AdminServicesPage = () => {
         >
           <LuArrowLeft size={24} />
         </button>
-
         <H2Bold>{getStageTitle()}</H2Bold>
       </div>
 
       <div style={{ marginBottom: "1.5rem" }}>
-        {isLoading && <IsFetchingAndLoading />}
+        {(isLoading || isLoadingShops) && <IsFetchingAndLoading />}
         {error && <ErrorMessage isMissing="serviços" />}
+
+        {stage === "selectShop" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {shops?.map((shop) => (
+              <div
+                key={shop.id}
+                onClick={() => handleSelectShop(shop.id)}
+                className="border border-gray-200 p-6 rounded-2xl shadow-sm hover:border-blue-400 hover:shadow-md transition-all cursor-pointer flex flex-col items-center text-center gap-3 bg-[var(--block)] group"
+              >
+                <div className="p-4 bg-blue-50 rounded-full text-blue-500 group-hover:scale-110 transition-transform">
+                  <LuStore size={32} />
+                </div>
+                <H2Bold>{shop.name}</H2Bold>
+                <p className="text-sm text-gray-500">{shop.address}</p>
+              </div>
+            ))}
+            {shops?.length === 0 && !isLoadingShops && (
+              <p>Nenhuma unidade encontrada.</p>
+            )}
+          </div>
+        )}
 
         {stage === "createService" && (
           <CreateAndEditServiceForm
@@ -159,7 +207,9 @@ const AdminServicesPage = () => {
                     </p>
                   </div>
                 ))}
-                {services?.length === 0 && <p>Nenhum serviço cadastrado.</p>}
+                {services?.length === 0 && !isLoading && (
+                  <p>Nenhum serviço cadastrado nesta unidade.</p>
+                )}
               </div>
             ) : (
               <CreateAndEditServiceForm
@@ -196,7 +246,9 @@ const AdminServicesPage = () => {
                 <LuTrash2 className="text-red-500" size={20} />
               </div>
             ))}
-            {services?.length === 0 && <p>Nenhum serviço cadastrado.</p>}
+            {services?.length === 0 && !isLoading && (
+              <p>Nenhum serviço cadastrado nesta unidade.</p>
+            )}
           </div>
         )}
       </div>
@@ -210,7 +262,7 @@ const AdminServicesPage = () => {
           }}
         >
           <div
-            onClick={() => setStage("createService")}
+            onClick={() => startAction("createService")}
             style={{ padding: "1.5rem" }}
             className="border border-[#2c8f44] rounded-2xl shadow-sm hover:shadow-md hover:border-green-400 transition-all cursor-pointer group"
           >
@@ -229,7 +281,7 @@ const AdminServicesPage = () => {
           </div>
 
           <div
-            onClick={() => setStage("edit")}
+            onClick={() => startAction("edit")}
             style={{ padding: "1.5rem" }}
             className="border border-[#8f882c] rounded-2xl shadow-sm hover:shadow-md hover:border-amber-400 transition-all cursor-pointer group"
           >
@@ -248,7 +300,7 @@ const AdminServicesPage = () => {
           </div>
 
           <div
-            onClick={() => setStage("delete")}
+            onClick={() => startAction("delete")}
             style={{ padding: "1.5rem" }}
             className="border border-[#8f2c2c] rounded-2xl shadow-sm hover:shadow-md hover:border-red-400 transition-all cursor-pointer group"
           >
@@ -270,9 +322,7 @@ const AdminServicesPage = () => {
 
       <Modal
         open={successConfig.open}
-        onClose={() => {
-          setSuccessConfig({ ...successConfig, open: false });
-        }}
+        onClose={() => setSuccessConfig({ ...successConfig, open: false })}
       >
         <div className="flex flex-col items-center text-center gap-4">
           <div
@@ -284,9 +334,7 @@ const AdminServicesPage = () => {
           <H2Bold>Sucesso!</H2Bold>
           <p className="text-gray-400">{successConfig.message}</p>
           <Button
-            onClick={() => {
-              setSuccessConfig({ ...successConfig, open: false });
-            }}
+            onClick={() => setSuccessConfig({ ...successConfig, open: false })}
             className="w-full bg-green-600 hover:bg-green-700 transition-all"
           >
             Continuar
