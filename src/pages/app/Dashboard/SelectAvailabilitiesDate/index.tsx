@@ -17,6 +17,8 @@ const SelectAvailabilitiesDatePage = () => {
     currentServiceId,
     currentServiceName,
     currentServiceDuration,
+    currentShopId,
+    currentShopName,
     currentBarberId,
     currentBarberName,
     addAppointmentItem,
@@ -27,7 +29,9 @@ const SelectAvailabilitiesDatePage = () => {
     !!currentBarberId &&
     !!currentServiceName &&
     !!currentBarberName &&
-    !!currentServiceDuration;
+    !!currentServiceDuration &&
+    !!currentShopId &&
+    !!currentShopName;
 
   useEffect(() => {
     if (!isReady) {
@@ -143,6 +147,8 @@ const SelectAvailabilitiesDatePage = () => {
       serviceName: currentServiceName!,
       barberId: currentBarberId!,
       barberName: currentBarberName!,
+      shopId: currentShopId!,
+      shopName: currentShopName!,
       dateTime: selectedDateTime,
       durationMinutes: currentServiceDuration!,
     };

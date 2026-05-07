@@ -11,20 +11,24 @@ import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 const SelectBarberPage = () => {
   const navigate = useNavigate();
 
-  const { currentServiceId, setCurrentBarberId, setCurrentBarberName } =
-    useAppointment();
+  const {
+    currentServiceId,
+    currentShopId,
+    setCurrentBarberId,
+    setCurrentBarberName,
+  } = useAppointment();
 
   const {
     data: barbers,
     isFetching: isFetchingBarbers,
     error: errorBarbers,
-  } = useBarbers();
+  } = useBarbers(currentShopId ?? "");
 
   useEffect(() => {
-    if (!currentServiceId) {
+    if (!currentServiceId || !currentShopId) {
       navigate("/app");
     }
-  }, [currentServiceId, navigate]);
+  }, [currentServiceId, currentShopId, navigate]);
 
   if (!currentServiceId) return null;
 

@@ -16,6 +16,8 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
   const [currentServiceDuration, setCurrentServiceDuration] = useState<
     number | null
   >(null);
+  const [currentShopId, setCurrentShopId] = useState<string | null>(null);
+  const [currentShopName, setCurrentShopName] = useState<string | null>(null);
   const [currentBarberId, setCurrentBarberId] = useState<string | null>(null);
   const [currentBarberName, setCurrentBarberName] = useState<string | null>(
     null,
@@ -98,6 +100,10 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
         setCurrentServiceName,
         currentServiceDuration,
         setCurrentServiceDuration,
+        currentShopId,
+        setCurrentShopId,
+        currentShopName,
+        setCurrentShopName,
         currentBarberId,
         setCurrentBarberId,
         currentBarberName,
