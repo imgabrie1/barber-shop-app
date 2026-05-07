@@ -11,7 +11,7 @@ import Button from "../ui/Button";
 import type { BarberService } from "@/interfaces/barber.interface";
 import { useEffect } from "react";
 
-type stagesServices = "create" | "edit";
+type stagesServices = "createService" | "edit";
 
 interface CreateAndEditServiceFormProps {
   typeStage: stagesServices;
@@ -44,7 +44,7 @@ const CreateAndEditServiceForm = ({
 
   const onSubmit = async (data: createServiceType) => {
     try {
-      if (typeStage === "create") {
+      if (typeStage === "createService") {
         await createBarberServiceService(data);
       } else if (typeStage === "edit" && initialData?.id) {
         await updateBarberServiceService(initialData.id, data);
@@ -57,7 +57,7 @@ const CreateAndEditServiceForm = ({
       const message =
         err instanceof Error
           ? err.message
-          : `Falha ao ${typeStage === "create" ? "criar" : "editar"} serviço`;
+          : `Falha ao ${typeStage === "createService" ? "criar" : "editar"} serviço`;
 
       setError("root", {
         type: "manual",
@@ -126,7 +126,10 @@ const CreateAndEditServiceForm = ({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label htmlFor="defaultBarberCommissionPercentage" className="2xl:text-[2vh]">
+          <label
+            htmlFor="defaultBarberCommissionPercentage"
+            className="2xl:text-[2vh]"
+          >
             Porcentagem Padrão de Comissão
           </label>
           <Input
@@ -134,11 +137,14 @@ const CreateAndEditServiceForm = ({
             id="defaultBarberCommissionPercentage"
             type="text"
             placeholder="Ex: 30"
-            {...register("defaultBarberCommissionPercentage", { valueAsNumber: true })}
+            {...register("defaultBarberCommissionPercentage", {
+              valueAsNumber: true,
+            })}
           />
           {errors.defaultBarberCommissionPercentage && (
             <p role="alert" className="text-xs text-red-600">
-              {errors.defaultBarberCommissionPercentage.message || "Nome obrigatório"}
+              {errors.defaultBarberCommissionPercentage.message ||
+                "Nome obrigatório"}
             </p>
           )}
         </div>
@@ -150,7 +156,7 @@ const CreateAndEditServiceForm = ({
         )}
 
         <Button type="submit" loading={isSubmitting} className="w-full">
-          {typeStage === "create" ? "Criar" : "Salvar Alterações"}
+          {typeStage === "createService" ? "Criar" : "Salvar Alterações"}
         </Button>
       </form>
     </section>
