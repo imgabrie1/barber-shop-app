@@ -16,7 +16,7 @@ import { FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ErrorMessage } from "@/components/common/ErrorMessage";
 
-type stagesServices = "init" | "create" | "edit" | "delete";
+type stagesServices = "init" | "createService" | "edit" | "delete";
 
 const AdminServicesPage = () => {
   const [stage, setStage] = useState<stagesServices>("init");
@@ -32,7 +32,6 @@ const AdminServicesPage = () => {
   });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const { data: services, isLoading, error } = useServices(stage !== "init");
@@ -42,7 +41,7 @@ const AdminServicesPage = () => {
 
   const getStageTitle = () => {
     switch (stage) {
-      case "create":
+      case "createService":
         return "Novo Serviço";
       case "edit":
         return selectedService
@@ -99,7 +98,7 @@ const AdminServicesPage = () => {
       open: true,
       message: msg,
     });
-    queryClient.invalidateQueries({ queryKey: ["service"] });
+    onSuccess();
   };
 
   return (
@@ -133,9 +132,9 @@ const AdminServicesPage = () => {
         {isLoading && <IsFetchingAndLoading />}
         {error && <ErrorMessage isMissing="serviços" />}
 
-        {stage === "create" && (
+        {stage === "createService" && (
           <CreateAndEditServiceForm
-            typeStage="create"
+            typeStage="createService"
             onSuccess={() => handleFormSuccess("Serviço criado com sucesso!")}
           />
         )}
@@ -211,7 +210,7 @@ const AdminServicesPage = () => {
           }}
         >
           <div
-            onClick={() => setStage("create")}
+            onClick={() => setStage("createService")}
             style={{ padding: "1.5rem" }}
             className="border border-[#2c8f44] rounded-2xl shadow-sm hover:shadow-md hover:border-green-400 transition-all cursor-pointer group"
           >
@@ -273,7 +272,6 @@ const AdminServicesPage = () => {
         open={successConfig.open}
         onClose={() => {
           setSuccessConfig({ ...successConfig, open: false });
-          onSuccess();
         }}
       >
         <div className="flex flex-col items-center text-center gap-4">
@@ -288,7 +286,6 @@ const AdminServicesPage = () => {
           <Button
             onClick={() => {
               setSuccessConfig({ ...successConfig, open: false });
-              onSuccess();
             }}
             className="w-full bg-green-600 hover:bg-green-700 transition-all"
           >

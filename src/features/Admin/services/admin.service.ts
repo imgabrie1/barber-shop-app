@@ -2,6 +2,7 @@ import type {
   adminRevenueInterface,
   createServiceOutput,
   createServiceType,
+  createShopType,
   userByIDtoAdminViewInterface,
 } from "@/interfaces/admin.interface";
 import api from "@/services/api";
@@ -109,6 +110,49 @@ export const updateBarberServiceService = async (
   }
 };
 
+export const createShopService = async (data: createShopType) => {
+  try {
+    const response = await api.post("/admin/shops", data);
+    return response.data;
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro ao criar unidade";
+    throw new Error(String(msg));
+  }
+};
+
+export const updateShopService = async (
+  id: string,
+  data: Partial<createShopType>,
+) => {
+  try {
+    const response = await api.patch(`/admin/shops/${id}`, data);
+    return response.data;
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro ao atualizar unidade";
+    throw new Error(String(msg));
+  }
+};
+
 export const deleteBarberServiceService = async (id: string) => {
   try {
     const response = await api.delete(`/service/${id}`);
@@ -125,6 +169,26 @@ export const deleteBarberServiceService = async (id: string) => {
         : responseData) ||
       currentError.message ||
       "Erro ao deletar serviço";
+    throw new Error(String(msg));
+  }
+};
+
+export const deleteShopService = async (id: string) => {
+  try {
+    const response = await api.delete(`/admin/shops/${id}`);
+    return response.data;
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+    const responseData = currentError.response?.data as
+      | { message?: string }
+      | string
+      | undefined;
+    const msg =
+      (typeof responseData === "object"
+        ? responseData?.message
+        : responseData) ||
+      currentError.message ||
+      "Erro ao deletar unidade";
     throw new Error(String(msg));
   }
 };
