@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { LuSlidersHorizontal } from "react-icons/lu";
+import { LuSlidersHorizontal, LuStore } from "react-icons/lu";
 import { formatCurrency } from "@/utils/masks";
 import Span from "@/components/ui/Span";
 import H2Bold from "@/components/ui/H2Bold";
@@ -8,15 +8,20 @@ import { useRevenue } from "@/features/Admin/hooks/useRevenue";
 import { ErrorMessage } from "./ErrorMessage";
 
 interface RevenueDisplayProps {
-  admin: boolean;
+  role: "admin" | "manager" | "barber";
   title: string;
 }
 
-const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
+const RevenueDisplay = ({ role, title }: RevenueDisplayProps) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
   const [tempType, setTempType] = useState<"day" | "month" | "quarter">(
     "month",
   );
+
+  const isAdmin = role === "admin";
+  const isManager = role === "manager";
+  const isBarber = role === "barber";
 
   const [filterType, setFilterType] = useState<
     "day" | "month" | "quarter" | undefined
@@ -29,7 +34,7 @@ const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
     data: revenue,
     isLoading,
     error,
-  } = useRevenue(admin, {
+  } = useRevenue(isAdmin || isManager, {
     filterType,
     filterValue,
   });
@@ -102,6 +107,24 @@ const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
 
   const [tempValue, setTempValue] = useState(getLocalDateString().slice(0, 7));
 
+  const currentDisplayData = useMemo(() => {
+    if (!revenue) return null;
+
+    if (isAdmin && revenue.shops && selectedShopId) {
+      return (
+        revenue.shops.find((shop) => shop.id === selectedShopId) ||
+        revenue.global
+      );
+    }
+
+    if ((isAdmin || isManager) && revenue.global) return revenue.global;
+
+    return {
+      totalRevenue: revenue.totalRevenue ?? 0,
+      filteredRevenue: revenue.filteredRevenue ?? 0,
+    };
+  }, [revenue, isAdmin, isManager, selectedShopId]);
+
   if (isLoading) return <IsFetchingAndLoading />;
 
   if (error) {
@@ -109,59 +132,41 @@ const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
   }
 
   const isFiltered = !!filterType && !!filterValue;
-  const isBroken =
-    !revenue || (revenue.totalRevenue === 0 && revenue.filteredRevenue === 0);
 
   return (
     <div className="max-w-[1000px] mx-auto w-full mt-8">
-      <H2Bold className="mb-5">{title}</H2Bold>
+      <div className="flex justify-between items-center mb-6">
+        <H2Bold>{title}</H2Bold>
 
-      <div
-        ref={filterWrapperRef}
-        className="flex flex-col items-end relative"
-        style={{ marginBottom: "24px" }}
-      >
-        <div
-          className="flex flex-col relative"
-          style={{ width: "100%", maxWidth: "200px" }}
-        >
+        <div ref={filterWrapperRef} className="relative">
           <div
-            className="flex p-2 ml-20 items-center justify-between cursor-pointer hover:bg-black/5 rounded-lg transition-colors border border-transparent hover:border-gray-200"
+            className="flex p-2 items-center gap-2 cursor-pointer hover:bg-black/5 rounded-lg transition-colors border border-gray-200"
             onClick={() => setIsFilterOpen(!isFilterOpen)}
           >
-            <Span>Filtros</Span>
-            <LuSlidersHorizontal size={20} />
+            <Span className="text-sm">Filtros</Span>
+            <LuSlidersHorizontal size={18} />
           </div>
 
           {isFilterOpen && (
             <div
-              style={{
-                padding: "20px",
-                marginTop: "10px",
-                minWidth: "280px",
-              }}
-              className="absolute top-full right-0 z-50 bg-[#1e2f62] rounded-xl shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in duration-200"
+              style={{ padding: "20px", marginTop: "10px", minWidth: "280px" }}
+              className="absolute top-full right-0 z-50 bg-[#1e2f62] rounded-xl shadow-2xl flex flex-col gap-4"
             >
               <div>
                 <span className="text-white text-xs font-bold uppercase tracking-widest">
                   Filtrar por período
                 </span>
-                <div
-                  style={{ marginTop: "12px" }}
-                  className="flex justify-between gap-2"
-                >
+                <div className="flex justify-between gap-2 mt-3">
                   {(["day", "month", "quarter"] as const).map((type) => (
                     <button
                       key={type}
-                      style={{ padding: "8px 12px" }}
                       className={`
-                        flex-1 text-xs rounded-lg font-bold transition-all uppercase tracking-tighter
+                        flex-1 py-2 text-xs rounded-lg font-bold transition-all uppercase
                         ${
                           tempType === type
                             ? "bg-blue-600 text-white shadow-md scale-105"
                             : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                         }
-                        active:scale-95
                       `}
                       onClick={() => {
                         setTempType(type);
@@ -185,15 +190,14 @@ const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
                 </div>
               </div>
 
-              <div style={{ marginTop: "10px" }}>
+              <div>
                 <span className="text-white text-[10px] font-bold uppercase tracking-widest block">
                   Data de Referência
                 </span>
-                <div style={{ marginTop: "6px" }}>
+                <div className="mt-1">
                   {tempType === "quarter" ? (
                     <select
-                      style={{ padding: "10px" }}
-                      className="w-full bg-white border border-gray-200 rounded-lg text-gray-700 font-medium focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full p-2 bg-white border border-gray-200 rounded-lg text-gray-700 font-medium outline-none"
                       value={tempValue}
                       onChange={(e) => setTempValue(e.target.value)}
                     >
@@ -208,32 +212,27 @@ const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
                     </select>
                   ) : (
                     <input
-                      key={tempType}
-                      style={{ padding: "10px" }}
-                      className="w-full bg-white rounded-lg text-gray-700 font-medium focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                      className="w-full p-2 bg-white rounded-lg text-gray-700 font-medium outline-none"
                       type={tempType === "day" ? "date" : "month"}
                       value={tempValue}
                       onChange={(e) => setTempValue(e.target.value)}
-                      onClick={(e) => e.currentTarget.showPicker?.()}
                     />
                   )}
                 </div>
               </div>
 
-              <div style={{ marginTop: "10px" }} className="flex gap-3">
+              <div className="flex gap-3 mt-2">
                 <button
-                  style={{ padding: "12px" }}
-                  className="flex-1 bg-red-50/20 text-red-400 rounded-lg font-bold text-xs uppercase hover:bg-red-50/20 transition-colors"
+                  className="flex-1 py-2 bg-red-50/20 text-red-400 rounded-lg font-bold text-xs uppercase hover:bg-red-50/30 transition-colors"
                   onClick={handleClearFilter}
                 >
                   Limpar
                 </button>
                 <button
-                  style={{ padding: "12px" }}
-                  className="flex-[2] bg-green-500 text-white rounded-lg font-bold text-xs uppercase hover:bg-green-600 transition-all active:translate-y-0.5"
+                  className="flex-[2] py-2 bg-green-500 text-white rounded-lg font-bold text-xs uppercase hover:bg-green-600 transition-all"
                   onClick={handleApplyFilter}
                 >
-                  Aplicar Filtro
+                  Aplicar
                 </button>
               </div>
             </div>
@@ -241,61 +240,117 @@ const RevenueDisplay = ({ admin, title }: RevenueDisplayProps) => {
         </div>
       </div>
 
-      <div>
-        {isFiltered ? (
-          <div style={{ marginTop: "30px" }} className="flex flex-col gap-4">
-            <div
-              style={{ padding: "24px" }}
-              className="bg-[var(--blueBox)] rounded-lg shadow-md border-l-4 border-blue-500 flex flex-col items-start transition-shadow hover:shadow-lg"
-            >
-              <span className="text-blue-900 text-sm font-medium uppercase tracking-wider">
-                {filterLabel}
-              </span>
-              <div
-                style={{ marginTop: "8px" }}
-                className="text-3xl font-bold text-gray-800"
-              >
-                {formatCurrency(revenue?.filteredRevenue ?? 0)}
-              </div>
-            </div>
-            <div
-              style={{ padding: "24px" }}
-              className="bg-[var(--revenueBox)] rounded-lg shadow-md border-l-4 border-green-500 flex flex-col items-start transition-shadow hover:shadow-lg"
-            >
-              <span className="text-green-900 text-sm font-medium uppercase tracking-wider">
-                Total Acumulado
-              </span>
-              <div
-                style={{ marginTop: "8px" }}
-                className="text-3xl font-bold text-gray-800"
-              >
-                {formatCurrency(revenue?.totalRevenue ?? 0)}
-              </div>
-            </div>
+      {isAdmin && revenue?.global && (
+        <div className="bg-gradient-to-br from-[#1e2f62] to-[#2c448f] p-6 rounded-2xl shadow-lg mb-8 text-white">
+          <div className="flex items-center gap-3 mb-4 opacity-80">
+            <LuStore size={20} />
+            <span className="text-xs font-bold uppercase tracking-[0.2em]">
+              Faturamento Global
+            </span>
           </div>
-        ) : (
-          <div style={{ marginTop: "30px" }}>
-            <div
-              style={{ padding: "24px" }}
-              className="bg-[var(--revenueBox)] rounded-lg shadow-md border-l-4 border-green-500 flex flex-col items-start transition-shadow hover:shadow-lg"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p className="text-blue-200 text-sm mb-1">Total Acumulado</p>
+              <p className="text-3xl font-bold">
+                {formatCurrency(revenue.global.totalRevenue)}
+              </p>
+            </div>
+            {isFiltered && (
+              <div className="md:border-l md:border-white/20 md:pl-6">
+                <p className="text-blue-200 text-sm mb-1">{filterLabel}</p>
+                <p className="text-3xl font-bold">
+                  {formatCurrency(revenue.global.filteredRevenue)}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {isAdmin && revenue?.shops && (
+        <div className="mb-8">
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
+            Selecionar Unidade
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button
+              onClick={() => setSelectedShopId(null)}
+              className={`p-4 rounded-xl border-2 transition-all text-left ${
+                selectedShopId === null
+                  ? "border-blue-500 bg-blue-50 text-blue-700 shadow-sm"
+                  : "border-gray-100 bg-white text-gray-500 hover:border-gray-200"
+              }`}
             >
-              <span className="text-green-900 text-sm font-medium uppercase tracking-wider">
+              <p className="font-bold">Geral</p>
+              <p className="text-[10px] opacity-60">Todas as unidades</p>
+            </button>
+            {revenue.shops.map((shop) => (
+              <button
+                key={shop.id}
+                onClick={() => setSelectedShopId(shop.id)}
+                className={`p-4 rounded-xl border-2 transition-all text-left ${
+                  selectedShopId === shop.id
+                    ? "border-blue-500 bg-blue-50 text-blue-700 shadow-sm"
+                    : "border-gray-100 bg-white text-gray-500 hover:border-gray-200"
+                }`}
+              >
+                <p className="font-bold truncate">{shop.name}</p>
+                <p className="text-[10px] opacity-60">Unidade específica</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {currentDisplayData && (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {!isBarber && (
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-1 w-8 bg-blue-500 rounded-full" />
+              <span className="font-bold text-gray-700">
+                Detalhes:{" "}
+                {isAdmin
+                  ? selectedShopId
+                    ? revenue?.shops?.find((s) => s.id === selectedShopId)?.name
+                    : "Consolidado"
+                  : isManager
+                    ? revenue?.shops?.[0]?.name || "Minha Unidade"
+                    : ""}
+              </span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white p-6 rounded-2xl border border-gray-100 border-l-4 border-l-green-500 shadow-sm hover:shadow-md transition-shadow">
+              <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">
                 Total Faturado
               </span>
-              <div
-                style={{ marginTop: "8px" }}
-                className="text-3xl font-bold text-gray-800"
-              >
-                {formatCurrency(revenue?.totalRevenue ?? 0)}
-              </div>
+              <p className="text-3xl font-bold text-gray-800 mt-2">
+                {formatCurrency(currentDisplayData.totalRevenue)}
+              </p>
             </div>
-          </div>
-        )}
-      </div>
 
-      {isBroken && (
-        <div style={{ marginTop: "20px" }}>
-          <Span>O caixa está vazio. Por enquanto...</Span>
+            {isFiltered && (
+              <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow">
+                <span className="text-blue-500 text-xs font-bold uppercase tracking-wider">
+                  {filterLabel}
+                </span>
+                <p className="text-3xl font-bold text-blue-900 mt-2">
+                  {formatCurrency(currentDisplayData.filteredRevenue)}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {(!currentDisplayData ||
+        (currentDisplayData.totalRevenue === 0 &&
+          currentDisplayData.filteredRevenue === 0)) && (
+        <div className="mt-10 text-center py-10 border-2 border-dashed border-gray-100 rounded-3xl">
+          <Span className="text-gray-400">
+            Nenhum faturamento registrado para este período.
+          </Span>
         </div>
       )}
     </div>

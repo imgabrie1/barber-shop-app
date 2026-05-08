@@ -17,12 +17,14 @@ interface CreateAndEditServiceFormProps {
   typeStage: stagesServices;
   initialData?: BarberService;
   onSuccess?: () => void;
+  shopId?: string;
 }
 
 const CreateAndEditServiceForm = ({
   typeStage,
   initialData,
   onSuccess,
+  shopId,
 }: CreateAndEditServiceFormProps) => {
   const {
     register,
@@ -44,10 +46,11 @@ const CreateAndEditServiceForm = ({
 
   const onSubmit = async (data: createServiceType) => {
     try {
+      const payload = { ...data, shopId: data.shopId || shopId };
       if (typeStage === "createService") {
-        await createBarberServiceService(data);
+        await createBarberServiceService(payload);
       } else if (typeStage === "edit" && initialData?.id) {
-        await updateBarberServiceService(initialData.id, data);
+        await updateBarberServiceService(initialData.id, payload);
       }
 
       if (onSuccess) {
