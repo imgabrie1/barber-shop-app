@@ -7,5 +7,5 @@ export const ServiceSchema = z.object({
   durationMinutes: z.number(),
   price: z.number(),
   defaultBarberCommissionPercentage: z.number(),
-  shops: returnShopsInServices.optional(),
+  shops: z.array(returnShopsInServices).optional(),
 });

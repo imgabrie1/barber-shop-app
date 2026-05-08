@@ -24,7 +24,7 @@ const AdminPage = () => {
         width: "100%",
       }}
     >
-      <RevenueDisplay admin={true} title="Painel Administrativo" />
+      <RevenueDisplay role="admin" title="Painel Administrativo" />
 
       <div className="grid grid-cols-2 w-full gap-5 pt-10 [&>*:last-child:nth-child(odd)]:col-span-2">
         <div

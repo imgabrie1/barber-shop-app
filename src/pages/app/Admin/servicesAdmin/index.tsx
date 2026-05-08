@@ -183,6 +183,7 @@ const AdminServicesPage = () => {
         {stage === "createService" && (
           <CreateAndEditServiceForm
             typeStage="createService"
+            shopId={selectedShopId}
             onSuccess={() => handleFormSuccess("Serviço criado com sucesso!")}
           />
         )}
@@ -214,6 +215,7 @@ const AdminServicesPage = () => {
             ) : (
               <CreateAndEditServiceForm
                 typeStage="edit"
+                shopId={selectedShopId}
                 initialData={selectedService}
                 onSuccess={() =>
                   handleFormSuccess("Alterações salvas com sucesso!")

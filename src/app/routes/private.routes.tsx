@@ -7,6 +7,7 @@ import SelectAvailabilitiesDatePage from "@/pages/app/Dashboard/SelectAvailabili
 import AppointmentSummaryPage from "@/pages/app/Dashboard/AppointmentSummary";
 import AdminPage from "@/pages/app/Admin";
 import BarberPage from "@/pages/app/Barber";
+import ManagerPage from "@/pages/app/Manager";
 import AdminUsersPage from "@/pages/app/Admin/usersAdmin";
 import AdminServicesPage from "@/pages/app/Admin/servicesAdmin";
 import AdminShopUnitsPage from "@/pages/app/Admin/shopUnitsAdmin";
@@ -66,6 +67,14 @@ export const privateRoutes = {
       element: (
         <RequireRole allowedRoles={["barber"]}>
           <BarberPage />
+        </RequireRole>
+      ),
+    },
+    {
+      path: "/app/manager",
+      element: (
+        <RequireRole allowedRoles={["manager"]}>
+          <ManagerPage />
         </RequireRole>
       ),
     },
