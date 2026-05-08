@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { userSchema } from "./user.schema";
 import { ServiceSchema } from "./barber.schemas";
-import { returnShopUnit } from "./admin.schema";
+import { returnShopUnit, returnShopsInServices } from "./admin.schema";
 
 export const appointmentStatusEnum = z.enum([
   "pending",
@@ -34,7 +34,7 @@ export const appointmentResponseSchema = z.object({
   client: userSchema,
   barber: userSchema,
   services: z.array(ServiceSchema),
-  shop: returnShopUnit.optional(),
+  shop: returnShopsInServices.optional(),
 });
 
 export const outputGetAppoitmentSchema = z.object({
