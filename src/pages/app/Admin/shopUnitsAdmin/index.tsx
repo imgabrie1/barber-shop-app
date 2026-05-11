@@ -133,7 +133,11 @@ const AdminShopUnitsPage = () => {
                   </div>
                 ))}
                 {shopUnitsData?.length === 0 && (
-                  <p>Nenhuma unidade cadastrada.</p>
+                  <div className="flex items-center mt-6 justify-center">
+                    <p className="text-2xl text-gray-400 font-bold ">
+                      Nenhuma unidade cadastrada
+                    </p>
+                  </div>
                 )}
               </div>
             ) : (
@@ -170,7 +174,11 @@ const AdminShopUnitsPage = () => {
               </div>
             ))}
             {shopUnitsData?.length === 0 && !isLoadingShops && (
-              <p>Nenhuma unidade cadastrada.</p>
+              <div className="flex items-center mt-6 justify-center">
+                <p className="text-2xl text-gray-400 font-bold ">
+                  Nenhuma unidade cadastrada
+                </p>
+              </div>
             )}
           </div>
         )}
@@ -198,7 +206,11 @@ const AdminShopUnitsPage = () => {
               </div>
             ))}
             {shopUnitsData?.length === 0 && !isLoadingShops && (
-              <p>Nenhuma unidade encontrada.</p>
+              <div className="flex items-center mt-6 justify-center">
+                <p className="text-2xl text-gray-400 font-bold ">
+                  Nenhuma unidade encontrada
+                </p>
+              </div>
             )}
           </div>
         )}
