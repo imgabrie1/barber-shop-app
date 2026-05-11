@@ -16,7 +16,7 @@ import CreateUserForm from "@/components/common/CreateUserForm";
 import { register as registerBarber } from "@/services/auth.service";
 import type { RegisterDTO } from "@/schemas/register.schemas";
 
-type stagesUsers = "init" | "list" | "create" | "delete";
+type stagesUsers = "init" | "list" | "createBarber" | "createManager" | "delete";
 
 const AdminUsersPage = () => {
   const [stage, setStage] = useState<stagesUsers>("init");
@@ -40,6 +40,8 @@ const AdminUsersPage = () => {
         return "Admin";
       case "barber":
         return "Barbeiro(a)";
+      case "manager":
+        return "Gerente";
       case "client":
         return "Cliente";
       default:
@@ -57,8 +59,10 @@ const AdminUsersPage = () => {
     switch (stage) {
       case "list":
         return "Lista de Usuários";
-      case "create":
+      case "createBarber":
         return "Criar Barbeiro";
+      case "createManager":
+        return "Criar Gerente";
       default:
         return "Painel de Usuários";
     }
@@ -87,6 +91,11 @@ const AdminUsersPage = () => {
   const handleCreateBarber = async (data: RegisterDTO & { role?: string }) => {
     await registerBarber(data);
     setSuccessConfig({ open: true, message: "Barbeiro criado com sucesso!" });
+  };
+
+  const handleCreateManager = async (data: RegisterDTO & { role?: string }) => {
+    await registerBarber(data);
+    setSuccessConfig({ open: true, message: "Gerente criado com sucesso!" });
   };
 
   const handleDelete = async () => {
@@ -146,7 +155,7 @@ const AdminUsersPage = () => {
           </div>
 
           <div
-            onClick={() => setStage("create")}
+            onClick={() => setStage("createBarber")}
             style={{ padding: "1.5rem" }}
             className="border border-[#2c8f44] rounded-2xl shadow-sm hover:shadow-md hover:border-green-400 transition-all cursor-pointer group"
           >
@@ -163,12 +172,37 @@ const AdminUsersPage = () => {
               Cadastre novos profissionais
             </p>
           </div>
+
+          <div
+            onClick={() => setStage("createManager")}
+            style={{ padding: "1.5rem" }}
+            className="border border-[#2c8f44] rounded-2xl shadow-sm hover:shadow-md hover:border-green-400 transition-all cursor-pointer group"
+          >
+            <LuUserPlus
+              size={32}
+              className="text-green-500 group-hover:scale-110 transition-transform"
+              style={{ marginBottom: "0.75rem" }}
+            />
+            <H2Bold>Adicionar Gerente</H2Bold>
+            <p
+              className="text-sm text-gray-500"
+              style={{ marginTop: "0.5rem" }}
+            >
+              Cadastre novos gerente de loja
+            </p>
+          </div>
         </div>
       )}
 
-      {stage === "create" && (
+      {stage === "createBarber" && (
         <div style={{ maxWidth: "500px", margin: "0 auto" }}>
           <CreateUserForm onSuccess={handleCreateBarber} defaultRole="barber" />
+        </div>
+      )}
+
+      {stage === "createManager" && (
+        <div style={{ maxWidth: "500px", margin: "0 auto" }}>
+          <CreateUserForm onSuccess={handleCreateManager} defaultRole="manager" />
         </div>
       )}
 
