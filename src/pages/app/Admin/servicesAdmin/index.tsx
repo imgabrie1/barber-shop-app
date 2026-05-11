@@ -175,7 +175,9 @@ const AdminServicesPage = () => {
               </div>
             ))}
             {shops?.length === 0 && !isLoadingShops && (
-              <p>Nenhuma unidade encontrada.</p>
+              <div className="flex items-center mt-6 justify-center">
+            <p className="text-2xl text-gray-400 font-bold ">Nenhuma unidade encontrada</p>
+          </div>
             )}
           </div>
         )}

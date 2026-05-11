@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
-
 import H2Bold from "@/components/ui/H2Bold";
 import P from "@/components/ui/Span";
 import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
@@ -73,6 +72,13 @@ const SelectServicePage = () => {
             </div>
           ))}
         </div>
+        {!shopData?.length && (
+          <div className="flex items-center mt-6 justify-center">
+            <p className="text-2xl text-gray-400 font-bold ">
+              Nenhuma unidade encontrada
+            </p>
+          </div>
+        )}
       </div>
     );
   }
@@ -93,7 +99,11 @@ const SelectServicePage = () => {
       {errorServices && <ErrorMessage isMissing="serviços" />}
 
       {!isFetchingServices && services?.length === 0 && (
-        <P>Nenhum serviço encontrado para esta unidade.</P>
+        <div className="flex justify-center items-center mt-6">
+          <p className="text-gray-400 font-bold text-xl">
+            Nenhum serviço encontrado para esta unidade.
+          </p>
+        </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 mt-6">
