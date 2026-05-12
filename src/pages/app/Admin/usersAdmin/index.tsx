@@ -245,7 +245,14 @@ const AdminUsersPage = () => {
                         {user.name}
                       </p>
                       <p>-</p>
-                      <p className="font-medium">{getrole(user.role)}</p>
+                      <p className="font-medium">
+                        {getrole(user.role)}
+                        {user.role === "barber" && user.commissionPercentage !== undefined && (
+                          <span className="ml-1 text-xs text-blue-500 font-bold">
+                            ({user.commissionPercentage}%)
+                          </span>
+                        )}
+                      </p>
                     </div>
                     <p className="text-sm text-gray-400">{user.phoneNumber}</p>
                   </div>
@@ -327,6 +334,16 @@ const AdminUsersPage = () => {
                 </p>
                 <span className=" ">{getrole(userDetails?.role)}</span>
               </div>
+              {userDetails?.role === "barber" && (
+                <div>
+                  <p className="text-xs text-gray-500 uppercase font-bold">
+                    Comissão
+                  </p>
+                  <p className="text-[var(--textPrimary)]">
+                    {userDetails.commissionPercentage ?? 0}%
+                  </p>
+                </div>
+              )}
               <div className="flex flex-col gap-3 mt-4">
                 <Button
                   onClick={() => {

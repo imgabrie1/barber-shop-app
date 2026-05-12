@@ -7,6 +7,7 @@ export const registerSchema = z
     password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
     passwordConfirmation: z.string().min(6, "A confirmação deve ter pelo menos 6 caracteres"),
     shopId: z.string().optional(),
+    commissionPercentage: z.number().min(0).max(100).optional(),
   })
   .refine((data) => data.password === data.passwordConfirmation, {
     message: "As senhas não coincidem",

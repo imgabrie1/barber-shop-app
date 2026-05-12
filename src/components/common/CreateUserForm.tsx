@@ -50,6 +50,10 @@ const CreateUserForm = ({ onSuccess, defaultRole }: CreateUserFormProps) => {
       fieldsToValidate.push("shopId");
     }
 
+    if (defaultRole === "barber") {
+      fieldsToValidate.push("commissionPercentage");
+    }
+
     const isValid = await trigger(fieldsToValidate);
     if (isValid) {
       setStage(2);
@@ -133,6 +137,27 @@ const CreateUserForm = ({ onSuccess, defaultRole }: CreateUserFormProps) => {
                   {errors.shopId && (
                     <p className="text-xs text-red-600">
                       {errors.shopId.message}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {defaultRole === "barber" && (
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold text-gray-600">
+                    Porcentagem de Comissão (%)
+                  </label>
+                  <Input
+                    id="commissionPercentage"
+                    type="number"
+                    placeholder="Ex: 50"
+                    {...register("commissionPercentage", {
+                      valueAsNumber: true,
+                    })}
+                  />
+                  {errors.commissionPercentage && (
+                    <p className="text-xs text-red-600">
+                      {errors.commissionPercentage.message}
                     </p>
                   )}
                 </div>
