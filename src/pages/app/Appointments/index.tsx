@@ -90,6 +90,7 @@ const AppointmentsPage = () => {
   if (isLoading) return <IsFetchingAndLoading />;
 
   if (error) {
+    console.log(error);
     return <ErrorMessage isMissing="agendamentos" />;
   }
 
@@ -117,7 +118,9 @@ const AppointmentsPage = () => {
       )}
 
       {appointments.map((item) => {
-        const isBarber = user?.role === "barber" && item.barber.id === user.id;
+        const isBarberOrManager =
+          (user?.role === "barber" && item.barber.id === user.id) ||
+          user?.role === "manager";
         const showCompletedButton = item.status === "confirmed";
         const showCancelButton =
           item.status === "pending" || item.status === "confirmed";
@@ -143,7 +146,7 @@ const AppointmentsPage = () => {
               <>
                 {!isCompleted && (
                   <>
-                    {isBarber && (
+                    {isBarberOrManager && (
                       <div style={{ marginTop: "0.9375rem" }}>
                         {showCompletedButton ? (
                           <Button

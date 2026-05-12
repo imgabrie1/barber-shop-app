@@ -1,5 +1,4 @@
 import z from "zod";
-import { userSchema } from "./user.schema";
 
 export const adminRevenueSchema = z.object({
   totalRevenue: z.number().optional(),
@@ -53,8 +52,4 @@ export const createServiceOutputSchema = createServiceSchema.extend({
   id: z.string(),
 });
 
-export const userByIDtoAdminViewSchema = userSchema.extend({
-  isActive: z.boolean(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-});
+
