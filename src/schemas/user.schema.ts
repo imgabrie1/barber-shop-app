@@ -5,4 +5,5 @@ export const userSchema = z.object({
   name: z.string(),
   phoneNumber: z.string(),
   role: z.enum(["admin", "barber", "client", "manager"]).optional(),
+  commissionPercentage: z.number().optional(),
 });
