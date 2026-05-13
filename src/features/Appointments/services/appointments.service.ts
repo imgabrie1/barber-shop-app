@@ -68,10 +68,14 @@ export const createAppointmentService = async (
   }
 };
 
-export const getMyAppointments = async () => {
+export const getMyAppointments = async (page = 1, limit = 10) => {
   try {
-    const response =
-      await api.get<OutputGetAppoitmentInterface>("/appointment/me");
+    const response = await api.get<OutputGetAppoitmentInterface>(
+      "/appointment/me",
+      {
+        params: { page, limit },
+      },
+    );
 
     const parsed = outputGetAppoitmentSchema.parse(response.data);
 

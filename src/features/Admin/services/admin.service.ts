@@ -3,10 +3,12 @@ import type {
   createServiceOutput,
   createServiceType,
   createShopType,
+  PaginatedUsersInterface,
   userByIDtoAdminViewInterface,
 } from "@/interfaces/admin.interface";
 import api from "@/services/api";
 import type { AxiosError } from "axios";
+
 
 type FilterType = "day" | "month" | "quarter";
 
@@ -193,9 +195,11 @@ export const deleteShopService = async (id: string) => {
   }
 };
 
-export const getUsersService = async () => {
+export const getUsersService = async (page = 1, limit = 10) => {
   try {
-    const response = await api.get<userByIDtoAdminViewInterface[]>("/user");
+    const response = await api.get<PaginatedUsersInterface>("/user", {
+      params: { page, limit },
+    });
     return response.data;
   } catch (err: unknown) {
     const currentError = err as AxiosError;

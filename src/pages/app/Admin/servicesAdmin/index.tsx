@@ -16,6 +16,8 @@ import Button from "@/components/ui/Button";
 import { FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ErrorMessage } from "@/components/common/ErrorMessage";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Span from "@/components/ui/Span";
 
 type stagesServices =
   | "init"
@@ -28,6 +30,7 @@ const AdminServicesPage = () => {
   const [stage, setStage] = useState<stagesServices>("init");
   const [targetAction, setTargetAction] = useState<stagesServices | null>(null);
   const [selectedShopId, setSelectedShopId] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedService, setSelectedService] = useState<BarberService | null>(
     null,
   );
@@ -47,9 +50,11 @@ const AdminServicesPage = () => {
   const {
     data: services,
     isLoading,
+    isFetching,
     error,
   } = useServices(
     selectedShopId,
+    currentPage,
     !!selectedShopId && stage !== "init" && stage !== "selectShop",
   );
 
@@ -84,6 +89,7 @@ const AdminServicesPage = () => {
     } else {
       setStage("selectShop");
       setSelectedService(null);
+      setCurrentPage(1);
     }
   };
 
@@ -92,6 +98,7 @@ const AdminServicesPage = () => {
     setStage("init");
     setSelectedService(null);
     setSelectedShopId("");
+    setCurrentPage(1);
   };
 
   const handleDelete = async () => {
@@ -135,6 +142,23 @@ const AdminServicesPage = () => {
     }
   };
 
+  const handleNextPage = () => {
+    if (services && currentPage < Math.ceil(services.total / services.limit)) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
+  const isFirstPage = currentPage === 1;
+  const isLastPage = services
+    ? currentPage >= Math.ceil(services.total / services.limit)
+    : true;
+
   return (
     <div style={{ maxWidth: "62.5rem", margin: "0 auto", width: "100%" }}>
       <div
@@ -176,8 +200,10 @@ const AdminServicesPage = () => {
             ))}
             {shops?.length === 0 && !isLoadingShops && (
               <div className="flex items-center mt-6 justify-center">
-            <p className="text-2xl text-gray-400 font-bold ">Nenhuma unidade encontrada</p>
-          </div>
+                <p className="text-2xl text-gray-400 font-bold ">
+                  Nenhuma unidade encontrada
+                </p>
+              </div>
             )}
           </div>
         )}
@@ -193,25 +219,61 @@ const AdminServicesPage = () => {
         {stage === "edit" && (
           <>
             {!selectedService ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {services?.map((service) => (
-                  <div
-                    key={service.id}
-                    onClick={() => setSelectedService(service)}
-                    style={{ padding: "10px" }}
-                    className="p-4 border border-gray-200 rounded-xl shadow-sm hover:border-amber-400 cursor-pointer transition-all"
-                  >
-                    <p className="font-bold text-lg text-[var(--textPrimary)]">
-                      {service.name}
-                    </p>
-                    <p className="text-gray-400">
-                      {service.durationMinutes} min -{" "}
-                      {formatCurrency(service.price)}
-                    </p>
+              <div className="flex flex-col gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {services?.data?.map((service) => (
+                    <div
+                      key={service.id}
+                      onClick={() => setSelectedService(service)}
+                      style={{ padding: "10px" }}
+                      className="p-4 border border-gray-200 rounded-xl shadow-sm hover:border-amber-400 cursor-pointer transition-all"
+                    >
+                      <p className="font-bold text-lg text-[var(--textPrimary)]">
+                        {service.name}
+                      </p>
+                      <p className="text-gray-400">
+                        {service.durationMinutes} min -{" "}
+                        {formatCurrency(service.price)}
+                      </p>
+                    </div>
+                  ))}
+                  {services?.data?.length === 0 && !isLoading && (
+                    <p>Nenhum serviço cadastrado nesta unidade.</p>
+                  )}
+                </div>
+
+                {services && services.total > services.limit && (
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex items-center justify-center gap-4">
+                      <IoIosArrowBack
+                        size={24}
+                        onClick={handlePrevPage}
+                        className="text-[var(--textPrimary)]"
+                        style={{
+                          cursor: isFirstPage ? "default" : "pointer",
+                          opacity: isFirstPage ? 0.3 : 1,
+                        }}
+                      />
+                      <Span style={{ fontSize: "1.1rem", fontWeight: "600" }}>
+                        Página {currentPage} de{" "}
+                        {Math.ceil(services.total / services.limit)}
+                      </Span>
+                      <IoIosArrowForward
+                        size={24}
+                        onClick={handleNextPage}
+                        className="text-[var(--textPrimary)]"
+                        style={{
+                          cursor: isLastPage ? "default" : "pointer",
+                          opacity: isLastPage ? 0.3 : 1,
+                        }}
+                      />
+                    </div>
+                    {isFetching && !isLoading && (
+                      <p className="text-center text-xs text-gray-400">
+                        Carregando...
+                      </p>
+                    )}
                   </div>
-                ))}
-                {services?.length === 0 && !isLoading && (
-                  <p>Nenhum serviço cadastrado nesta unidade.</p>
                 )}
               </div>
             ) : (
@@ -228,30 +290,66 @@ const AdminServicesPage = () => {
         )}
 
         {stage === "delete" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {services?.map((service) => (
-              <div
-                key={service.id}
-                onClick={() => {
-                  setSelectedService(service);
-                  setIsDeleteModalOpen(true);
-                }}
-                style={{ padding: "10px" }}
-                className="p-4 border border-gray-200 rounded-xl shadow-sm hover:border-red-400 cursor-pointer transition-all flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-bold text-lg text-[var(--textPrimary)]">
-                    {service.name}
-                  </p>
-                  <p className="text-gray-400">
-                    {formatCurrency(service.price)}
-                  </p>
+          <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {services?.data?.map((service) => (
+                <div
+                  key={service.id}
+                  onClick={() => {
+                    setSelectedService(service);
+                    setIsDeleteModalOpen(true);
+                  }}
+                  style={{ padding: "10px" }}
+                  className="p-4 border border-gray-200 rounded-xl shadow-sm hover:border-red-400 cursor-pointer transition-all flex justify-between items-center"
+                >
+                  <div>
+                    <p className="font-bold text-lg text-[var(--textPrimary)]">
+                      {service.name}
+                    </p>
+                    <p className="text-gray-400">
+                      {formatCurrency(service.price)}
+                    </p>
+                  </div>
+                  <LuTrash2 className="text-red-500" size={20} />
                 </div>
-                <LuTrash2 className="text-red-500" size={20} />
+              ))}
+              {services?.data?.length === 0 && !isLoading && (
+                <p>Nenhum serviço cadastrado nesta unidade.</p>
+              )}
+            </div>
+
+            {services && services.total > services.limit && (
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex items-center justify-center gap-4">
+                  <IoIosArrowBack
+                    size={24}
+                    onClick={handlePrevPage}
+                    className="text-[var(--textPrimary)]"
+                    style={{
+                      cursor: isFirstPage ? "default" : "pointer",
+                      opacity: isFirstPage ? 0.3 : 1,
+                    }}
+                  />
+                  <Span style={{ fontSize: "1.1rem", fontWeight: "600" }}>
+                    Página {currentPage} de{" "}
+                    {Math.ceil(services.total / services.limit)}
+                  </Span>
+                  <IoIosArrowForward
+                    size={24}
+                    onClick={handleNextPage}
+                    className="text-[var(--textPrimary)]"
+                    style={{
+                      cursor: isLastPage ? "default" : "pointer",
+                      opacity: isLastPage ? 0.3 : 1,
+                    }}
+                  />
+                </div>
+                {isFetching && !isLoading && (
+                  <p className="text-center text-xs text-gray-400">
+                    Carregando...
+                  </p>
+                )}
               </div>
-            ))}
-            {services?.length === 0 && !isLoading && (
-              <p>Nenhum serviço cadastrado nesta unidade.</p>
             )}
           </div>
         )}
