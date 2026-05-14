@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { OutputGetAppoitmentInterface } from "@/interfaces/appointments.interface";
 import {
   updateAppointmentStatus,
   deleteAppointment,
@@ -33,42 +32,8 @@ export const useMutationAppointment = () => {
       await deleteAppointment(id);
     },
 
-    onSuccess: (_, { id, action }) => {
-      queryClient.setQueryData<OutputGetAppoitmentInterface>(
-        ["myAppointments"],
-        (oldData) => {
-          if (!oldData) return oldData;
-
-          if (
-            action === "confirm" ||
-            action === "complete" ||
-            action === "cancel"
-          ) {
-            const newStatus =
-              action === "confirm"
-                ? "confirmed"
-                : action === "complete"
-                  ? "completed"
-                  : "cancelled";
-
-            return {
-              ...oldData,
-              data: oldData.data.map((item) =>
-                item.id === id ? { ...item, status: newStatus } : item,
-              ),
-            };
-          }
-
-          if (action === "delete") {
-            return {
-              ...oldData,
-              data: oldData.data.filter((item) => item.id !== id),
-            };
-          }
-
-          return oldData;
-        },
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["myAppointments"] });
     },
 
     onError: (error) => {
