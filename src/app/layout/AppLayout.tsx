@@ -16,6 +16,7 @@ export const AppLayout = () => {
   const isAdmin = user?.role === "admin";
   const isBarber = user?.role === "barber";
   const isManager = user?.role === "manager";
+  const isClient = user?.role === "client";
 
   return (
     <div
@@ -132,6 +133,20 @@ export const AppLayout = () => {
                   }
                 >
                   GERENTE
+                </NavLink>
+              )}
+              {isClient && (
+                <NavLink
+                  to="/app/clientProfile"
+                  className={({ isActive }) =>
+                    ` text-sm font-medium transition-all border-b-2 ${
+                      isActive
+                        ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                    }`
+                  }
+                >
+                  PERFIL
                 </NavLink>
               )}
 
