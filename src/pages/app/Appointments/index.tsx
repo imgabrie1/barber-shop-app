@@ -120,6 +120,7 @@ const AppointmentsPage = () => {
   if (isLoading) return <IsFetchingAndLoading />;
 
   if (error) {
+    console.log(error);
     return <ErrorMessage isMissing="agendamentos" />;
   }
 
