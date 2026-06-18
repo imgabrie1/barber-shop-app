@@ -22,10 +22,3 @@ export const paginatedUsersSchema = z.object({
   page: z.number(),
   limit: z.number(),
 });
-
-
-export const userByIDtoAdminViewSchema = userSchema.extend({
-  isActive: z.boolean(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-});
