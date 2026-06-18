@@ -11,6 +11,7 @@ import ManagerPage from "@/pages/app/Manager";
 import AdminUsersPage from "@/pages/app/Admin/usersAdmin";
 import AdminServicesPage from "@/pages/app/Admin/servicesAdmin";
 import AdminShopUnitsPage from "@/pages/app/Admin/shopUnitsAdmin";
+import ClientProfilePage from "@/pages/app/ClientProfile";
 
 export const privateRoutes = {
   element: (
@@ -75,6 +76,14 @@ export const privateRoutes = {
       element: (
         <RequireRole allowedRoles={["manager"]}>
           <ManagerPage />
+        </RequireRole>
+      ),
+    },
+    {
+      path: "/app/clientProfile",
+      element: (
+        <RequireRole allowedRoles={["client"]}>
+          <ClientProfilePage />
         </RequireRole>
       ),
     },

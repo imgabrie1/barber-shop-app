@@ -71,7 +71,10 @@ const SelectBarberPage = () => {
                 <P>{barber.name}</P>
               </div>
 
-              <MdNavigateNext className="text-[var(--textPrimary)] md:hidden " size={30} />
+              <MdNavigateNext
+                className="text-[var(--textPrimary)] md:hidden "
+                size={30}
+              />
             </div>
           );
         })}

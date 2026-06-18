@@ -6,7 +6,7 @@ import type {
   returnMultipleShopUnits,
   returnShopUnit,
 } from "@/schemas/admin.schema";
-import type { userByIDtoAdminViewSchema } from "@/schemas/user.schema";
+import type { paginatedUsersSchema, userByIDtoAdminViewSchema } from "@/schemas/user.schema";
 import type z from "zod";
 
 export type adminRevenueInterface = z.infer<typeof adminRevenueSchema>;
@@ -24,3 +24,5 @@ export interface ShopUnity extends createShopType {
 export type userByIDtoAdminViewInterface = z.infer<
   typeof userByIDtoAdminViewSchema
 >;
+
+export type PaginatedUsersInterface = z.infer<typeof paginatedUsersSchema>

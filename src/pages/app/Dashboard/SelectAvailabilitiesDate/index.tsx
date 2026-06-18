@@ -109,6 +109,7 @@ const SelectAvailabilitiesDatePage = () => {
     date: getFormattedDate(currentDate),
     barberId: currentBarberId!,
     barberName: currentBarberName!,
+    shopId: currentShopId!,
     enabled: isReady,
   });
 
