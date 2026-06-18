@@ -137,7 +137,6 @@ const AppointmentsPage = () => {
 
       {appointments.length === 0 ? (
         <div
-          style={{ marginTop: "0.9375rem" }}
           className="mt-4 text-center text-gray-500"
         >
           <H2Bold>Nenhum agendamento encontrado.</H2Bold>

@@ -49,7 +49,7 @@ const AppointmentSummaryPage = () => {
       navigate("/app/appointments");
     } catch (err) {
       console.error("Erro ao criar agendamentos:", err);
-      alert("Erro ao confirmar agendamento");
+      alert(err);
     }
   };
 

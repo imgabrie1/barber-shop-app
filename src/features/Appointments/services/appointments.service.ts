@@ -12,6 +12,7 @@ export const getCheckAvailability = async (params: {
   date: string;
   barberId: string;
   barberName: string;
+  shopId: string;
 }) => {
   try {
     const response = await api.get<TimeSlotsInterface>(
