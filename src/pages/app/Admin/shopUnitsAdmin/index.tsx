@@ -199,8 +199,14 @@ const AdminShopUnitsPage = () => {
                   </p>
                   <p className="text-gray-500 text-sm">{shop.address}</p>
                   <div className="flex gap-4 mt-2 text-sm font-medium text-gray-400">
-                    <p>Abre: {shop.businessStartHour}h</p>
-                    <p>Fecha: {shop.businessEndHour}h</p>
+                    {shop.alwaysOpen ? (
+                      <p>Aberto 24h</p>
+                    ) : (
+                      <>
+                        <p>Abre: {shop.businessStartHour}h</p>
+                        <p>Fecha: {shop.businessEndHour}h</p>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

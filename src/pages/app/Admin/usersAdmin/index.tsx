@@ -15,11 +15,14 @@ import { ErrorMessage } from "@/components/common/ErrorMessage";
 import CreateUserForm from "@/components/common/CreateUserForm";
 import { register as registerBarber } from "@/services/auth.service";
 import type { RegisterDTO } from "@/schemas/register.schemas";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Span from "@/components/ui/Span";
 
 type stagesUsers = "init" | "list" | "createBarber" | "createManager" | "delete";
 
 const AdminUsersPage = () => {
   const [stage, setStage] = useState<stagesUsers>("init");
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [successConfig, setSuccessConfig] = useState({
@@ -49,7 +52,12 @@ const AdminUsersPage = () => {
     }
   };
 
-  const { data: users, isLoading, error } = useUsersToAdmin(stage !== "init");
+  const {
+    data: users,
+    isLoading,
+    isFetching,
+    error,
+  } = useUsersToAdmin(currentPage, stage !== "init");
 
   const { data: userDetails, isFetching: isFetchingUser } = useUserToAdmin(
     selectedUserId || "",
@@ -74,6 +82,7 @@ const AdminUsersPage = () => {
     } else {
       setStage("init");
       setSelectedUserId(null);
+      setCurrentPage(1);
     }
   };
 
@@ -86,6 +95,7 @@ const AdminUsersPage = () => {
     queryClient.invalidateQueries({ queryKey: ["users"] });
     setSelectedUserId(null);
     setStage("init");
+    setCurrentPage(1);
   };
 
   const handleCreateBarber = async (data: RegisterDTO & { role?: string }) => {
@@ -114,6 +124,23 @@ const AdminUsersPage = () => {
       alert("Erro ao excluir usuário");
     }
   };
+
+  const handleNextPage = () => {
+    if (users && currentPage < Math.ceil(users.total / users.limit)) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
+  const isFirstPage = currentPage === 1;
+  const isLastPage = users
+    ? currentPage >= Math.ceil(users.total / users.limit)
+    : true;
 
   return (
     <div style={{ maxWidth: "62.5rem", margin: "0 auto", width: "100%" }}>
@@ -212,7 +239,7 @@ const AdminUsersPage = () => {
           {error && <ErrorMessage isMissing="usuários" />}
 
           <div className="grid grid-cols-1 gap-5">
-            {users?.map((user) => (
+            {users?.data?.map((user) => (
               <div
                 key={user.id}
                 onClick={() =>
@@ -259,10 +286,39 @@ const AdminUsersPage = () => {
                 </div>
               </div>
             ))}
-            {users?.length === 0 && !isLoading && (
+            {users?.data?.length === 0 && !isLoading && (
               <p>Nenhum usuário encontrado.</p>
             )}
           </div>
+
+          {users && users.total > users.limit && (
+            <div className="flex items-center justify-center gap-4 mt-8">
+              <IoIosArrowBack
+                size={24}
+                onClick={handlePrevPage}
+                className="text-[var(--textPrimary)]"
+                style={{
+                  cursor: isFirstPage ? "default" : "pointer",
+                  opacity: isFirstPage ? 0.3 : 1,
+                }}
+              />
+              <Span style={{ fontSize: "1.1rem", fontWeight: "600" }}>
+                Página {currentPage} de {Math.ceil(users.total / users.limit)}
+              </Span>
+              <IoIosArrowForward
+                size={24}
+                onClick={handleNextPage}
+                className="text-[var(--textPrimary)]"
+                style={{
+                  cursor: isLastPage ? "default" : "pointer",
+                  opacity: isLastPage ? 0.3 : 1,
+                }}
+              />
+            </div>
+          )}
+          {isFetching && !isLoading && (
+             <p className="text-center text-xs text-gray-400 mt-2">Carregando...</p>
+          )}
         </div>
       )}
 

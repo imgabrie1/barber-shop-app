@@ -1,17 +1,22 @@
 import type { MultipleShopUnitsOutput } from "@/interfaces/admin.interface";
-import type { BarberService } from "@/interfaces/barber.interface";
+import type { PaginatedServicesInterface } from "@/interfaces/barber.interface";
 import type { User } from "@/interfaces/user.interface";
 import api from "@/services/api";
 import type { AxiosError } from "axios";
 
-export const getServices = async (shopId: string) => {
+export const getServices = async (shopId: string, page = 1, limit = 10) => {
   try {
-    const response = await api.get<BarberService[]>(`/service/perUnit/${shopId}`);
+    const response = await api.get<PaginatedServicesInterface>(
+      `/service/perUnit/${shopId}`,
+      {
+        params: { page, limit },
+      },
+    );
     return response.data;
   } catch (err: unknown) {
     const currentError = err as AxiosError;
     if (currentError.response?.status === 404) {
-      return [];
+      return { data: [], total: 0, page: 1, limit: 10 };
     }
     const msg =
       (currentError.response?.data as string | undefined) ||

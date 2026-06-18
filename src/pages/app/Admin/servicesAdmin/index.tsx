@@ -16,6 +16,8 @@ import Button from "@/components/ui/Button";
 import { FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ErrorMessage } from "@/components/common/ErrorMessage";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Span from "@/components/ui/Span";
 
 type stagesServices =
   | "init"
@@ -28,6 +30,7 @@ const AdminServicesPage = () => {
   const [stage, setStage] = useState<stagesServices>("init");
   const [targetAction, setTargetAction] = useState<stagesServices | null>(null);
   const [selectedShopId, setSelectedShopId] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedService, setSelectedService] = useState<BarberService | null>(
     null,
   );
@@ -47,9 +50,11 @@ const AdminServicesPage = () => {
   const {
     data: services,
     isLoading,
+    isFetching,
     error,
   } = useServices(
     selectedShopId,
+    currentPage,
     !!selectedShopId && stage !== "init" && stage !== "selectShop",
   );
 
@@ -84,6 +89,7 @@ const AdminServicesPage = () => {
     } else {
       setStage("selectShop");
       setSelectedService(null);
+      setCurrentPage(1);
     }
   };
 
@@ -92,6 +98,7 @@ const AdminServicesPage = () => {
     setStage("init");
     setSelectedService(null);
     setSelectedShopId("");
+    setCurrentPage(1);
   };
 
   const handleDelete = async () => {
@@ -135,27 +142,36 @@ const AdminServicesPage = () => {
     }
   };
 
+  const handleNextPage = () => {
+    if (services && currentPage < Math.ceil(services.total / services.limit)) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
+  const isFirstPage = currentPage === 1;
+  const isLastPage = services
+    ? currentPage >= Math.ceil(services.total / services.limit)
+    : true;
+
   return (
-    <div style={{ maxWidth: "62.5rem", margin: "0 auto", width: "100%" }}>
-      <div
-        style={{
-          marginBottom: "1.875rem",
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-        }}
-      >
+    <div className="mx-auto w-full">
+      <div className="mb-6 flex items-center gap-4">
         <button
           onClick={handleBack}
-          style={{ padding: "0.5rem" }}
-          className="hover:bg-black/5 rounded-full transition-colors flex items-center justify-center"
+          className="p-2 hover:bg-black/5 rounded-full transition-colors flex items-center justify-center"
         >
           <LuArrowLeft size={24} />
         </button>
         <H2Bold>{getStageTitle()}</H2Bold>
       </div>
 
-      <div style={{ marginBottom: "1.5rem" }}>
+      <div className="mb-6">
         {(isLoading || isLoadingShops) && <IsFetchingAndLoading />}
         {error && <ErrorMessage isMissing="serviços" />}
 
@@ -176,8 +192,10 @@ const AdminServicesPage = () => {
             ))}
             {shops?.length === 0 && !isLoadingShops && (
               <div className="flex items-center mt-6 justify-center">
-            <p className="text-2xl text-gray-400 font-bold ">Nenhuma unidade encontrada</p>
-          </div>
+                <p className="text-2xl text-gray-400 font-bold">
+                  Nenhuma unidade encontrada
+                </p>
+              </div>
             )}
           </div>
         )}
@@ -193,25 +211,63 @@ const AdminServicesPage = () => {
         {stage === "edit" && (
           <>
             {!selectedService ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {services?.map((service) => (
-                  <div
-                    key={service.id}
-                    onClick={() => setSelectedService(service)}
-                    style={{ padding: "10px" }}
-                    className="p-4 border border-gray-200 rounded-xl shadow-sm hover:border-amber-400 cursor-pointer transition-all"
-                  >
-                    <p className="font-bold text-lg text-[var(--textPrimary)]">
-                      {service.name}
-                    </p>
-                    <p className="text-gray-400">
-                      {service.durationMinutes} min -{" "}
-                      {formatCurrency(service.price)}
-                    </p>
+              <div className="flex flex-col gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {services?.data?.map((service) => (
+                    <div
+                      key={service.id}
+                      onClick={() => setSelectedService(service)}
+                      className="p-[10px] border border-gray-200 rounded-xl shadow-sm hover:border-amber-400 cursor-pointer transition-all"
+                    >
+                      <p className="font-bold text-lg text-[var(--textPrimary)]">
+                        {service.name}
+                      </p>
+                      <p className="text-gray-400">
+                        {service.durationMinutes} min -{" "}
+                        {formatCurrency(service.price)}
+                      </p>
+                    </div>
+                  ))}
+
+                  {services?.data?.length === 0 && !isLoading && (
+                    <div className="col-span-full flex justify-center items-center p-6 text-gray-500">
+                      <H2Bold>Nenhum serviço cadastrado nesta unidade.</H2Bold>
+                    </div>
+                  )}
+                </div>
+
+                {services && services.total > services.limit && (
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex items-center justify-center gap-4">
+                      <IoIosArrowBack
+                        size={24}
+                        onClick={handlePrevPage}
+                        className={`text-[var(--textPrimary)] ${
+                          isFirstPage
+                            ? "cursor-default opacity-30"
+                            : "cursor-pointer opacity-100"
+                        }`}
+                      />
+                      <Span className="text-[1.1rem] font-sixth-hundred font-semibold">
+                        Página {currentPage} de{" "}
+                        {Math.ceil(services.total / services.limit)}
+                      </Span>
+                      <IoIosArrowForward
+                        size={24}
+                        onClick={handleNextPage}
+                        className={`text-[var(--textPrimary)] ${
+                          isLastPage
+                            ? "cursor-default opacity-30"
+                            : "cursor-pointer opacity-100"
+                        }`}
+                      />
+                    </div>
+                    {isFetching && !isLoading && (
+                      <p className="text-center text-xs text-gray-400">
+                        Carregando...
+                      </p>
+                    )}
                   </div>
-                ))}
-                {services?.length === 0 && !isLoading && (
-                  <p>Nenhum serviço cadastrado nesta unidade.</p>
                 )}
               </div>
             ) : (
@@ -228,96 +284,110 @@ const AdminServicesPage = () => {
         )}
 
         {stage === "delete" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {services?.map((service) => (
-              <div
-                key={service.id}
-                onClick={() => {
-                  setSelectedService(service);
-                  setIsDeleteModalOpen(true);
-                }}
-                style={{ padding: "10px" }}
-                className="p-4 border border-gray-200 rounded-xl shadow-sm hover:border-red-400 cursor-pointer transition-all flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-bold text-lg text-[var(--textPrimary)]">
-                    {service.name}
-                  </p>
-                  <p className="text-gray-400">
-                    {formatCurrency(service.price)}
-                  </p>
+          <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {services?.data?.map((service) => (
+                <div
+                  key={service.id}
+                  onClick={() => {
+                    setSelectedService(service);
+                    setIsDeleteModalOpen(true);
+                  }}
+                  className="p-[10px] border border-gray-200 rounded-xl shadow-sm hover:border-red-400 cursor-pointer transition-all flex justify-between items-center"
+                >
+                  <div>
+                    <p className="font-bold text-lg text-[var(--textPrimary)]">
+                      {service.name}
+                    </p>
+                    <p className="text-gray-400">
+                      {formatCurrency(service.price)}
+                    </p>
+                  </div>
+                  <LuTrash2 className="text-red-500" size={20} />
                 </div>
-                <LuTrash2 className="text-red-500" size={20} />
+              ))}
+              {services?.data?.length === 0 && !isLoading && (
+                <p>Nenhum serviço cadastrado nesta unidade.</p>
+              )}
+            </div>
+
+            {services && services.total > services.limit && (
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex items-center justify-center gap-4">
+                  <IoIosArrowBack
+                    size={24}
+                    onClick={handlePrevPage}
+                    className={`text-[var(--textPrimary)] ${
+                      isFirstPage
+                        ? "cursor-default opacity-30"
+                        : "cursor-pointer opacity-100"
+                    }`}
+                  />
+                  <Span className="text-[1.1rem] font-semibold">
+                    Página {currentPage} de{" "}
+                    {Math.ceil(services.total / services.limit)}
+                  </Span>
+                  <IoIosArrowForward
+                    size={24}
+                    onClick={handleNextPage}
+                    className={`text-[var(--textPrimary)] ${
+                      isLastPage
+                        ? "cursor-default opacity-30"
+                        : "cursor-pointer opacity-100"
+                    }`}
+                  />
+                </div>
+                {isFetching && !isLoading && (
+                  <p className="text-center text-xs text-gray-400">
+                    Carregando...
+                  </p>
+                )}
               </div>
-            ))}
-            {services?.length === 0 && !isLoading && (
-              <p>Nenhum serviço cadastrado nesta unidade.</p>
             )}
           </div>
         )}
       </div>
 
       {stage === "init" && (
-        <div
-          className="gap-6"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(15.625rem, 1fr))",
-          }}
-        >
+        <div className="gap-6 grid grid-cols-[repeat(auto-fit,minmax(15.625rem,1fr))]">
           <div
             onClick={() => startAction("createService")}
-            style={{ padding: "1.5rem" }}
-            className="border border-[#2c8f44] rounded-2xl shadow-sm hover:shadow-md hover:border-green-400 transition-all cursor-pointer group"
+            className="p-6 border border-[#2c8f44] rounded-2xl shadow-sm hover:shadow-md hover:border-green-400 transition-all cursor-pointer group"
           >
             <BsPlusCircleFill
               size={32}
-              className="text-green-500 group-hover:scale-110 transition-transform"
-              style={{ marginBottom: "0.75rem" }}
+              className="text-green-500 group-hover:scale-110 transition-transform mb-3"
             />
             <H2Bold>Criar Serviço</H2Bold>
-            <p
-              className="text-sm text-gray-500"
-              style={{ marginTop: "0.5rem" }}
-            >
+            <p className="text-sm text-gray-500 mt-2">
               Adicione novos itens ao catálogo
             </p>
           </div>
 
           <div
             onClick={() => startAction("edit")}
-            style={{ padding: "1.5rem" }}
-            className="border border-[#8f882c] rounded-2xl shadow-sm hover:shadow-md hover:border-amber-400 transition-all cursor-pointer group"
+            className="p-6 border border-[#8f882c] rounded-2xl shadow-sm hover:shadow-md hover:border-amber-400 transition-all cursor-pointer group"
           >
             <LuPencil
               size={32}
-              className="text-amber-500 group-hover:scale-110 transition-transform"
-              style={{ marginBottom: "0.75rem" }}
+              className="text-amber-500 group-hover:scale-110 transition-transform mb-3"
             />
             <H2Bold>Editar Serviço</H2Bold>
-            <p
-              className="text-sm text-gray-500"
-              style={{ marginTop: "0.5rem" }}
-            >
+            <p className="text-sm text-gray-500 mt-2">
               Modifique preços e descrições
             </p>
           </div>
 
           <div
             onClick={() => startAction("delete")}
-            style={{ padding: "1.5rem" }}
-            className="border border-[#8f2c2c] rounded-2xl shadow-sm hover:shadow-md hover:border-red-400 transition-all cursor-pointer group"
+            className="p-6 border border-[#8f2c2c] rounded-2xl shadow-sm hover:shadow-md hover:border-red-400 transition-all cursor-pointer group"
           >
             <LuTrash2
               size={32}
-              className="text-red-500 group-hover:scale-110 transition-transform"
-              style={{ marginBottom: "0.75rem" }}
+              className="text-red-500 group-hover:scale-110 transition-transform mb-3"
             />
             <H2Bold>Deletar Serviço</H2Bold>
-            <p
-              className="text-sm text-gray-500"
-              style={{ marginTop: "0.5rem" }}
-            >
+            <p className="text-sm text-gray-500 mt-2">
               Remova serviços permanentemente
             </p>
           </div>
@@ -329,10 +399,7 @@ const AdminServicesPage = () => {
         onClose={() => setSuccessConfig({ ...successConfig, open: false })}
       >
         <div className="flex flex-col items-center text-center gap-4">
-          <div
-            style={{ padding: "20px" }}
-            className="bg-green-500/10 rounded-full"
-          >
+          <div className="p-5 bg-green-500/10 rounded-full">
             <FaCheck className="text-green-500" size={40} />
           </div>
           <H2Bold>Sucesso!</H2Bold>
