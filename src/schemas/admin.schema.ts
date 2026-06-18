@@ -37,6 +37,7 @@ export const createShopBaseSchema = z.object({
   businessEndHour: z.union([z.number().min(0).max(23), z.nan()]).optional(),
 });
 
+
 export const createShopSchema = createShopBaseSchema.refine(
   (data) =>
     data.alwaysOpen ||
