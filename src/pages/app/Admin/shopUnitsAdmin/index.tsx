@@ -4,7 +4,8 @@ import { useShopUnits } from "@/features/barberServices/hooks/useShopUnits";
 import { useState } from "react";
 import { BiSolidBusiness } from "react-icons/bi";
 import { MdAddBusiness } from "react-icons/md";
-import { LuArrowLeft, LuPencil, LuTrash2 } from "react-icons/lu";
+import { LuArrowLeft, LuTrash2 } from "react-icons/lu";
+import { HiPencilAlt } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import H2Bold from "@/components/ui/H2Bold";
 import CreateAndEditShopUnityForm from "@/components/common/CreateShopUnity";
@@ -199,14 +200,9 @@ const AdminShopUnitsPage = () => {
                   </p>
                   <p className="text-gray-500 text-sm">{shop.address}</p>
                   <div className="flex gap-4 mt-2 text-sm font-medium text-gray-400">
-                    {shop.alwaysOpen ? (
-                      <p>Aberto 24h</p>
-                    ) : (
-                      <>
-                        <p>Abre: {shop.businessStartHour}h</p>
-                        <p>Fecha: {shop.businessEndHour}h</p>
-                      </>
-                    )}
+                    <p>
+                      {shop.alwaysOpen ? "Aberto 24 horas" : "Horários Dinâmicos"}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -273,7 +269,7 @@ const AdminShopUnitsPage = () => {
             style={{ padding: "1.5rem" }}
             className="border border-[#8f882c] rounded-2xl shadow-sm hover:shadow-md hover:border-amber-400 transition-all cursor-pointer group"
           >
-            <LuPencil
+            <HiPencilAlt
               size={32}
               className="text-amber-500 group-hover:scale-110 transition-transform"
               style={{ marginBottom: "0.75rem" }}

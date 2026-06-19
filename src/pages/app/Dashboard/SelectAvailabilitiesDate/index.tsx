@@ -8,6 +8,7 @@ import { useState, useEffect, useMemo } from "react";
 import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 import { useAppointment } from "@/contexts/useAppointment";
 import { IoIosArrowForward } from "react-icons/io";
+import { formatAppointmentDate } from "@/utils/date";
 
 const SelectAvailabilitiesDatePage = () => {
   const navigate = useNavigate();
@@ -48,26 +49,7 @@ const SelectAvailabilitiesDatePage = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const getDisplayDate = (date: Date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-
-    const checkDate = new Date(date);
-    checkDate.setHours(0, 0, 0, 0);
-
-    if (checkDate.getTime() === today.getTime()) return "Hoje";
-    if (checkDate.getTime() === tomorrow.getTime()) return "Amanhã";
-
-    const day = date.getDate();
-    const month = date.toLocaleDateString("pt-BR", { month: "long" });
-    const weekday = date.toLocaleDateString("pt-BR", { weekday: "long" });
-
-    const formatted = `${weekday}, ${day} de ${month}`;
-    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
-  };
+  
 
   const handleNextDay = () => {
     setCurrentDate((prev) => {
@@ -184,7 +166,7 @@ const SelectAvailabilitiesDatePage = () => {
           }}
         />
         <P style={{ fontSize: "1.1rem", fontWeight: "600" }}>
-          {getDisplayDate(currentDate)}
+          {formatAppointmentDate(currentDate)}
         </P>
         <IoIosArrowForward
           size={24}
@@ -208,7 +190,7 @@ const SelectAvailabilitiesDatePage = () => {
           style={{ marginTop: "1rem" }}
         >
           {import.meta.env.VITE_BARBER_SHOP_NAME} e/ou o {currentBarberName} não
-          atenderá {getDisplayDate(currentDate)}
+          atenderá {formatAppointmentDate(currentDate)}
         </P>
       )}
 
@@ -221,7 +203,7 @@ const SelectAvailabilitiesDatePage = () => {
             className="text-yellow-500 font-semibold"
             style={{ marginTop: "1rem" }}
           >
-            Não há mais horários disponíveis para {getDisplayDate(currentDate)}
+            Não há mais horários disponíveis para {formatAppointmentDate(currentDate)}
           </P>
         )}
 
