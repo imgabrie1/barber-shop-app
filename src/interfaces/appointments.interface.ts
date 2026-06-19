@@ -14,7 +14,7 @@ export const appointmentStatusMap: Record<
   { label: string; color: string }
 > = {
   pending: {
-    label: "Pendente",
+    label: "Aguardando confirmação",
     color: "text-[var(--warning)]",
   },
   confirmed: {

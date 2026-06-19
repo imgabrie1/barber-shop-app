@@ -4,10 +4,11 @@ import { RiMenu4Line } from "@react-icons/all-files/ri/RiMenu4Line";
 import { GoX } from "@react-icons/all-files/go/GoX";
 import Header from "@/components/ui/Header";
 import { useState } from "react";
+import { MdLogout } from "react-icons/md";
 
 export const AppLayout = () => {
   const { logout, user } = useAuth();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const handleOpenAndCloseMenu = () => {
     setIsOpen(!isOpen);
@@ -154,7 +155,7 @@ export const AppLayout = () => {
                 onClick={logout}
                 className="text-md font-medium cursor-pointer"
               >
-                SAIR
+                <MdLogout size={24}/>
               </p>
             </nav>
           </div>
