@@ -1,8 +1,10 @@
 import { useAuth } from "@/app/providers/AuthProvider";
 import H2Bold from "@/components/ui/H2Bold";
-import { LuUser, LuPencil, LuArrowLeft } from "react-icons/lu";
+import { LuUser, LuArrowLeft } from "react-icons/lu";
+import { HiPencilAlt } from "react-icons/hi";
 import { FaMobileScreen } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { FaUserEdit } from "react-icons/fa";
 
 const ClientProfilePage = () => {
   const { user } = useAuth();
@@ -17,7 +19,6 @@ const ClientProfilePage = () => {
 
   const userOrStranger = user ?? InvalidUser;
 
-  const seeRole = userOrStranger.role == "client";
 
   function capitalize(phrase: string) {
     return phrase
@@ -56,7 +57,7 @@ const ClientProfilePage = () => {
                 </H2Bold>
               </div>
             </div>
-            <LuPencil
+            <FaUserEdit
               size={20}
               className="text-gray-400 hover:text-amber-500 transition-colors"
             />
@@ -76,30 +77,14 @@ const ClientProfilePage = () => {
                 </H2Bold>
               </div>
             </div>
-            <LuPencil
+            <HiPencilAlt  
               size={20}
               className="text-gray-400 hover:text-amber-500 transition-colors"
             />
           </div>
         </div>
 
-        {seeRole && (
-          <div>
-            <div className="p-6 border border-gray-200 rounded-2xl shadow-sm opacity-70 bg-gray-50/5">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-gray-500/10 rounded-full text-gray-500">
-                  <LuUser size={28} />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Tipo de Conta</p>
-                  <p className="font-bold text-lg uppercase tracking-wider text-gray-400">
-                    {userOrStranger.role}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+    
 
       </div>
     </div>

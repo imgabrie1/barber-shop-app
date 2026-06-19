@@ -1,7 +1,8 @@
 import H2Bold from "@/components/ui/H2Bold";
 import { useState } from "react";
 import { BsPlusCircleFill } from "react-icons/bs";
-import { LuPencil, LuTrash2, LuArrowLeft, LuStore } from "react-icons/lu";
+import { LuTrash2, LuArrowLeft, LuStore } from "react-icons/lu";
+import { HiPencilAlt } from "react-icons/hi";
 import { useServices } from "@/features/barberServices/hooks/useBarbersServices";
 import { useShopUnits } from "@/features/barberServices/hooks/useShopUnits";
 import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
@@ -368,7 +369,7 @@ const AdminServicesPage = () => {
             onClick={() => startAction("edit")}
             className="p-6 border border-[#8f882c] rounded-2xl shadow-sm hover:shadow-md hover:border-amber-400 transition-all cursor-pointer group"
           >
-            <LuPencil
+            <HiPencilAlt
               size={32}
               className="text-amber-500 group-hover:scale-110 transition-transform mb-3"
             />

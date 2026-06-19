@@ -29,25 +29,23 @@ export const createServiceSchema = z.object({
   shopId: z.string().optional(),
 });
 
+export const scheduleSchema = z.object({
+  id: z.string().optional(),
+  dayOfWeek: z.number().int().min(0).max(6),
+  startHour: z.number().int().min(0).max(23).default(8),
+  endHour: z.number().int().min(0).max(23).default(18),
+  isOpen: z.boolean().default(true),
+});
+
 export const createShopBaseSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
   address: z.string().min(1, "Endereço é obrigatório"),
   alwaysOpen: z.boolean(),
-  businessStartHour: z.union([z.number().min(0).max(23), z.nan()]).optional(),
-  businessEndHour: z.union([z.number().min(0).max(23), z.nan()]).optional(),
+  schedules: z.array(scheduleSchema).optional(),
 });
 
 
-export const createShopSchema = createShopBaseSchema.refine(
-  (data) =>
-    data.alwaysOpen ||
-    (data.businessStartHour !== undefined &&
-      data.businessEndHour !== undefined),
-  {
-    message: "Horários são obrigatórios quando não é 24h",
-    path: ["businessStartHour"],
-  }
-);
+export const createShopSchema = createShopBaseSchema;
 
 export const returnShopUnit = createShopBaseSchema.extend({
   id: z.string(),
@@ -55,8 +53,7 @@ export const returnShopUnit = createShopBaseSchema.extend({
 
 export const returnShopsInServices = returnShopUnit.omit({
   address: true,
-  businessStartHour: true,
-  businessEndHour: true,
+  schedules: true,
   alwaysOpen: true,
 });
 

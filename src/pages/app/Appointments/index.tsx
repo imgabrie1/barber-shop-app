@@ -8,6 +8,7 @@ import Span from "@/components/ui/Span";
 import { useMutationAppointment } from "@/features/Appointments/hooks/useMutationAppointment";
 import { useMyAppointments } from "@/features/Appointments/hooks/useMyAppointments";
 import { appointmentStatusMap } from "@/interfaces/appointments.interface";
+import { formatAppointmentDate } from "@/utils/date";
 import { useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
@@ -145,6 +146,7 @@ const AppointmentsPage = () => {
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4">
             {appointments.map((item) => {
+
               const isBarberOrManager =
                 (user?.role === "barber" && item.barber.id === user.id) ||
                 user?.role === "manager";
@@ -172,7 +174,10 @@ const AppointmentsPage = () => {
                 >
                   <div className="py-4">
                     <p>Serviço: {service.name}</p>
+                    <p>Quando: {formatAppointmentDate(item.startTime, true)}</p>
+                    <p>Término previsto: {formatAppointmentDate(item.endTime, true)}</p>
                     <p>Duração: {service.durationMinutes} min</p>
+                    <p>Profissional: {item.barber.name}</p>
 
                     <p className={status.color}>{status.label}</p>
 
