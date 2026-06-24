@@ -203,7 +203,7 @@ const SelectAvailabilitiesDatePage = () => {
             className="text-yellow-500 font-semibold"
             style={{ marginTop: "1rem" }}
           >
-            Não há mais horários disponíveis para {formatAppointmentDate(currentDate)}
+            Não há horários disponíveis para {formatAppointmentDate(currentDate)}
           </P>
         )}
 
