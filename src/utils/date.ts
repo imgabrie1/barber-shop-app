@@ -24,8 +24,8 @@ export const formatAppointmentDate = (dateInput: string | Date, includeTime = fa
     dayLabel = "Amanhã";
   } else {
     const day = date.getDate();
-    const month = date.toLocaleDateString("pt-BR", { month: "long" });
-    const weekday = date.toLocaleDateString("pt-BR", { weekday: "long" });
+    const month = date.toLocaleDateString("pt-BR", { month: "long", timeZone: "America/Sao_Paulo" });
+    const weekday = date.toLocaleDateString("pt-BR", { weekday: "long", timeZone: "America/Sao_Paulo" });
     const formatted = `${weekday}, ${day} de ${month}`;
     dayLabel = formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }
@@ -34,6 +34,7 @@ export const formatAppointmentDate = (dateInput: string | Date, includeTime = fa
     const time = date.toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
+      timeZone: "America/Sao_Paulo",
     });
     return `${dayLabel} às ${time}`;
   }
