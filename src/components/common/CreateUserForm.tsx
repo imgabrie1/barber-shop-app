@@ -1,18 +1,21 @@
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema, type RegisterDTO } from "@/schemas/register.schemas";
+import { registerSchema, type RegisterDTO, updateUserSchema, type UpdateUserDTO } from "@/schemas/register.schemas";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { maskPhone, unmaskPhone } from "@/utils/masks";
 import { useState } from "react";
 import { useShopUnits } from "@/features/barberServices/hooks/useShopUnits";
+import type { User } from "@/interfaces/user.interface";
 
 interface CreateUserFormProps {
-  onSuccess: (data: RegisterDTO) => Promise<void>;
+  onSuccess: (data: Partial<User>) => Promise<void>;
   defaultRole?: "barber" | "admin" | "manager";
+  isEdit?: boolean;
+  defaultValues?: Partial<UpdateUserDTO>;
 }
 
-const CreateUserForm = ({ onSuccess, defaultRole }: CreateUserFormProps) => {
+const CreateUserForm = ({ onSuccess, defaultRole, isEdit, defaultValues }: CreateUserFormProps) => {
   const [stage, setStage] = useState<1 | 2>(1);
   const { data: shops } = useShopUnits(
     defaultRole === "barber" || defaultRole === "manager",
@@ -27,8 +30,9 @@ const CreateUserForm = ({ onSuccess, defaultRole }: CreateUserFormProps) => {
     getValues,
     formState: { errors, isSubmitting },
   } = useForm<RegisterDTO>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(isEdit ? updateUserSchema : registerSchema) as unknown as Resolver<RegisterDTO>,
     mode: "onChange",
+    defaultValues: defaultValues,
   });
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,17 +167,27 @@ const CreateUserForm = ({ onSuccess, defaultRole }: CreateUserFormProps) => {
                 </div>
               )}
 
-              <Button
-                type="button"
-                className="w-full mt-2"
-                onClick={handleNext}
-              >
-                Avançar
-              </Button>
+              {isEdit ? (
+                <Button
+                  type="submit"
+                  className="w-full mt-2"
+                  loading={isSubmitting}
+                >
+                  Salvar
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  className="w-full mt-2"
+                  onClick={handleNext}
+                >
+                  Avançar
+                </Button>
+              )}
             </>
           )}
 
-          {stage === 2 && (
+          {stage === 2 && !isEdit && (
             <>
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-gray-600">
