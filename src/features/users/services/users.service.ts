@@ -31,7 +31,24 @@ export const getUserById = async (id: string) => {
     const msg =
       (currentError.response?.data as string | undefined) ||
       currentError.message ||
-      "Erro ao carregar usuario";
+      "Erro ao carregar usuário";
+    throw new Error(String(msg));
+  }
+};
+
+export const patchUser = async (id: string, data: Partial<User>) => {
+  try {
+    const response = await api.patch(`/user/${id}`, data);
+    return response;
+  } catch (err: unknown) {
+    const currentError = err as AxiosError;
+    if (currentError.response?.status === 404) {
+      return null;
+    }
+    const msg =
+      (currentError.response?.data as string | undefined) ||
+      currentError.message ||
+      "Erro ao editar usuário";
     throw new Error(String(msg));
   }
 };

@@ -15,3 +15,12 @@ export const registerSchema = z
   });
 
 export type RegisterDTO = z.infer<typeof registerSchema>;
+
+export const updateUserSchema = z.object({
+  name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres"),
+  phoneNumber: z.string().length(11, "O telefone deve ter 11 dígitos (DDD + número)"),
+  shopId: z.string().optional(),
+  commissionPercentage: z.number().min(0).max(100).optional(),
+});
+
+export type UpdateUserDTO = z.infer<typeof updateUserSchema>;

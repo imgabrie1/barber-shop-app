@@ -17,6 +17,7 @@ type AuthContextValue = {
   user: User | null;
   login: (user: User) => void;
   logout: () => void;
+  updateUser: (userData: Partial<User>) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -55,9 +56,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     queryClient.clear();
   }, [queryClient]);
 
+  const updateUser = useCallback((userData: Partial<User>) => {
+    setUser((prevUser) => {
+      if (!prevUser) return null;
+      const newUser = { ...prevUser, ...userData };
+      storage.set(USER_STORAGE, JSON.stringify(newUser));
+      return newUser;
+    });
+  }, []);
+
   const value = useMemo(
-    () => ({ isAuthenticated, user, login, logout }),
-    [isAuthenticated, user, login, logout],
+    () => ({ isAuthenticated, user, login, logout, updateUser }),
+    [isAuthenticated, user, login, logout, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
