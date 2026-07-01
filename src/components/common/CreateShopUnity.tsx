@@ -47,7 +47,7 @@ const CreateAndEditShopUnityForm = ({
     control,
     formState: { errors, isSubmitting },
   } = useForm<createShopType>({
-    resolver: zodResolver(createShopSchema),
+    resolver: zodResolver(createShopSchema) as any,
     mode: "onChange",
     defaultValues: {
       ...initialData,
