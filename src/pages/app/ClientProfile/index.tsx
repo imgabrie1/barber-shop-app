@@ -7,7 +7,7 @@ import { FaUserEdit } from "react-icons/fa";
 import { useState } from "react";
 import CreateUserForm from "@/components/common/CreateUserForm";
 import { usePatchUser } from "@/features/users/hooks/usePatchUser";
-import type { User } from "@/interfaces/user.interface";
+import type { UpdateUserDTO } from "@/schemas/register.schemas";
 
 const ClientProfilePage = () => {
   const { user, updateUser } = useAuth();
@@ -35,7 +35,7 @@ const ClientProfilePage = () => {
     navigate(-1);
   };
 
-  const handleEditSubmit = async (data: Partial<User>) => {
+  const handleEditSubmit = async (data: UpdateUserDTO) => {
     if (user?.id) {
       const response = await patchUser({ id: user.id, data });
       const updatedUser = response?.data;

@@ -6,16 +6,16 @@ import Button from "@/components/ui/Button";
 import { maskPhone, unmaskPhone } from "@/utils/masks";
 import { useState } from "react";
 import { useShopUnits } from "@/features/barberServices/hooks/useShopUnits";
-import type { User } from "@/interfaces/user.interface";
 
-interface CreateUserFormProps {
-  onSuccess: (data: Partial<User>) => Promise<void>;
+
+interface CreateUserFormProps<T> {
+  onSuccess: (data: T) => Promise<void>;
   defaultRole?: "barber" | "admin" | "manager";
   isEdit?: boolean;
   defaultValues?: Partial<UpdateUserDTO>;
 }
 
-const CreateUserForm = ({ onSuccess, defaultRole, isEdit, defaultValues }: CreateUserFormProps) => {
+const CreateUserForm = <T,>({ onSuccess, defaultRole, isEdit, defaultValues }: CreateUserFormProps<T>) => {
   const [stage, setStage] = useState<1 | 2>(1);
   const { data: shops } = useShopUnits(
     defaultRole === "barber" || defaultRole === "manager",
@@ -74,7 +74,7 @@ const CreateUserForm = ({ onSuccess, defaultRole, isEdit, defaultValues }: Creat
         return;
       }
       const payload = defaultRole ? { ...data, role: defaultRole } : data;
-      await onSuccess(payload);
+      await onSuccess(payload as unknown as T);
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Falha ao criar conta";
