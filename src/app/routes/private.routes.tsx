@@ -1,17 +1,26 @@
+import { lazy, Suspense } from "react";
 import { AppLayout } from "../layout/AppLayout";
 import { RequireAuth, RequireRole } from "../providers/AuthProvider";
-import AppointmentsPage from "@/pages/app/Appointments";
-import SelectServicePage from "@/pages/app/Dashboard/SelectService";
-import SelectBarberPage from "@/pages/app/Dashboard/SelectBarber";
-import SelectAvailabilitiesDatePage from "@/pages/app/Dashboard/SelectAvailabilitiesDate";
-import AppointmentSummaryPage from "@/pages/app/Dashboard/AppointmentSummary";
-import AdminPage from "@/pages/app/Admin";
-import BarberPage from "@/pages/app/Barber";
-import ManagerPage from "@/pages/app/Manager";
-import AdminUsersPage from "@/pages/app/Admin/usersAdmin";
-import AdminServicesPage from "@/pages/app/Admin/servicesAdmin";
-import AdminShopUnitsPage from "@/pages/app/Admin/shopUnitsAdmin";
-import ClientProfilePage from "@/pages/app/ClientProfile";
+import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
+
+const AppointmentsPage = lazy(() => import("@/pages/app/Appointments"));
+const SelectServicePage = lazy(() => import("@/pages/app/Dashboard/SelectService"));
+const SelectBarberPage = lazy(() => import("@/pages/app/Dashboard/SelectBarber"));
+const SelectAvailabilitiesDatePage = lazy(() => import("@/pages/app/Dashboard/SelectAvailabilitiesDate"));
+const AppointmentSummaryPage = lazy(() => import("@/pages/app/Dashboard/AppointmentSummary"));
+const AdminPage = lazy(() => import("@/pages/app/Admin"));
+const BarberPage = lazy(() => import("@/pages/app/Barber"));
+const ManagerPage = lazy(() => import("@/pages/app/Manager"));
+const AdminUsersPage = lazy(() => import("@/pages/app/Admin/usersAdmin"));
+const AdminServicesPage = lazy(() => import("@/pages/app/Admin/servicesAdmin"));
+const AdminShopUnitsPage = lazy(() => import("@/pages/app/Admin/shopUnitsAdmin"));
+const ClientProfilePage = lazy(() => import("@/pages/app/ClientProfile"));
+
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-[50vh]">
+    <IsFetchingAndLoading />
+  </div>
+);
 
 export const privateRoutes = {
   element: (
@@ -20,22 +29,31 @@ export const privateRoutes = {
     </RequireAuth>
   ),
   children: [
-    { path: "/app", element: <SelectServicePage /> },
-    { path: "/app/appointments", element: <AppointmentsPage /> },
+    {
+      path: "/app",
+      element: <Suspense fallback={<PageLoader />}><SelectServicePage /></Suspense>,
+    },
+    {
+      path: "/app/appointments",
+      element: <Suspense fallback={<PageLoader />}><AppointmentsPage /></Suspense>,
+    },
     {
       path: "/app/appointment/select-barber/:serviceId",
-      element: <SelectBarberPage />,
+      element: <Suspense fallback={<PageLoader />}><SelectBarberPage /></Suspense>,
     },
     {
       path: "/app/appointment/select-availabilityDate",
-      element: <SelectAvailabilitiesDatePage />,
+      element: <Suspense fallback={<PageLoader />}><SelectAvailabilitiesDatePage /></Suspense>,
     },
-    { path: "/app/appointment/summary", element: <AppointmentSummaryPage /> },
+    {
+      path: "/app/appointment/summary",
+      element: <Suspense fallback={<PageLoader />}><AppointmentSummaryPage /></Suspense>,
+    },
     {
       path: "/app/admin",
       element: (
         <RequireRole allowedRoles={["admin"]}>
-          <AdminPage />
+          <Suspense fallback={<PageLoader />}><AdminPage /></Suspense>
         </RequireRole>
       ),
     },
@@ -43,7 +61,7 @@ export const privateRoutes = {
       path: "/app/admin/users",
       element: (
         <RequireRole allowedRoles={["admin"]}>
-          <AdminUsersPage />
+          <Suspense fallback={<PageLoader />}><AdminUsersPage /></Suspense>
         </RequireRole>
       ),
     },
@@ -51,7 +69,7 @@ export const privateRoutes = {
       path: "/app/admin/services",
       element: (
         <RequireRole allowedRoles={["admin"]}>
-          <AdminServicesPage />
+          <Suspense fallback={<PageLoader />}><AdminServicesPage /></Suspense>
         </RequireRole>
       ),
     },
@@ -59,7 +77,7 @@ export const privateRoutes = {
       path: "/app/admin/shopUnits",
       element: (
         <RequireRole allowedRoles={["admin"]}>
-          <AdminShopUnitsPage />
+          <Suspense fallback={<PageLoader />}><AdminShopUnitsPage /></Suspense>
         </RequireRole>
       ),
     },
@@ -67,7 +85,7 @@ export const privateRoutes = {
       path: "/app/barber",
       element: (
         <RequireRole allowedRoles={["barber"]}>
-          <BarberPage />
+          <Suspense fallback={<PageLoader />}><BarberPage /></Suspense>
         </RequireRole>
       ),
     },
@@ -75,7 +93,7 @@ export const privateRoutes = {
       path: "/app/manager",
       element: (
         <RequireRole allowedRoles={["manager"]}>
-          <ManagerPage />
+          <Suspense fallback={<PageLoader />}><ManagerPage /></Suspense>
         </RequireRole>
       ),
     },
@@ -83,7 +101,7 @@ export const privateRoutes = {
       path: "/app/clientProfile",
       element: (
         <RequireRole allowedRoles={["client"]}>
-          <ClientProfilePage />
+          <Suspense fallback={<PageLoader />}><ClientProfilePage /></Suspense>
         </RequireRole>
       ),
     },

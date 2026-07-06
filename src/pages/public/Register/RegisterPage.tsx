@@ -7,7 +7,7 @@ import type { RegisterDTO } from "@/schemas/register.schemas";
 const RegisterPage = () => {
   const navigate = useNavigate();
 
-  const handleRegister = async (data: RegisterDTO) => {
+  const handleRegister = async (data: RegisterDTO & { role?: string }) => {
     await registerRequest(data);
     navigate("/login", { replace: true });
   };
