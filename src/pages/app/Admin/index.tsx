@@ -16,6 +16,10 @@ const AdminPage = () => {
     navigate("/app/admin/shopUnits");
   };
 
+  const handleNavigateWhatsapp = () => {
+    navigate("/app/admin/whatsapp");
+  };
+
   return (
     <div
       style={{
@@ -26,7 +30,7 @@ const AdminPage = () => {
     >
       <RevenueDisplay role="admin" title="Painel Administrativo" />
 
-      <div className="grid grid-cols-2 w-full gap-5 pt-10 [&>*:last-child:nth-child(odd)]:col-span-2">
+      <div className="grid grid-cols-2 w-full gap-5 pt-10">
         <div
           onClick={handleNavigateUsers}
           className="
@@ -42,6 +46,7 @@ const AdminPage = () => {
                   transition-all
                   cursor-pointer
                   group
+                  min-h-[100px]
                   "
         >
           <H2Bold>Gerenciar Usuários</H2Bold>
@@ -63,6 +68,7 @@ const AdminPage = () => {
                   transition-all
                   cursor-pointer
                   group
+                  min-h-[100px]
                   "
         >
           <H2Bold>Gerenciar Serviços</H2Bold>
@@ -83,9 +89,31 @@ const AdminPage = () => {
                   transition-all
                   cursor-pointer
                   group
+                  min-h-[100px]
                   "
         >
           <H2Bold>Gerenciar Unidades</H2Bold>
+        </div>
+        <div
+          onClick={handleNavigateWhatsapp}
+          className="
+                  p-6
+                  flex
+                  items-center
+                  justify-center
+                  border
+                  border-emerald-600
+                  rounded-2xl
+                  shadow-sm
+                  hover:shadow-md
+                  hover:border-emerald-400
+                  transition-all
+                  cursor-pointer
+                  group
+                  min-h-[100px]
+                  "
+        >
+          <H2Bold>Conexão WhatsApp</H2Bold>
         </div>
       </div>
     </div>
