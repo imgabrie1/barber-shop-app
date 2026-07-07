@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import api from "@/services/api";
 import H2Bold from "@/components/ui/H2Bold";
@@ -8,6 +8,20 @@ const WhatsappAdmin = () => {
     "CONNECTED" | "DISCONNECTED" | "LOADING"
   >("LOADING");
   const [qrCode, setQrCode] = useState<string | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
+
+  const hasTriggeredStart = useRef(false);
+
+  const handleStartWhatsApp = async () => {
+    try {
+      setIsStarting(true);
+      await api.post("/whatsapp/start");
+      setTimeout(() => setIsStarting(false), 2000);
+    } catch (error) {
+      console.error("Erro ao iniciar o WhatsApp:", error);
+      setIsStarting(false);
+    }
+  };
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -15,12 +29,18 @@ const WhatsappAdmin = () => {
     const fetchStatus = async () => {
       try {
         const response = await api.get("/whatsapp/status");
+
         if (response.data.connected) {
           setStatus("CONNECTED");
           setQrCode(null);
         } else {
           setStatus("DISCONNECTED");
           setQrCode(response.data.qr);
+
+          if (!response.data.qr && !hasTriggeredStart.current) {
+            hasTriggeredStart.current = true;
+            handleStartWhatsApp();
+          }
         }
       } catch (error) {
         console.error("Erro ao buscar status do WhatsApp:", error);
@@ -57,7 +77,7 @@ const WhatsappAdmin = () => {
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="http://www.w3.org/2000/xl"
             >
               <path
                 strokeLinecap="round"
@@ -89,10 +109,20 @@ const WhatsappAdmin = () => {
         )}
 
         {status === "DISCONNECTED" && !qrCode && (
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center gap-4">
             <p className="text-gray-500">
-              Aguardando geração do QR Code pelo servidor...
+              {isStarting
+                ? "Iniciando o serviço e gerando QR Code..."
+                : "O serviço do WhatsApp está em modo de espera para poupar recursos."}
             </p>
+            {!isStarting && (
+              <button
+                onClick={handleStartWhatsApp}
+                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl shadow transition-colors"
+              >
+                Gerar QR Code para Conectar
+              </button>
+            )}
           </div>
         )}
       </div>
