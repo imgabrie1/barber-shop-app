@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { AppLayout } from "../layout/AppLayout";
 import { RequireAuth, RequireRole } from "../providers/AuthProvider";
-import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
+
 
 const AppointmentsPage = lazy(() => import("@/pages/app/Appointments"));
 const SelectServicePage = lazy(() => import("@/pages/app/Dashboard/SelectService"));
@@ -14,13 +14,9 @@ const ManagerPage = lazy(() => import("@/pages/app/Manager"));
 const AdminUsersPage = lazy(() => import("@/pages/app/Admin/usersAdmin"));
 const AdminServicesPage = lazy(() => import("@/pages/app/Admin/servicesAdmin"));
 const AdminShopUnitsPage = lazy(() => import("@/pages/app/Admin/shopUnitsAdmin"));
+const AdminWhatsappPage = lazy(() => import("@/pages/app/Admin/whatsappAdmin"));
 const ClientProfilePage = lazy(() => import("@/pages/app/ClientProfile"));
-
-const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-[50vh]">
-    <IsFetchingAndLoading />
-  </div>
-);
+import { PageLoader } from "@/components/ui/PageLoader";
 
 export const privateRoutes = {
   element: (
@@ -78,6 +74,14 @@ export const privateRoutes = {
       element: (
         <RequireRole allowedRoles={["admin"]}>
           <Suspense fallback={<PageLoader />}><AdminShopUnitsPage /></Suspense>
+        </RequireRole>
+      ),
+    },
+    {
+      path: "/app/admin/whatsapp",
+      element: (
+        <RequireRole allowedRoles={["admin"]}>
+          <Suspense fallback={<PageLoader />}><AdminWhatsappPage /></Suspense>
         </RequireRole>
       ),
     },
