@@ -6,6 +6,8 @@ import H2Bold from "@/components/ui/H2Bold";
 import P from "@/components/ui/Span";
 import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 import { ErrorMessage } from "@/components/common/ErrorMessage";
+import { SiGooglemaps } from "react-icons/si";
+import { BiSolidBusiness } from "react-icons/bi";
 
 import { useServices } from "@/features/barberServices/hooks/useBarbersServices";
 import { useShopUnits } from "@/features/barberServices/hooks/useShopUnits";
@@ -34,15 +36,20 @@ const SelectServicePage = () => {
     error: shopError,
   } = useShopUnits();
 
+  const hasSingleShop = shopData && shopData.length === 1;
+  const resolvedShopId = hasSingleShop ? shopData[0].id : selectedShopId;
+  const resolvedStage = hasSingleShop ? "shopData" : stage;
+  const selectedShop = shopData?.find((shop) => shop.id === resolvedShopId);
+
   const {
     data: services,
     isFetching: isFetchingServices,
     isLoading: isLoadingServices,
     error: errorServices,
   } = useServices(
-    selectedShopId ?? "",
+    resolvedShopId ?? "",
     currentPage,
-    stage === "shopData" && !!selectedShopId,
+    resolvedStage === "shopData" && !!resolvedShopId,
   );
 
   const handleSelectShop = (shopId: string, shopName: string) => {
@@ -70,7 +77,16 @@ const SelectServicePage = () => {
     ? currentPage >= Math.ceil(services.total / services.limit)
     : true;
 
-  if (stage === "init") {
+  const handleGoBack = () => {
+    if (shopData && shopData.length === 1) {
+      navigate(-1);
+    } else {
+      setStage("init");
+      setCurrentPage(1);
+    }
+  };
+
+  if (resolvedStage === "init") {
     return (
       <div>
         <H2Bold>Selecione uma Unidade</H2Bold>
@@ -83,22 +99,40 @@ const SelectServicePage = () => {
             <div
               key={shop.id}
               onClick={() => handleSelectShop(shop.id, shop.name)}
-              className="flex p-4 justify-between items-center cursor-pointer border border-white/20 rounded-lg hover:bg-white/5 transition-colors"
+              className="flex p-4 justify-between items-center cursor-pointer border border-white/20 rounded-lg hover:bg-white/5 transition-colors group"
             >
-              <div>
+              <div className="flex-1">
                 <P className="font-bold">{shop.name}</P>
 
-                <P className="text-sm opacity-70">
-                  {shop.address || "Endereço não informado"}
-                </P>
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  <P className="text-sm opacity-70">
+                    {shop.address || "Endereço não informado"}
+                  </P>
+                  {shop.address && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(
+                          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`,
+                          "_blank",
+                        );
+                      }}
+                      className="p-1 hover:bg-white/10 rounded text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 text-xs"
+                      title="Ver no Google Maps"
+                    >
+                      <SiGooglemaps size={14} />
+                      <span className="text-[10px] opacity-80 underline font-medium">Ver no mapa</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
-              <MdNavigateNext size={30} className="text-[var(--textPrimary)]" />
+              <MdNavigateNext size={30} className="text-[var(--textPrimary)] group-hover:translate-x-1 transition-transform" />
             </div>
           ))}
         </div>
 
-        {!shopData?.length && (
+        {!shopData?.length && !shopLoading && (
           <div className="flex items-center mt-6 justify-center">
             <p className="text-2xl text-gray-400 font-bold">
               Nenhuma unidade encontrada
@@ -112,18 +146,47 @@ const SelectServicePage = () => {
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
-        <button
-          onClick={() => {
-            setStage("init");
-            setCurrentPage(1);
-          }}
-          className="p-1 hover:bg-white/10 rounded-full"
-        >
-          <MdArrowBack size={24} />
-        </button>
+        {!hasSingleShop && (
+          <button
+            onClick={handleGoBack}
+            className="p-1 hover:bg-white/10 rounded-full"
+          >
+            <MdArrowBack size={24} />
+          </button>
+        )}
 
         <H2Bold>Serviços Disponíveis</H2Bold>
       </div>
+
+      {selectedShop && (
+        <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-lg flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-[var(--textPrimary)]/10 text-[var(--textPrimary)] rounded-lg flex-shrink-0">
+              <BiSolidBusiness size={20} />
+            </div>
+            <div>
+              <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Unidade Selecionada</p>
+              <p className="text-sm font-bold text-white">{selectedShop.name}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{selectedShop.address || "Endereço não informado"}</p>
+            </div>
+          </div>
+          {selectedShop.address && (
+            <button
+              onClick={() => {
+                window.open(
+                  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedShop.address)}`,
+                  "_blank",
+                );
+              }}
+              className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors flex items-center gap-1.5 text-xs font-semibold shrink-0 cursor-pointer"
+              title="Ver no Google Maps"
+            >
+              <SiGooglemaps size={16} />
+              <span>Ver no mapa</span>
+            </button>
+          )}
+        </div>
+      )}
 
       {(isLoadingServices || shopLoading) && <IsFetchingAndLoading />}
 
@@ -144,10 +207,17 @@ const SelectServicePage = () => {
               setCurrentServiceId(service.id);
               setCurrentServiceName(service.name);
               setCurrentServiceDuration(service.durationMinutes);
-              setCurrentShopId(selectedShopId);
+              setCurrentShopId(resolvedShopId);
+
+              const currentShop = shopData?.find(
+                (s) => s.id === resolvedShopId,
+              );
+              if (currentShop) {
+                setCurrentShopName(currentShop.name);
+              }
 
               navigate(
-                `/app/appointment/select-barber/${service.id}?price=${service.price}&shopId=${selectedShopId}`,
+                `/app/appointment/select-barber/${service.id}?price=${service.price}&shopId=${resolvedShopId}`,
                 {
                   state: { price: service.price },
                 },
