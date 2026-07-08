@@ -135,20 +135,19 @@ const AdminShopUnitsPage = () => {
                       <p className="text-gray-400 text-sm">{shop.address}</p>
                     </div>
                     {shop.address && (
-                      <button
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         onClick={(e) => {
                           e.stopPropagation();
-                          window.open(
-                            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`,
-                            "_blank",
-                          );
                         }}
                         className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-400 mt-2 cursor-pointer transition-colors w-fit"
                         title="Ver no Google Maps"
                       >
                         <SiGooglemaps size={12} />
                         <span className="underline text-[10px] font-medium">Ver no mapa</span>
-                      </button>
+                      </a>
                     )}
                   </div>
                 ))}
@@ -190,20 +189,19 @@ const AdminShopUnitsPage = () => {
                   </p>
                   <p className="text-gray-400 text-sm">{shop.address}</p>
                   {shop.address && (
-                    <button
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(
-                          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`,
-                          "_blank",
-                        );
                       }}
                       className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-400 mt-1 cursor-pointer transition-colors w-fit"
                       title="Ver no Google Maps"
                     >
                       <SiGooglemaps size={12} />
                       <span className="underline text-[10px] font-medium">Ver no mapa</span>
-                    </button>
+                    </a>
                   )}
                 </div>
                 <LuTrash2 className="text-red-500 flex-shrink-0" size={20} />
@@ -235,20 +233,19 @@ const AdminShopUnitsPage = () => {
                   </p>
                   <p className="text-gray-500 text-sm">{shop.address}</p>
                   {shop.address && (
-                    <button
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(
-                          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`,
-                          "_blank",
-                        );
                       }}
                       className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-400 mt-1 cursor-pointer transition-colors w-fit"
                       title="Ver no Google Maps"
                     >
                       <SiGooglemaps size={12} />
                       <span className="underline text-[10px] font-medium">Ver no mapa</span>
-                    </button>
+                    </a>
                   )}
                   <div className="flex gap-4 mt-2 text-sm font-medium text-gray-400">
                     <p>
