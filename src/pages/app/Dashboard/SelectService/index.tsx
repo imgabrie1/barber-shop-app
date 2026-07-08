@@ -109,20 +109,19 @@ const SelectServicePage = () => {
                     {shop.address || "Endereço não informado"}
                   </P>
                   {shop.address && (
-                    <button
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(
-                          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`,
-                          "_blank",
-                        );
                       }}
                       className="p-1 hover:bg-white/10 rounded text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 text-xs"
                       title="Ver no Google Maps"
                     >
                       <SiGooglemaps size={14} />
                       <span className="text-[10px] opacity-80 underline font-medium">Ver no mapa</span>
-                    </button>
+                    </a>
                   )}
                 </div>
               </div>
@@ -171,19 +170,16 @@ const SelectServicePage = () => {
             </div>
           </div>
           {selectedShop.address && (
-            <button
-              onClick={() => {
-                window.open(
-                  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedShop.address)}`,
-                  "_blank",
-                );
-              }}
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedShop.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors flex items-center gap-1.5 text-xs font-semibold shrink-0 cursor-pointer"
               title="Ver no Google Maps"
             >
               <SiGooglemaps size={16} />
               <span>Ver no mapa</span>
-            </button>
+            </a>
           )}
         </div>
       )}
