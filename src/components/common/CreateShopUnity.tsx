@@ -1,11 +1,13 @@
 import { useForm, useWatch, useFieldArray } from "react-hook-form";
+import type { Resolver } from "react-hook-form";
 import Input from "../ui/Input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createShopSchema } from "@/schemas/admin.schema";
 import type { createShopType, ShopUnity } from "@/interfaces/admin.interface";
 import Button from "../ui/Button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useShopMutation } from "@/features/Admin/hooks/useShopMutation";
+import { SiGooglemaps } from "react-icons/si";
 
 type stagesServices = "createShop" | "editShop";
 
@@ -38,6 +40,14 @@ const CreateAndEditShopUnityForm = ({
   onSuccess,
 }: CreateShopUnityFormProps) => {
   const { createMutation, updateMutation } = useShopMutation();
+  
+  const [prevInitialAddress, setPrevInitialAddress] = useState<string | undefined>(initialData?.address);
+  const [mapAddress, setMapAddress] = useState(initialData?.address || "");
+
+  if (initialData?.address !== prevInitialAddress) {
+    setPrevInitialAddress(initialData?.address);
+    setMapAddress(initialData?.address || "");
+  }
 
   const {
     register,
@@ -47,7 +57,7 @@ const CreateAndEditShopUnityForm = ({
     control,
     formState: { errors, isSubmitting },
   } = useForm<createShopType>({
-    resolver: zodResolver(createShopSchema) as any,
+    resolver: zodResolver(createShopSchema) as Resolver<createShopType>,
     mode: "onChange",
     defaultValues: {
       ...initialData,
@@ -65,6 +75,19 @@ const CreateAndEditShopUnityForm = ({
     control,
     name: "alwaysOpen",
   });
+
+  const watchedAddress = useWatch({
+    control,
+    name: "address",
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMapAddress((prev) => (prev !== watchedAddress ? (watchedAddress || "") : prev));
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [watchedAddress]);
 
   useEffect(() => {
     if (initialData) {
@@ -143,6 +166,32 @@ const CreateAndEditShopUnityForm = ({
               {errors.address.message}
             </p>
           )}
+
+          {/* Pré-visualização do Google Maps */}
+          <div className="mt-2 border border-white/10 rounded-lg overflow-hidden bg-white/5 p-2">
+            <div className="text-xs font-semibold text-gray-400 mb-2 flex items-center gap-1.5">
+              <SiGooglemaps className="text-red-500 animate-pulse" size={16} /> Pré-visualização da Localização
+            </div>
+            {mapAddress ? (
+              <iframe
+                title="Mapa de Localização da Unidade"
+                width="100%"
+                height="200"
+                style={{ border: 0, borderRadius: "6px" }}
+                loading="lazy"
+                allowFullScreen
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(mapAddress)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+              />
+            ) : (
+              <div className="h-[200px] flex flex-col items-center justify-center text-sm text-gray-400 border border-dashed border-white/15 rounded-md p-4 text-center">
+                <p>Nenhum endereço digitado ainda.</p>
+                <p className="text-xs opacity-70">O mapa será carregado após você digitar o endereço.</p>
+              </div>
+            )}
+            <p className="text-[10px] text-gray-500 mt-1.5 italic text-right">
+              O mapa é atualizado automaticamente após você parar de digitar.
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">

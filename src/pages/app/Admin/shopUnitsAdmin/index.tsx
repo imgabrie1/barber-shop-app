@@ -16,6 +16,7 @@ import Button from "@/components/ui/Button";
 import type { ShopUnity } from "@/interfaces/admin.interface";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { useShopMutation } from "@/features/Admin/hooks/useShopMutation";
+import { SiGooglemaps } from "react-icons/si";
 
 type stagesShops =
   | "init"
@@ -125,12 +126,30 @@ const AdminShopUnitsPage = () => {
                     key={shop.id}
                     onClick={() => setSelectedShop(shop as ShopUnity)}
                     style={{ padding: "20px" }}
-                    className="border border-gray-200 rounded-xl shadow-sm hover:border-amber-400 cursor-pointer transition-all"
+                    className="border border-gray-200 rounded-xl shadow-sm hover:border-amber-400 cursor-pointer transition-all flex flex-col justify-between"
                   >
-                    <p className="font-bold text-lg text-[var(--textPrimary)]">
-                      {shop.name}
-                    </p>
-                    <p className="text-gray-400 text-sm">{shop.address}</p>
+                    <div>
+                      <p className="font-bold text-lg text-[var(--textPrimary)]">
+                        {shop.name}
+                      </p>
+                      <p className="text-gray-400 text-sm">{shop.address}</p>
+                    </div>
+                    {shop.address && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(
+                            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`,
+                            "_blank",
+                          );
+                        }}
+                        className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-400 mt-2 cursor-pointer transition-colors w-fit"
+                        title="Ver no Google Maps"
+                      >
+                        <SiGooglemaps size={12} />
+                        <span className="underline text-[10px] font-medium">Ver no mapa</span>
+                      </button>
+                    )}
                   </div>
                 ))}
                 {shopUnitsData?.length === 0 && (
@@ -170,8 +189,24 @@ const AdminShopUnitsPage = () => {
                     {shop.name}
                   </p>
                   <p className="text-gray-400 text-sm">{shop.address}</p>
+                  {shop.address && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(
+                          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`,
+                          "_blank",
+                        );
+                      }}
+                      className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-400 mt-1 cursor-pointer transition-colors w-fit"
+                      title="Ver no Google Maps"
+                    >
+                      <SiGooglemaps size={12} />
+                      <span className="underline text-[10px] font-medium">Ver no mapa</span>
+                    </button>
+                  )}
                 </div>
-                <LuTrash2 className="text-red-500" size={20} />
+                <LuTrash2 className="text-red-500 flex-shrink-0" size={20} />
               </div>
             ))}
             {shopUnitsData?.length === 0 && !isLoadingShops && (
@@ -191,14 +226,30 @@ const AdminShopUnitsPage = () => {
                 key={shop.id}
                 className="border border-gray-200 rounded-xl p-5 shadow-sm flex items-start gap-4"
               >
-                <div className="p-2 bg-blue-500/10 rounded-full text-blue-500">
+                <div className="p-2 bg-blue-500/10 rounded-full text-blue-500 flex-shrink-0">
                   <BiSolidBusiness size={24} />
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-full">
                   <p className="font-bold text-[var(--textPrimary)] text-lg">
                     {shop.name}
                   </p>
                   <p className="text-gray-500 text-sm">{shop.address}</p>
+                  {shop.address && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(
+                          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`,
+                          "_blank",
+                        );
+                      }}
+                      className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-400 mt-1 cursor-pointer transition-colors w-fit"
+                      title="Ver no Google Maps"
+                    >
+                      <SiGooglemaps size={12} />
+                      <span className="underline text-[10px] font-medium">Ver no mapa</span>
+                    </button>
+                  )}
                   <div className="flex gap-4 mt-2 text-sm font-medium text-gray-400">
                     <p>
                       {shop.alwaysOpen ? "Aberto 24 horas" : "Horários Dinâmicos"}
