@@ -61,7 +61,7 @@ const SelectBarberPage = () => {
             <div
               key={barber.id}
               onClick={handleSelectBarber}
-              className="flex pb-4 justify-between items-center cursor-pointer border-white/20 border-b md:border md:rounded-lg"
+              className="flex pb-4 justify-between items-center cursor-pointer border-[var(--borderBox)] border-b md:border md:rounded-lg"
               style={{
                 paddingBottom: "19.2px",
                 padding: window.innerWidth >= 768 ? "19.2px" : undefined,

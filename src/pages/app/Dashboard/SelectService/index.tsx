@@ -99,7 +99,7 @@ const SelectServicePage = () => {
             <div
               key={shop.id}
               onClick={() => handleSelectShop(shop.id, shop.name)}
-              className="flex p-4 justify-between items-center cursor-pointer border border-white/20 rounded-lg hover:bg-white/5 transition-colors group"
+              className="flex p-4 justify-between items-center cursor-pointer border border-[var(--borderBox)] rounded-lg hover:bg-white/5 transition-colors group"
             >
               <div className="flex-1">
                 <P className="font-bold">{shop.name}</P>
@@ -158,7 +158,7 @@ const SelectServicePage = () => {
       </div>
 
       {selectedShop && (
-        <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-lg flex items-center justify-between gap-4">
+        <div className="mb-6 p-4 bg-white/5 border border-[var(--borderBox)] rounded-lg flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-[var(--textPrimary)]/10 text-[var(--textPrimary)] rounded-lg flex-shrink-0">
               <BiSolidBusiness size={20} />
@@ -224,7 +224,7 @@ const SelectServicePage = () => {
               <div
                 key={service.id}
                 onClick={handleSelectService}
-                className="flex p-3 justify-between items-center cursor-pointer border-white/20 border-b md:border md:rounded-lg hover:bg-white/5"
+                className="flex p-3 justify-between items-center cursor-pointer border-[var(--borderBox)] border-b md:border md:rounded-lg hover:bg-white/5"
               >
                 <div>
                   <P className="font-medium">{service.name}</P>
