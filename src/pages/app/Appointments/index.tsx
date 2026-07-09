@@ -170,7 +170,7 @@ const AppointmentsPage = () => {
               return (
                 <div
                   key={item.id}
-                  className="mb-4 items-center cursor-pointer border-white/20 border-b md:border md:px-4 md:rounded-lg"
+                  className="mb-4 items-center cursor-pointer border-[var(--borderBox)] border-b md:border md:px-4 md:rounded-lg"
                 >
                   <div className="py-4">
                     <p>Serviço: {service.name}</p>

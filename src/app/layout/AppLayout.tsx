@@ -21,8 +21,8 @@ export const AppLayout = () => {
 
   return (
     <div
-      style={{ transition: "background-color 0.3s ease" }}
-      className="flex flex-col min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A]"
+      style={{ background: "var(--background)", transition: "background-color 0.3s ease, color 0.3s ease" }}
+      className="flex flex-col min-h-screen"
     >
       <Header className="">
         <div className="flex flex-col">
@@ -71,7 +71,7 @@ export const AppLayout = () => {
                 className={({ isActive }) =>
                   `text-sm font-medium transition-all border-b-2 ${
                     isActive
-                      ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
+                      ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
                       : "border-transparent opacity-60 hover:opacity-100"
                   }`
                 }
@@ -84,7 +84,7 @@ export const AppLayout = () => {
                 className={({ isActive }) =>
                   ` text-sm font-medium transition-all border-b-2 ${
                     isActive
-                      ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
+                      ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
                       : "border-transparent opacity-60 hover:opacity-100"
                   }`
                 }
@@ -98,7 +98,7 @@ export const AppLayout = () => {
                   className={({ isActive }) =>
                     ` text-sm font-medium transition-all border-b-2 ${
                       isActive
-                        ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
+                        ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
                         : "border-transparent opacity-60 hover:opacity-100"
                     }`
                   }
@@ -113,7 +113,7 @@ export const AppLayout = () => {
                   className={({ isActive }) =>
                     ` text-sm font-medium transition-all border-b-2 ${
                       isActive
-                        ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
+                        ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
                         : "border-transparent opacity-60 hover:opacity-100"
                     }`
                   }
@@ -128,7 +128,7 @@ export const AppLayout = () => {
                   className={({ isActive }) =>
                     ` text-sm font-medium transition-all border-b-2 ${
                       isActive
-                        ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
+                        ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
                         : "border-transparent opacity-60 hover:opacity-100"
                     }`
                   }
@@ -142,7 +142,7 @@ export const AppLayout = () => {
                   className={({ isActive }) =>
                     ` text-sm font-medium transition-all border-b-2 ${
                       isActive
-                        ? "border-[var(--textPrimary)] text-[var(--textPrimary)] opacity-100"
+                        ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
                         : "border-transparent opacity-60 hover:opacity-100"
                     }`
                   }

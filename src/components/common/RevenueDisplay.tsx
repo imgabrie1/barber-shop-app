@@ -241,7 +241,7 @@ const RevenueDisplay = ({ role, title }: RevenueDisplayProps) => {
       </div>
 
       {isAdmin && revenue?.global && (
-        <div className="bg-gradient-to-br from-[#1e2f62] to-[#2c448f] p-6 rounded-2xl shadow-lg mb-8 text-white">
+        <div className="bg-gradient-to-br from-[var(--revenueBoxFrom)] to-[var(--revenueBoxTo)] p-6 rounded-2xl shadow-lg mb-8 text-white">
           <div className="flex items-center gap-3 mb-4 opacity-80">
             <LuStore size={20} />
             <span className="text-xs font-bold uppercase tracking-[0.2em]">
@@ -312,7 +312,7 @@ const RevenueDisplay = ({ role, title }: RevenueDisplayProps) => {
                 {isAdmin
                   ? selectedShopId
                     ? revenue?.shops?.find((s) => s.id === selectedShopId)?.name
-                    : "Consolidado"
+                    : "Geral"
                   : isManager
                     ? revenue?.shops?.[0]?.name || "Minha Unidade"
                     : ""}
@@ -321,11 +321,11 @@ const RevenueDisplay = ({ role, title }: RevenueDisplayProps) => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 border-l-4 border-l-green-500 shadow-sm hover:shadow-md transition-shadow">
-              <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">
+            <div className="bg-[var(--totalRevenue)] p-6 rounded-2xl border border-gray-100 border-2 border-green-500 shadow-sm hover:shadow-md transition-shadow">
+              <span className="text-[var(--textPrimary)] text-xs font-bold uppercase tracking-wider">
                 Total Faturado
               </span>
-              <p className="text-3xl font-bold text-gray-800 mt-2">
+              <p className="text-3xl font-bold text-[var(--textPrimary)] mt-2">
                 {formatCurrency(currentDisplayData.totalRevenue)}
               </p>
             </div>
@@ -347,8 +347,8 @@ const RevenueDisplay = ({ role, title }: RevenueDisplayProps) => {
       {(!currentDisplayData ||
         (currentDisplayData.totalRevenue === 0 &&
           currentDisplayData.filteredRevenue === 0)) && (
-        <div className="mt-10 text-center py-10 border-2 border-dashed border-gray-100 rounded-3xl">
-          <Span className="text-gray-400">
+        <div className="mt-10 text-center py-10 border-2 border-dashed border-[var(--textSecondary)] rounded-3xl">
+          <Span className="text-[var(--textSecondary)]">
             Nenhum faturamento registrado para este período.
           </Span>
         </div>
