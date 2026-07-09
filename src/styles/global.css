@@ -1,31 +1,66 @@
 @import url("https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV,SHRP@100..900,0..1,0..100&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 
+/* ===== MODO ESCURO (padrão) ===== */
 :root {
   --background: #01030c;
   --block: #181f39;
-  --headerColor: var(--primaryColor);
-  --textPrimary: #fff;
-  --textSecondary: #000;
   --primaryColor: #050f1a;
+  --headerColor: var(--primaryColor);
+  --textHeader: #ffffff;
+
+  --textPrimary: #ffffff;
+  --textSecondary: #a0aec0;
+  --borderBox: #ffffff1a;
   --inputColor: #242424;
   --red: red;
   --drop-shadow: rgba(255, 255, 255, 0.414);
 
-  /* --success: #b9f6ca; */
   --success: #377b4a;
   --warning: #ffecb3;
   --no-show: #e6812f;
   --modalFilter: #081729da;
   --revenueBox: rgb(220, 236, 222);
   --blueBox: rgb(214, 219, 252);
+
+  --revenueBoxFrom: #1e2f62;
+  --revenueBoxTo: #2c448f;
+
+  --totalRevenue: #52ff1d0f;
+}
+
+/* ===== MODO CLARO ===== */
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #f8fafc;
+    --block: #e2e8f0;
+    --primaryColor: #4365c3;
+    --headerColor: var(--primaryColor);
+
+    --textPrimary: #050f1a;
+    --textSecondary: #334155;
+    --borderBox: #0000001a;
+
+    --success: #245231;
+    --: #bd971a;
+    --no-show: #ae6021;
+
+    --inputColor: #c6c7c8;
+    --drop-shadow: rgba(0, 0, 0, 0.15);
+    --modalFilter: rgba(8, 23, 41, 0.85);
+
+    --revenueBoxFrom: #5068b1;
+    --revenueBoxTo: #666e83;
+  }
 }
 
 body {
   font-family: "Inter", sans-serif;
-
   background: var(--background);
-  color: white;
+  color: var(--textPrimary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 h1 {
