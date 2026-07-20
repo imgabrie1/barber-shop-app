@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 import { getToken, clearTokens, USER_STORAGE } from "@/services/auth.storage";
 import { type User } from "@/interfaces/user.interface";
 import { storage } from "@/services/storage";
@@ -85,10 +85,14 @@ export const useAuth = () => {
 export const RequireAuth = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
+  const { tenantSlug } = useParams<{ tenantSlug: string }>();
 
   if (!isAuthenticated) {
     const from = location.pathname + location.search;
-    return <Navigate to="/login" replace state={{ from }} />;
+    const loginPath = tenantSlug
+      ? `/t/${tenantSlug}/login`
+      : "/login";
+    return <Navigate to={loginPath} replace state={{ from }} />;
   }
 
   return <>{children}</>;
@@ -103,14 +107,21 @@ export const RequireRole = ({
 }) => {
   const { user, isAuthenticated } = useAuth();
   const location = useLocation();
+  const { tenantSlug } = useParams<{ tenantSlug: string }>();
 
   if (!isAuthenticated) {
     const from = location.pathname + location.search;
-    return <Navigate to="/login" replace state={{ from }} />;
+    const loginPath = tenantSlug
+      ? `/t/${tenantSlug}/login`
+      : "/login";
+    return <Navigate to={loginPath} replace state={{ from }} />;
   }
 
   if (!user || !user.role || !allowedRoles.includes(user.role)) {
-    return <Navigate to="/app" replace />;
+    const redirectPath = tenantSlug
+      ? `/t/${tenantSlug}/app`
+      : "/app";
+    return <Navigate to={redirectPath} replace />;
   }
 
   return <>{children}</>;

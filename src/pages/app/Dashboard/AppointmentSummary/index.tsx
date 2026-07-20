@@ -2,7 +2,7 @@ import H2Bold from "@/components/ui/H2Bold";
 import P from "@/components/ui/Span";
 import { IoIosArrowBack } from "@react-icons/all-files/io/IoIosArrowBack";
 import { IoMdAddCircle } from "@react-icons/all-files/io/IoMdAddCircle";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppointment } from "@/contexts/useAppointment";
 import Button from "@/components/ui/Button";
 import { TiDelete } from "react-icons/ti";
@@ -18,6 +18,7 @@ const AppointmentSummaryPage = () => {
   );
 
   const navigate = useNavigate();
+  const { tenantSlug } = useParams<{ tenantSlug: string }>();
 
   const {
     selectedAppointmentItems,
@@ -28,7 +29,7 @@ const AppointmentSummaryPage = () => {
   const { mutateAsync, isPending } = useCreateAppointment();
 
   const handleAddMoreService = () => {
-    navigate("/app");
+    navigate(`/t/${tenantSlug}/app`);
   };
 
   const formatToLocalTimeString = (date: Date) => {
@@ -55,7 +56,7 @@ const AppointmentSummaryPage = () => {
       }
 
       clearAppointmentItems();
-      navigate("/app/appointments");
+      navigate(`/t/${tenantSlug}/app/appointments`);
     } catch (err) {
       console.error("Erro ao criar agendamentos:", err);
       alert(err);

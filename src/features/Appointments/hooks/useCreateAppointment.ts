@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createAppointmentService } from "../services/appointments.service";
+import { getTenant } from "@/services/auth.storage";
 
 export const useCreateAppointment = () => {
   const queryClient = useQueryClient();
@@ -11,7 +12,7 @@ export const useCreateAppointment = () => {
       console.log("Agendamento criado:", data);
 
       queryClient.invalidateQueries({
-        queryKey: ["myAppointments"],
+        queryKey: [getTenant(), "myAppointments"],
       });
     },
 

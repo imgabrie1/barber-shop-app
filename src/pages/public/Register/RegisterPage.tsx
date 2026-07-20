@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { register as registerRequest } from "../../../services/auth.service";
 import H2Bold from "@/components/ui/H2Bold";
 import CreateUserForm from "@/components/common/CreateUserForm";
@@ -6,17 +6,23 @@ import type { RegisterDTO } from "@/schemas/register.schemas";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const { tenantSlug } = useParams<{ tenantSlug: string }>();
+
+  if (!tenantSlug) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleRegister = async (data: RegisterDTO & { role?: string }) => {
     await registerRequest(data);
-    navigate("/login", { replace: true });
+    navigate(`/t/${tenantSlug}/login`, { replace: true });
   };
 
   return (
-    <section className="relative -top-20 xl:-top-8">
-      <div className="flex flex-col justify-center gap-4 text-[var(--textPrimary)] w-[95vw] md:w-[90vw] lg:w-[60vh] min-h-[25vh]">
-        <div className="flex justify-center">
+    <section className="flex flex-col items-center justify-center min-h-screen p-4">
+      <div className="w-full max-w-[400px]">
+        <div className="mb-2 flex flex-col items-center justify-center">
           <H2Bold>CRIAR CONTA</H2Bold>
+          <span className="text-sm text-gray-500 uppercase mt-1 font-semibold">{tenantSlug}</span>
         </div>
 
         <CreateUserForm onSuccess={handleRegister} />
@@ -25,7 +31,7 @@ const RegisterPage = () => {
           <span>Já tem uma conta?</span>
           <button
             type="button"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate(`/t/${tenantSlug}/login`)}
             className="font-bold underline cursor-pointer hover:text-gray-500 text-gray-300"
           >
             Entre aqui!

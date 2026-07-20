@@ -5,6 +5,7 @@ import {
   deleteShopService,
 } from "../services/admin.service";
 import type { createShopType } from "@/interfaces/admin.interface";
+import { getTenant } from "@/services/auth.storage";
 
 export const useShopMutation = () => {
   const queryClient = useQueryClient();
@@ -12,7 +13,7 @@ export const useShopMutation = () => {
   const createMutation = useMutation({
     mutationFn: (data: createShopType) => createShopService(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["shopUnits"] });
+      queryClient.invalidateQueries({ queryKey: [getTenant(), "shopUnits"] });
     },
   });
 
@@ -20,14 +21,14 @@ export const useShopMutation = () => {
     mutationFn: ({ id, data }: { id: string; data: Partial<createShopType> }) =>
       updateShopService(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["shopUnits"] });
+      queryClient.invalidateQueries({ queryKey: [getTenant(), "shopUnits"] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteShopService(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["shopUnits"] });
+      queryClient.invalidateQueries({ queryKey: [getTenant(), "shopUnits"] });
     },
   });
 

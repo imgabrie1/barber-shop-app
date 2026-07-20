@@ -3,7 +3,7 @@ import P from "@/components/ui/Span";
 import { useAvailability } from "@/features/Appointments/hooks/UseCheckAvailability";
 import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { IoIosArrowBack } from "@react-icons/all-files/io/IoIosArrowBack";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
 import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 import { useAppointment } from "@/contexts/useAppointment";
@@ -12,6 +12,7 @@ import { formatAppointmentDate } from "@/utils/date";
 
 const SelectAvailabilitiesDatePage = () => {
   const navigate = useNavigate();
+  const { tenantSlug } = useParams<{ tenantSlug: string }>();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const {
@@ -36,9 +37,9 @@ const SelectAvailabilitiesDatePage = () => {
 
   useEffect(() => {
     if (!isReady) {
-      navigate("/app");
+      navigate(`/t/${tenantSlug}/app`);
     }
-  }, [isReady, navigate]);
+  }, [isReady, navigate, tenantSlug]);
 
   const getFormattedDate = (date: Date, format: "iso" | "br" = "iso") => {
     const year = date.getFullYear();
@@ -137,7 +138,7 @@ const SelectAvailabilitiesDatePage = () => {
     };
 
     addAppointmentItem(newAppointmentItem);
-    navigate("/app/appointment/summary");
+    navigate(`/t/${tenantSlug}/app/appointment/summary`);
   };
 
   return (
