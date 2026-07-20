@@ -1,23 +1,24 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import RevenueDisplay from "@/components/common/RevenueDisplay";
 import H2Bold from "@/components/ui/H2Bold";
 
 const AdminPage = () => {
   const navigate = useNavigate();
+  const { tenantSlug } = useParams<{ tenantSlug: string }>();
 
   const handleNavigateUsers = () => {
-    navigate("/app/admin/users");
+    navigate(`/t/${tenantSlug}/app/admin/users`);
   };
   const handleNavigateServices = () => {
-    navigate("/app/admin/services");
+    navigate(`/t/${tenantSlug}/app/admin/services`);
   };
 
   const handleNavigateShopUnits = () => {
-    navigate("/app/admin/shopUnits");
+    navigate(`/t/${tenantSlug}/app/admin/shopUnits`);
   };
 
   const handleNavigateWhatsapp = () => {
-    navigate("/app/admin/whatsapp");
+    navigate(`/t/${tenantSlug}/app/admin/whatsapp`);
   };
 
   return (

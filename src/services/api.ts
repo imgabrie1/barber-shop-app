@@ -10,6 +10,7 @@ import {
   getRefreshToken,
   setTokens,
   clearTokens,
+  getTenant,
 } from "./auth.storage";
 
 export const API_BASE_URL =
@@ -39,6 +40,7 @@ export const registerLogoutCallback = (callback: () => void) => {
 const handleUnauthorized = async () => {
   clearTokens();
   delete api.defaults.headers.common["Authorization"];
+  delete api.defaults.headers.common["X-Tenant-ID"];
 
   if (logoutCallback) {
     logoutCallback();
@@ -48,14 +50,24 @@ const handleUnauthorized = async () => {
 const processTokenRefresh = async () => {
   try {
     const refreshToken = getRefreshToken();
+    const currentTenant = getTenant();
 
     if (!refreshToken) {
       throw new Error("No refresh token available");
     }
 
-    const response = await axios.post(`${API_BASE_URL}/login/refresh-token`, {
-      refresh_token: refreshToken,
-    });
+    const headers: any = {};
+    if (currentTenant) {
+      headers["X-Tenant-ID"] = currentTenant;
+    }
+
+    const response = await axios.post(
+      `${API_BASE_URL}/login/refresh-token`,
+      {
+        refresh_token: refreshToken,
+      },
+      { headers },
+    );
 
     const { token, refreshToken: newRefreshToken } = response.data;
 
@@ -119,10 +131,16 @@ api.interceptors.response.use(
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getToken();
+    const tenant = getTenant();
+
+    config.headers = config.headers || {};
 
     if (token) {
-      config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (tenant) {
+      config.headers["X-Tenant-ID"] = tenant;
     }
 
     return config;

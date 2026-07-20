@@ -1,6 +1,7 @@
 import type { User } from "@/interfaces/user.interface";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { patchUser } from "../services/users.service";
+import { getTenant } from "@/services/auth.storage";
 
 export const usePatchUser = () => {
   const queryClient = useQueryClient();
@@ -11,9 +12,9 @@ export const usePatchUser = () => {
 
     onSuccess: (response, variables) => {
       if (response) {
-        queryClient.invalidateQueries({ queryKey: ["user", variables.id] });
+        queryClient.invalidateQueries({ queryKey: [getTenant(), "user", variables.id] });
 
-        queryClient.invalidateQueries({ queryKey: ["users"] });
+        queryClient.invalidateQueries({ queryKey: [getTenant(), "users"] });
       }
     },
     onError: (error) => {

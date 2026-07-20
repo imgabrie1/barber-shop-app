@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCheckAvailability } from "../services/appointments.service";
+import { getTenant } from "@/services/auth.storage";
 
 type UseAvailabilityProps = {
   date: string;
@@ -17,7 +18,7 @@ export const useAvailability = ({
   enabled = true,
 }: UseAvailabilityProps) => {
   return useQuery({
-    queryKey: ["checkAvailability", date, barberId, barberName, shopId],
+    queryKey: [getTenant(), "checkAvailability", date, barberId, barberName, shopId],
     queryFn: () => getCheckAvailability({ date, barberId, barberName, shopId }),
     enabled: enabled && !!date && !!barberId && !!barberName && !!shopId,
     staleTime: 1000 * 60 * 2,

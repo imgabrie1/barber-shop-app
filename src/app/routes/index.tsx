@@ -1,5 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
-import { privateRoutes } from "./private.routes";
-import { publicRoutes } from "./public.routes";
+import { globalPublicRoutes } from "./public.routes";
+import { tenantRoutes } from "./tenant.routes";
 
-export const appRouter = createBrowserRouter([publicRoutes, privateRoutes]);
+export const appRouter = createBrowserRouter([
+  globalPublicRoutes,
+  {
+    path: "/t/:tenantSlug",
+    children: tenantRoutes,
+  },
+]);

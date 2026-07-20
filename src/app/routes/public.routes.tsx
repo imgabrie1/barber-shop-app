@@ -1,17 +1,19 @@
 import { lazy, Suspense } from "react";
-import { PublicLayout } from "../layout/PublicLayout";
+import { PageLoader } from "@/components/ui/PageLoader";
 
 const LandingPage = lazy(() =>
   import("../../pages/public/LandingPage").then((m) => ({
     default: m.LandingPage,
   })),
 );
-const LoginPage = lazy(() => import("@/pages/public/Login/LoginPage"));
-const RegisterPage = lazy(() => import("@/pages/public/Register/RegisterPage"));
-import { PageLoader } from "@/components/ui/PageLoader";
+const RegisterTenantPage = lazy(
+  () => import("@/pages/public/RegisterTenant/RegisterTenantPage"),
+);
+const PlatformLoginPage = lazy(
+  () => import("@/pages/public/PlatformLogin/PlatformLoginPage"),
+);
 
-export const publicRoutes = {
-  element: <PublicLayout />,
+export const globalPublicRoutes = {
   children: [
     {
       path: "/",
@@ -22,18 +24,18 @@ export const publicRoutes = {
       ),
     },
     {
-      path: "/login",
+      path: "/register-tenant",
       element: (
         <Suspense fallback={<PageLoader />}>
-          <LoginPage />
+          <RegisterTenantPage />
         </Suspense>
       ),
     },
     {
-      path: "/register",
+      path: "/platform-login",
       element: (
         <Suspense fallback={<PageLoader />}>
-          <RegisterPage />
+          <PlatformLoginPage />
         </Suspense>
       ),
     },

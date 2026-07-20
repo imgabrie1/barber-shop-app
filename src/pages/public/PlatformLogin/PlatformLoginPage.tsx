@@ -1,6 +1,6 @@
-import { useLocation, useNavigate, useParams, Navigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../app/providers/AuthProvider";
-import { login as loginRequest } from "../../../services/auth.service";
+import api from "../../../services/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginDTO } from "@/schemas/login.schemas";
@@ -10,12 +10,13 @@ import H2Bold from "@/components/ui/H2Bold";
 import { maskPhone, unmaskPhone } from "@/utils/masks";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { setTokens, getTenant, USER_STORAGE } from "@/services/auth.storage";
+import { storage } from "@/services/storage";
 
-const LoginPage = () => {
+const PlatformLoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tenantSlug } = useParams<{ tenantSlug: string }>();
 
   const {
     register,
@@ -26,10 +27,6 @@ const LoginPage = () => {
     resolver: zodResolver(loginSchema),
     mode: "onChange",
   });
-
-  if (!tenantSlug) {
-    return <Navigate to="/" replace />;
-  }
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -42,15 +39,29 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginDTO) => {
     try {
-      const response = await loginRequest(data);
-      login(response.user);
+      const cleanData = {
+        ...data,
+        phoneNumber: unmaskPhone(data.phoneNumber),
+      };
 
-      toast.success("Bem-vindo de volta!");
+      const response = await api.post("/platform/login", cleanData);
 
-      const from = (location.state as { from?: string } | null)?.from || `/t/${tenantSlug}/app`;
+      const { token, refreshToken, user } = response.data;
+
+      setTokens(token, refreshToken);
+      storage.set(USER_STORAGE, JSON.stringify(user));
+      login(user);
+
+      toast.success("Bem-vindo, Super Admin!");
+
+      const storedTenant = getTenant();
+      const from =
+        (location.state as { from?: string } | null)?.from
+        || (storedTenant && `/t/${storedTenant}/app/platform`)
+        || "/";
       navigate(from, { replace: true });
     } catch (err: unknown) {
-      let message = "Falha ao fazer login";
+      let message = "Falha ao fazer login na plataforma";
 
       if (err instanceof AxiosError) {
         message =
@@ -67,19 +78,21 @@ const LoginPage = () => {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center min-h-screen p-4">
+    <section className="flex flex-col items-center justify-center p-4 min-h-screen">
       <div className="w-full max-w-[400px]">
         <div className="mb-2 flex flex-col items-center justify-center">
-          <H2Bold>ENTRAR</H2Bold>
-          <span className="text-sm text-gray-500 uppercase mt-1 font-semibold">
-            {tenantSlug}
+          <H2Bold>ACESSO RESTRITO</H2Bold>
+          <span className="text-sm text-red-500 uppercase mt-1 font-semibold">
+            SUPER ADMIN
           </span>
         </div>
 
         <form
-          className="mt-4 bg-[var(--block)] p-6 md:p-8 border border-gray-200 rounded-2xl shadow-sm flex flex-col gap-6"
+          className="mt-4 bg-[var(--block)] p-6 md:p-8 border border-red-200 rounded-2xl shadow-sm flex flex-col gap-6 relative overflow-hidden"
           onSubmit={handleSubmit(onSubmit)}
         >
+          <div className="absolute top-0 left-0 w-full h-1 bg-red-500" />
+
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-gray-600">
@@ -120,19 +133,22 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <Button type="submit" className="w-full" loading={isSubmitting}>
-            Entrar
+          <Button
+            type="submit"
+            className="w-full !bg-red-600 hover:!bg-red-700 text-white"
+            loading={isSubmitting}
+          >
+            Entrar na Plataforma
           </Button>
         </form>
 
         <div className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-600">
-          <span>Não tem uma conta?</span>
           <button
             type="button"
-            onClick={() => navigate(`/t/${tenantSlug}/register`)}
-            className="font-bold underline cursor-pointer hover:text-gray-500 text-gray-300"
+            onClick={() => navigate("/")}
+            className="underline cursor-pointer hover:text-gray-500 text-gray-400"
           >
-            Crie aqui!
+            Voltar para a página inicial
           </button>
         </div>
       </div>
@@ -140,4 +156,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default PlatformLoginPage;

@@ -4,12 +4,13 @@ import P from "@/components/ui/Span";
 import { useBarbers } from "@/features/barberServices/hooks/useBarbers";
 import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { IoIosArrowBack } from "@react-icons/all-files/io/IoIosArrowBack";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppointment } from "@/contexts/useAppointment";
 import IsFetchingAndLoading from "@/components/ui/IsFetchingAndLoading";
 
 const SelectBarberPage = () => {
   const navigate = useNavigate();
+  const { tenantSlug } = useParams<{ tenantSlug: string }>();
 
   const {
     currentServiceId,
@@ -26,9 +27,9 @@ const SelectBarberPage = () => {
 
   useEffect(() => {
     if (!currentServiceId || !currentShopId) {
-      navigate("/app");
+      navigate(`/t/${tenantSlug}/app`);
     }
-  }, [currentServiceId, currentShopId, navigate]);
+  }, [currentServiceId, currentShopId, navigate, tenantSlug]);
 
   if (!currentServiceId) return null;
 
@@ -54,7 +55,7 @@ const SelectBarberPage = () => {
           const handleSelectBarber = () => {
             setCurrentBarberId(barber.id);
             setCurrentBarberName(barber.name);
-            navigate(`/app/appointment/select-availabilityDate`);
+            navigate(`/t/${tenantSlug}/app/appointment/select-availabilityDate`);
           };
 
           return (

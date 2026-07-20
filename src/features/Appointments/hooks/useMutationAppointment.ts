@@ -3,6 +3,7 @@ import {
   updateAppointmentStatus,
   deleteAppointment,
 } from "../services/appointments.service";
+import { getTenant } from "@/services/auth.storage";
 
 type MutationInput = {
   id: string;
@@ -33,7 +34,7 @@ export const useMutationAppointment = () => {
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["myAppointments"] });
+      queryClient.invalidateQueries({ queryKey: [getTenant(), "myAppointments"] });
     },
 
     onError: (error) => {

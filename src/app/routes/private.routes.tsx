@@ -1,7 +1,5 @@
 import { lazy, Suspense } from "react";
-import { AppLayout } from "../layout/AppLayout";
-import { RequireAuth, RequireRole } from "../providers/AuthProvider";
-
+import { RequireRole } from "../providers/AuthProvider";
 
 const AppointmentsPage = lazy(() => import("@/pages/app/Appointments"));
 const SelectServicePage = lazy(() => import("@/pages/app/Dashboard/SelectService"));
@@ -16,37 +14,33 @@ const AdminServicesPage = lazy(() => import("@/pages/app/Admin/servicesAdmin"));
 const AdminShopUnitsPage = lazy(() => import("@/pages/app/Admin/shopUnitsAdmin"));
 const AdminWhatsappPage = lazy(() => import("@/pages/app/Admin/whatsappAdmin"));
 const ClientProfilePage = lazy(() => import("@/pages/app/ClientProfile"));
+const PlatformPage = lazy(() => import("@/pages/app/Platform/PlatformPage"));
 import { PageLoader } from "@/components/ui/PageLoader";
 
 export const privateRoutes = {
-  element: (
-    <RequireAuth>
-      <AppLayout />
-    </RequireAuth>
-  ),
   children: [
     {
-      path: "/app",
+      index: true,
       element: <Suspense fallback={<PageLoader />}><SelectServicePage /></Suspense>,
     },
     {
-      path: "/app/appointments",
+      path: "appointments",
       element: <Suspense fallback={<PageLoader />}><AppointmentsPage /></Suspense>,
     },
     {
-      path: "/app/appointment/select-barber/:serviceId",
+      path: "appointment/select-barber/:serviceId",
       element: <Suspense fallback={<PageLoader />}><SelectBarberPage /></Suspense>,
     },
     {
-      path: "/app/appointment/select-availabilityDate",
+      path: "appointment/select-availabilityDate",
       element: <Suspense fallback={<PageLoader />}><SelectAvailabilitiesDatePage /></Suspense>,
     },
     {
-      path: "/app/appointment/summary",
+      path: "appointment/summary",
       element: <Suspense fallback={<PageLoader />}><AppointmentSummaryPage /></Suspense>,
     },
     {
-      path: "/app/admin",
+      path: "admin",
       element: (
         <RequireRole allowedRoles={["admin"]}>
           <Suspense fallback={<PageLoader />}><AdminPage /></Suspense>
@@ -54,7 +48,7 @@ export const privateRoutes = {
       ),
     },
     {
-      path: "/app/admin/users",
+      path: "admin/users",
       element: (
         <RequireRole allowedRoles={["admin"]}>
           <Suspense fallback={<PageLoader />}><AdminUsersPage /></Suspense>
@@ -62,7 +56,7 @@ export const privateRoutes = {
       ),
     },
     {
-      path: "/app/admin/services",
+      path: "admin/services",
       element: (
         <RequireRole allowedRoles={["admin"]}>
           <Suspense fallback={<PageLoader />}><AdminServicesPage /></Suspense>
@@ -70,7 +64,7 @@ export const privateRoutes = {
       ),
     },
     {
-      path: "/app/admin/shopUnits",
+      path: "admin/shopUnits",
       element: (
         <RequireRole allowedRoles={["admin"]}>
           <Suspense fallback={<PageLoader />}><AdminShopUnitsPage /></Suspense>
@@ -78,7 +72,7 @@ export const privateRoutes = {
       ),
     },
     {
-      path: "/app/admin/whatsapp",
+      path: "admin/whatsapp",
       element: (
         <RequireRole allowedRoles={["admin"]}>
           <Suspense fallback={<PageLoader />}><AdminWhatsappPage /></Suspense>
@@ -86,7 +80,7 @@ export const privateRoutes = {
       ),
     },
     {
-      path: "/app/barber",
+      path: "barber",
       element: (
         <RequireRole allowedRoles={["barber"]}>
           <Suspense fallback={<PageLoader />}><BarberPage /></Suspense>
@@ -94,7 +88,7 @@ export const privateRoutes = {
       ),
     },
     {
-      path: "/app/manager",
+      path: "manager",
       element: (
         <RequireRole allowedRoles={["manager"]}>
           <Suspense fallback={<PageLoader />}><ManagerPage /></Suspense>
@@ -102,10 +96,18 @@ export const privateRoutes = {
       ),
     },
     {
-      path: "/app/clientProfile",
+      path: "clientProfile",
       element: (
         <RequireRole allowedRoles={["client"]}>
           <Suspense fallback={<PageLoader />}><ClientProfilePage /></Suspense>
+        </RequireRole>
+      ),
+    },
+    {
+      path: "platform",
+      element: (
+        <RequireRole allowedRoles={["super_admin"]}>
+          <Suspense fallback={<PageLoader />}><PlatformPage /></Suspense>
         </RequireRole>
       ),
     },
