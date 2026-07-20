@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useParams } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import { RiMenu4Line } from "@react-icons/all-files/ri/RiMenu4Line";
 import { GoX } from "@react-icons/all-files/go/GoX";
@@ -8,6 +8,7 @@ import { MdLogout } from "react-icons/md";
 
 export const AppLayout = () => {
   const { logout, user } = useAuth();
+  const { tenantSlug } = useParams<{ tenantSlug: string }>();
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const handleOpenAndCloseMenu = () => {
@@ -18,17 +19,21 @@ export const AppLayout = () => {
   const isBarber = user?.role === "barber";
   const isManager = user?.role === "manager";
   const isClient = user?.role === "client";
+  const isSuperAdmin = user?.role === "super_admin";
 
   return (
     <div
-      style={{ background: "var(--background)", transition: "background-color 0.3s ease, color 0.3s ease" }}
+      style={{
+        background: "var(--background)",
+        transition: "background-color 0.3s ease, color 0.3s ease",
+      }}
       className="flex flex-col min-h-screen"
     >
       <Header className="">
         <div className="flex flex-col">
           <div className="flex justify-between items-center w-full">
-            <h1 className="text-xl md:text-2xl font-bold tracking-tight">
-              {import.meta.env.VITE_BARBER_SHOP_NAME}
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight uppercase">
+{user?.tenant?.name || tenantSlug}
             </h1>
 
             {isOpen ? (
@@ -65,36 +70,40 @@ export const AppLayout = () => {
             "
               style={{ paddingTop: "0.625rem" }}
             >
-              <NavLink
-                to="/app"
-                end
-                className={({ isActive }) =>
-                  `text-sm font-medium transition-all border-b-2 ${
-                    isActive
-                      ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
-                      : "border-transparent opacity-60 hover:opacity-100"
-                  }`
-                }
-              >
-                INICIO
-              </NavLink>
+              {!isSuperAdmin && (
+                <NavLink
+                  to={`/t/${tenantSlug}/app`}
+                  end
+                  className={({ isActive }) =>
+                    `text-sm font-medium transition-all border-b-2 ${
+                      isActive
+                        ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                    }`
+                  }
+                >
+                  INICIO
+                </NavLink>
+              )}
 
-              <NavLink
-                to="/app/appointments"
-                className={({ isActive }) =>
-                  ` text-sm font-medium transition-all border-b-2 ${
-                    isActive
-                      ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
-                      : "border-transparent opacity-60 hover:opacity-100"
-                  }`
-                }
-              >
-                AGENDA
-              </NavLink>
+              {!isSuperAdmin && (
+                <NavLink
+                  to={`/t/${tenantSlug}/app/appointments`}
+                  className={({ isActive }) =>
+                    ` text-sm font-medium transition-all border-b-2 ${
+                      isActive
+                        ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                    }`
+                  }
+                >
+                  AGENDA
+                </NavLink>
+              )}
 
               {isBarber && (
                 <NavLink
-                  to="/app/barber"
+                  to={`/t/${tenantSlug}/app/barber`}
                   className={({ isActive }) =>
                     ` text-sm font-medium transition-all border-b-2 ${
                       isActive
@@ -109,7 +118,7 @@ export const AppLayout = () => {
 
               {isAdmin && (
                 <NavLink
-                  to="/app/admin"
+                  to={`/t/${tenantSlug}/app/admin`}
                   className={({ isActive }) =>
                     ` text-sm font-medium transition-all border-b-2 ${
                       isActive
@@ -122,9 +131,24 @@ export const AppLayout = () => {
                 </NavLink>
               )}
 
+              {isSuperAdmin && (
+                <NavLink
+                  to={`/t/${tenantSlug}/app/platform`}
+                  className={({ isActive }) =>
+                    ` text-sm font-medium transition-all border-b-2 ${
+                      isActive
+                        ? "border-[var(--textHeader)] text-[var(--textHeader)] opacity-100"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                    }`
+                  }
+                >
+                  PLATAFORMA
+                </NavLink>
+              )}
+
               {isManager && (
                 <NavLink
-                  to="/app/manager"
+                  to={`/t/${tenantSlug}/app/manager`}
                   className={({ isActive }) =>
                     ` text-sm font-medium transition-all border-b-2 ${
                       isActive
@@ -138,7 +162,7 @@ export const AppLayout = () => {
               )}
               {isClient && (
                 <NavLink
-                  to="/app/clientProfile"
+                  to={`/t/${tenantSlug}/app/clientProfile`}
                   className={({ isActive }) =>
                     ` text-sm font-medium transition-all border-b-2 ${
                       isActive
@@ -155,7 +179,7 @@ export const AppLayout = () => {
                 onClick={logout}
                 className="text-md font-medium cursor-pointer"
               >
-                <MdLogout size={24}/>
+                <MdLogout size={24} />
               </p>
             </nav>
           </div>

@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { ReactNode } from "react";
 import { AppointmentContext } from "./appointment-context-obj";
 import type { AppointmentItem } from "./appointment.interface";
 import { USER_STORAGE } from "@/services/auth.storage";
 import { storage } from "@/services/storage";
+import { useAuth } from "@/app/providers/AuthProvider";
 
 export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
   const [selectedAppointmentItems, setSelectedAppointmentItems] = useState<
@@ -33,6 +34,20 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
       return null;
     }
   }, []);
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    setSelectedAppointmentItems([]);
+    setCurrentServiceId(null);
+    setCurrentServiceName(null);
+    setCurrentServiceDuration(null);
+    setCurrentShopId(null);
+    setCurrentShopName(null);
+    setCurrentBarberId(null);
+    setCurrentBarberName(null);
+    setCurrentDateTime(null);
+  }, [user?.id]);
 
   const addAppointmentItem = (item: AppointmentItem) => {
     const newAppointmentStart = item.dateTime.getTime();

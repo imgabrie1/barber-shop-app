@@ -5,9 +5,10 @@ export const userSchema = z.object({
   id: z.string(),
   name: z.string(),
   phoneNumber: z.string(),
-  role: z.enum(["admin", "barber", "client", "manager"]).optional(),
+  role: z.enum(["admin", "barber", "client", "manager", "super_admin"]).optional(),
   commissionPercentage: z.number().optional(),
   shop: returnShopsInServices.optional(),
+  tenant: z.object({ id: z.string(), name: z.string(), slug: z.string() }).optional(),
 });
 
 export const userByIDtoAdminViewSchema = userSchema.extend({

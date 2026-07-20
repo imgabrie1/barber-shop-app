@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MdNavigateNext } from "@react-icons/all-files/md/MdNavigateNext";
 import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
 import H2Bold from "@/components/ui/H2Bold";
@@ -17,6 +17,7 @@ import Span from "@/components/ui/Span";
 
 const SelectServicePage = () => {
   const navigate = useNavigate();
+  const { tenantSlug } = useParams<{ tenantSlug: string }>();
 
   const [stage, setStage] = useState<"init" | "shopData">("init");
   const [currentPage, setCurrentPage] = useState(1);
@@ -213,7 +214,7 @@ const SelectServicePage = () => {
               }
 
               navigate(
-                `/app/appointment/select-barber/${service.id}?price=${service.price}&shopId=${resolvedShopId}`,
+                `/t/${tenantSlug}/app/appointment/select-barber/${service.id}?price=${service.price}&shopId=${resolvedShopId}`,
                 {
                   state: { price: service.price },
                 },

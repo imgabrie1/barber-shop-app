@@ -1,6 +1,7 @@
 import type { adminRevenueInterface } from "@/interfaces/admin.interface";
 import { useQuery } from "@tanstack/react-query";
 import { adminRevenueService } from "../services/admin.service";
+import { getTenant } from "@/services/auth.storage";
 
 type FilterType = "day" | "month" | "quarter";
 
@@ -15,7 +16,7 @@ export const useRevenue = (
   { filterType, filterValue, enabled = true }: UseRevenueParams = {},
 ) => {
   return useQuery<adminRevenueInterface>({
-    queryKey: ["revenue", filterType, filterValue],
+    queryKey: [getTenant(), "revenue", filterType, filterValue],
     queryFn: () =>
       adminRevenueService(admin, {
         filterType,
