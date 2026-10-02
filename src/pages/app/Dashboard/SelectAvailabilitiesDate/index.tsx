@@ -190,7 +190,7 @@ const SelectAvailabilitiesDatePage = () => {
           className="text-red-500 font-semibold"
           style={{ marginTop: "1rem" }}
         >
-          {import.meta.env.VITE_BARBER_SHOP_NAME} e/ou o {currentBarberName} não
+          {currentShopName} e/ou o {currentBarberName} não
           atenderá {formatAppointmentDate(currentDate)}
         </P>
       )}
